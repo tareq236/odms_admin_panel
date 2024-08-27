@@ -19,7 +19,10 @@ export default async function UserManagementPage({
         icon={<UserPen className="size-5 fill-primary/20" />}
         title="User Management"
       />
-      <FilterSection />
+
+      <Suspense fallback={<p>Loading...</p>}>
+        <FilterSection />
+      </Suspense>
 
       <Suspense fallback={<TableSkeleton />}>
         <DataTable searchParams={searchParams} />
