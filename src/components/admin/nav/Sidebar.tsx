@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Home, ListTodo, Map, Route, Truck, UserRoundPen } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { ComponentProps, ReactNode } from "react";
 
 export default function Sidebar() {
@@ -19,17 +20,17 @@ export default function Sidebar() {
           <NavLink
             icon={<Home className="size-5" />}
             name="Dashboard"
-            href=""
+            href="/admin"
           />
           <NavLink
             icon={<UserRoundPen className="size-5" />}
             name="User Management"
-            href=""
+            href="/admin/user/management"
           />
           <NavLink
             icon={<ListTodo className="size-5" />}
             name="Attendance"
-            href=""
+            href="/admin/user/attendance"
           />
           <NavLink icon={<Route className="size-5" />} name="Route" href="" />
           <NavLink
@@ -54,10 +55,13 @@ const NavLink = ({
   name: string;
   href: string;
 }) => {
+
+  const pathname = usePathname()
+
   return (
     <>
       <Link
-        className={`${name==='Dashboard' && 'text-primary bg-primary/5'} flex gap-3 items-center p-2 rounded hover:bg-primary/10 hover:text-primary transition-all duration-300`}
+        className={`${href===pathname && 'text-primary bg-primary/5'} flex gap-3 items-center p-2 rounded hover:bg-primary/10 hover:text-primary transition-all duration-300`}
         href={href}
       >
         {icon}
