@@ -16,7 +16,7 @@ export default async function UserManagementPage({
   return (
     <>
       <PageHeader
-        icon={<UserPen className="size-5" />}
+        icon={<UserPen className="size-5 fill-primary/20" />}
         title="User Management"
       />
       <FilterSection />
@@ -33,48 +33,54 @@ const DataTable = async ({
 }: {
   searchParams: { q: string; p: string };
 }) => {
-  let count;
+  let count = 0;
   let data;
   const limit = 20;
+  let connectionError = false
 
-  if (searchParams.q) {
-    [data, count] = await Promise.all([
-      db.rdl_user_list.findMany({
-        where: {
-          OR: [
-            { full_name: { contains: searchParams.q } },
-            { mobile_number: { startsWith: searchParams.q } },
-            { sap_id: Number(searchParams.q) || 0 },
-          ],
-        },
-        orderBy: { created_at: "desc" },
-        take: limit,
-        skip: limit * (Number(searchParams.p || 1) - 1),
-      }),
-      db.rdl_user_list.count({
-        where: {
-          OR: [
-            { full_name: { contains: searchParams.q } },
-            { mobile_number: { startsWith: searchParams.q } },
-            { sap_id: Number(searchParams.q) || 0 },
-          ],
-        },
-      }),
-    ]);
-  } else {
-    [data, count] = await Promise.all([
-      db.rdl_user_list.findMany({
-        orderBy: { created_at: "desc" },
-        take: limit,
-        skip: limit * (Number(searchParams.p || 1) - 1),
-      }),
-      db.rdl_user_list.count(),
-    ]);
+  try {
+    if (searchParams.q) {
+      [data, count] = await Promise.all([
+        db.rdl_user_list.findMany({
+          where: {
+            OR: [
+              { full_name: { contains: searchParams.q } },
+              { mobile_number: { startsWith: searchParams.q } },
+              { sap_id: Number(searchParams.q) || 0 },
+            ],
+          },
+          orderBy: { created_at: "desc" },
+          take: limit,
+          skip: limit * (Number(searchParams.p || 1) - 1),
+        }),
+        db.rdl_user_list.count({
+          where: {
+            OR: [
+              { full_name: { contains: searchParams.q } },
+              { mobile_number: { startsWith: searchParams.q } },
+              { sap_id: Number(searchParams.q) || 0 },
+            ],
+          },
+        }),
+      ]);
+    } else {
+      [data, count] = await Promise.all([
+        db.rdl_user_list.findMany({
+          orderBy: { created_at: "desc" },
+          take: limit,
+          skip: limit * (Number(searchParams.p || 1) - 1),
+        }),
+        db.rdl_user_list.count(),
+      ]);
+    }
+  } catch (error) {
+    data = [] as rdl_user_list[];
+    connectionError = true
   }
 
   return (
     <section className="data-table-section">
-      <UserTable data={data as rdl_user_list[]} />
+      <UserTable data={data as rdl_user_list[]} connectionError={connectionError} />
       <PagePagination limit={limit} count={count} />
     </section>
   );

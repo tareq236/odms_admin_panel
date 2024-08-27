@@ -1,10 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Home, ListTodo, Map, Route, Truck, UserRoundPen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { ComponentProps, ReactNode } from "react";
+import { ReactNode } from "react";
 
 export default function Sidebar() {
   return (
@@ -61,7 +60,7 @@ const NavLink = ({
   return (
     <>
       <Link
-        className={`${href===pathname && 'text-primary bg-primary/5'} flex gap-3 items-center p-2 rounded hover:bg-primary/10 hover:text-primary transition-all duration-300`}
+        className={`${href===pathname && 'text-primary bg-primary/5'} text-sm flex gap-3 items-center p-2 rounded hover:bg-primary/10 hover:text-primary transition-all duration-300`}
         href={href}
       >
         {icon}

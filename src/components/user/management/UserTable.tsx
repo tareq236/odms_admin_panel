@@ -12,10 +12,16 @@ import {
 import Tooltips from "@/components/ui/Tooltips";
 import { formatDate } from "@/lib/formatters";
 import { rdl_user_list } from "@prisma/client";
-import { Edit, MessageSquareOff, Trash } from "lucide-react";
+import { Edit, Globe, MessageSquareOff, Trash } from "lucide-react";
 import React from "react";
 
-function UserTable({ data }: { data: rdl_user_list[] }) {
+function UserTable({
+  data,
+  connectionError,
+}: {
+  data: rdl_user_list[];
+  connectionError: boolean;
+}) {
   return (
     <>
       <Table>
@@ -32,7 +38,18 @@ function UserTable({ data }: { data: rdl_user_list[] }) {
         </TableHeader>
 
         <TableBody>
-          {data.length > 0 ? (
+          {connectionError ? (
+            <TableRow>
+              <TableCell
+                colSpan={7}
+                align="center"
+                className="py-20 text-gray-400 pointer-events-none"
+              >
+                <Globe className="size-10" />
+                <span className="text-[11px]">Check Internet Connection</span>
+              </TableCell>
+            </TableRow>
+          ) : data.length > 0 ? (
             data.map((item) => (
               <TableRow key={item.sap_id}>
                 <TableCell>{item.sap_id}</TableCell>
