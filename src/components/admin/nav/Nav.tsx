@@ -63,7 +63,7 @@ export default function Nav() {
       {/* sidebar */}
       <Sheet open={showSidebar} onOpenChange={setShowSidebar}>
         <SheetContent side={"left"}>
-          <Sidebar />
+          <Sidebar onClose={() => {setShowSidebar(false)}} />
         </SheetContent>
       </Sheet>
     </nav>
