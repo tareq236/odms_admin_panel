@@ -143,10 +143,10 @@ function UserTable({
       <AlertDialog open={!!delUser} onOpenChange={setDelUser}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle className="font-bold">Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete this
-              Doctor and remove data from servers.
+              <b> user</b> and remove data from servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

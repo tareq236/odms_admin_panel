@@ -10,7 +10,7 @@ export default async function AdminLayout({
   return (
     <div className="relative min-h-screen md:flex">
       {/* sidebar */}
-      <aside className="hidden min-h-screen h-full border-r md:block md:sticky top-0 left-0 min-w-[15rem]">
+      <aside className="hidden min-h-screen h-full bg-white border-r md:block md:sticky top-0 left-0 min-w-[15rem] z-20">
         <Sidebar />
       </aside>
 
