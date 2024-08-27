@@ -7,13 +7,13 @@ import React from 'react'
 
 export default function FilterSection() {
   return (
-    <div className='filter-section'>
+    <section className='filter-section'>
         <Search placeholder='Search by ID, name, mobile' />
 
         <Button>
             <Plus className='size-4 mr-2' />
             <span>Add</span>
         </Button>
-    </div>
+    </section>
   )
 }

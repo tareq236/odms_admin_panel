@@ -20,7 +20,7 @@ export default function Nav() {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
-    <nav className="sticky top-0 bg-white w-full border-b">
+    <nav className="sticky top-0 bg-white w-full border-b z-10">
       
       {/* navbar */}
       <div className="flex justify-between items-center gap-5 px-5 py-6 shadow-sm h-14">
