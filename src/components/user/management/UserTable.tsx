@@ -18,9 +18,21 @@ import {
 import Tooltips from "@/components/ui/Tooltips";
 import { formatDate } from "@/lib/formatters";
 import { rdl_user_list } from "@prisma/client";
-import { Edit, Globe, MessageSquareOff, Trash, UserPen } from "lucide-react";
-import React, { useState } from "react";
+import { Edit, MessageSquareOff, ServerOff, Trash, UserPen } from "lucide-react";
+import React, { useState, useTransition } from "react";
 import UserForm from "./UserForm";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "@/components/ui/alert-dialog";
+import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
+import { toast } from "sonner";
+import { deleteUser } from "@/app/actions/user";
 
 function UserTable({
   data,
@@ -30,6 +42,9 @@ function UserTable({
   connectionError: boolean;
 }) {
   const [editUser, setEditUser] = useState<any>(false);
+  const [delUser, setDelUser] = useState<any>();
+
+  const [isPending, startTransition] = useTransition();
 
   return (
     <>
@@ -54,7 +69,7 @@ function UserTable({
                 align="center"
                 className="py-20 text-gray-400 pointer-events-none"
               >
-                <Globe className="size-10" />
+                <ServerOff className="size-10" />
                 <span className="text-[11px]">Check Internet Connection</span>
               </TableCell>
             </TableRow>
@@ -83,7 +98,7 @@ function UserTable({
                       size={"icon"}
                       variant={"destructive"}
                       className="rounded-full size-8"
-                      //   onClick={() => setDelDoctor(item.id)}
+                        onClick={() => setDelUser(item.sap_id)}
                     >
                       <Trash className="size-4" />
                     </Button>
@@ -122,6 +137,33 @@ function UserTable({
           <UserForm user={editUser} onClose={() => setEditUser(false)} />
         </DialogContent>
       </Dialog>
+
+      {/* delete user confirmation modal */}
+      <AlertDialog open={!!delUser} onOpenChange={setDelUser}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              Doctor and remove data from servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isPending}
+              onClick={() => {
+                startTransition(async () => {
+                  await deleteUser(delUser);
+                  toast.success("User is deleted");
+                });
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

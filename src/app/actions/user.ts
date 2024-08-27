@@ -4,6 +4,7 @@ import { z } from "zod";
 import db from "../../../db/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { notFound } from "next/navigation";
 
 const addSchema = z.object({
   sap_id: z.string().min(1),
@@ -129,3 +130,15 @@ export const updateUser = async (
     }
   }
 };
+
+export const deleteUser = async(id: number) => {
+    const user = await db.rdl_user_list.findUnique({where: {sap_id: id}})
+
+    if(user == null) return notFound()
+
+    await db.rdl_user_list.delete({where: {sap_id: id}})
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/user/management");
+    
+}
