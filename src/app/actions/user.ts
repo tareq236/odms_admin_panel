@@ -3,6 +3,7 @@
 import { z } from "zod";
 import db from "../../../db/db";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 
 const addSchema = z.object({
   sap_id: z.string().min(1),
@@ -24,43 +25,107 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
     };
   }
 
-  const data = result.data
+  const data = result.data;
 
-  const user = await db.rdl_user_list.findUnique({where: {sap_id: Number(data.sap_id)}})
+  const user = await db.rdl_user_list.findUnique({
+    where: { sap_id: Number(data.sap_id) },
+  });
 
-  if(user != null) {
+  if (user != null) {
     return {
-        error: null,
-        success: null,
-        toast: "SAP ID is alreay exist",
-      };
+      error: null,
+      success: null,
+      toast: "SAP ID is alreay exist",
+    };
   }
 
   try {
-
     await db.rdl_user_list.create({
-        data: {
-            sap_id: Number(data.sap_id),
-            full_name: data.full_name,
-            mobile_number: data.mobile_number,
-            status: Number(data.status),
-            password: data.password,
-            user_type: data.user_type,
-            updated_at: new Date()
-        }
-    })
+      data: {
+        sap_id: Number(data.sap_id),
+        full_name: data.full_name,
+        mobile_number: data.mobile_number,
+        status: Number(data.status),
+        password: data.password,
+        user_type: data.user_type,
+        updated_at: new Date(),
+      },
+    });
 
-    revalidatePath('/admin')
-    revalidatePath('/admin/user/management')
+    revalidatePath("/admin");
+    revalidatePath("/admin/user/management");
 
     return {
-        error: null,
-        success: 'User is added',
-        toast: null,
-      };
+      error: null,
+      success: "User is added",
+      toast: null,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
 
+export const updateUser = async (
+  id: number,
+  prevState: unknown,
+  formData: FormData,
+) => {
+  const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
+
+  if (result.success === false) {
+    return {
+      error: result.error.formErrors.fieldErrors,
+      success: null,
+      toast: null,
+    };
+  }
+
+  const data = result.data;
+
+  const user = await db.rdl_user_list.findUnique({
+    where: { sap_id: Number(data.sap_id) },
+  });
+
+  if (user == null) {
+    return {
+      error: null,
+      success: null,
+      toast: "User is not exist",
+    };
+  }
+
+  try {
+    await db.rdl_user_list.update({
+      where: { sap_id: id },
+      data: {
+        sap_id: Number(data.sap_id),
+        full_name: data.full_name,
+        mobile_number: data.mobile_number,
+        status: Number(data.status),
+        password: data.password,
+        user_type: data.user_type,
+        updated_at: new Date(),
+      },
+    });
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/user/management");
+
+    return {
+      error: null,
+      success: "User is updated",
+      toast: null,
+    };
     
   } catch (error) {
-    console.log(error)
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return {
+          error: null,
+          success: null,
+          toast: "SAP ID is already exist",
+        };
+      }
+    }
   }
 };

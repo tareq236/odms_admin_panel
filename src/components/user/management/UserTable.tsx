@@ -2,6 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -12,8 +18,9 @@ import {
 import Tooltips from "@/components/ui/Tooltips";
 import { formatDate } from "@/lib/formatters";
 import { rdl_user_list } from "@prisma/client";
-import { Edit, Globe, MessageSquareOff, Trash } from "lucide-react";
-import React from "react";
+import { Edit, Globe, MessageSquareOff, Trash, UserPen } from "lucide-react";
+import React, { useState } from "react";
+import UserForm from "./UserForm";
 
 function UserTable({
   data,
@@ -22,6 +29,8 @@ function UserTable({
   data: rdl_user_list[];
   connectionError: boolean;
 }) {
+  const [editUser, setEditUser] = useState<any>(false);
+
   return (
     <>
       <Table>
@@ -64,7 +73,7 @@ function UserTable({
                       size={"icon"}
                       variant={"outline"}
                       className="rounded-full size-8"
-                      //   onClick={() => setEdit(item)}
+                      onClick={() => setEditUser(item)}
                     >
                       <Edit className="size-4" />
                     </Button>
@@ -98,6 +107,21 @@ function UserTable({
           )}
         </TableBody>
       </Table>
+
+      {/* edit user dialog */}
+      <Dialog open={editUser} onOpenChange={setEditUser}>
+        <DialogContent className="md:w-[90vw] md:max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPen className="size-4 text-primary" />
+              <span>Edit User</span>
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* form */}
+          <UserForm user={editUser} onClose={() => setEditUser(false)} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
