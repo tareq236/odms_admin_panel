@@ -1,5 +1,5 @@
-import Nav from "@/components/dashboard/nav/Nav";
-import Sidebar from "@/components/dashboard/nav/Sidebar";
+import Nav from "@/components/admin/nav/Nav";
+import Sidebar from "@/components/admin/nav/Sidebar";
 import React from "react";
 
 export default async function AdminLayout({

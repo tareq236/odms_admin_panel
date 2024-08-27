@@ -1,10 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Menu } from "lucide-react";
 import React, { useState } from "react";
-import Search from "./Search";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,9 +36,6 @@ export default function Nav() {
             <Menu className="size-6" />
           </Button>
 
-          <Separator className="h-8 md:hidden" orientation="vertical" />
-
-          <Search />
         </div>
 
         <div className="right">

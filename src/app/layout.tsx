@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import ProgressProvider from "@/contexts/ProgressProvider";
-
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,12 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-        )}
-      >
-        <ProgressProvider>{children}</ProgressProvider>
+      <body className={cn("min-h-screen bg-background font-sans antialiased")}>
+        <ProgressProvider>
+          {children}
+          <Toaster position='top-right' richColors />
+        </ProgressProvider>
       </body>
     </html>
   );
