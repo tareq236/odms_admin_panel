@@ -31,7 +31,7 @@ export default function UserForm({onClose, user}: UserFormProps) {
   return (
     <>
       <form action={action} className="flex flex-col gap-5">
-        <div className="form grid gap-x-3 gap-y-5 md:grid-cols-3">
+        <div className="form flex flex-col md:grid gap-x-3 gap-y-5 md:grid-cols-3">
           <p className="md:col-span-3">
             <Label htmlFor="sapId">SAP ID</Label>
             <Input type="number" id="sapId" name="sap_id" defaultValue={Number(user?.sap_id)} />
