@@ -33,6 +33,7 @@ import {
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { toast } from "sonner";
 import { deleteUser } from "@/app/actions/user";
+import UserStatusTag from "../UserStatusTag";
 
 function UserTable({
   data,
@@ -80,7 +81,7 @@ function UserTable({
                 <TableCell>{item.full_name}</TableCell>
                 <TableCell>{item.mobile_number}</TableCell>
                 <TableCell>{item.user_type}</TableCell>
-                <TableCell>{item.status}</TableCell>
+                <TableCell><UserStatusTag status={item.status.toString()} /></TableCell>
                 <TableCell>{formatDate(item.created_at)}</TableCell>
                 <TableCell className="flex justify-end gap-2">
                   <Tooltips title="Edit">
