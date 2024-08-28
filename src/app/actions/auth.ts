@@ -33,7 +33,11 @@ export const adminLogin = async (prevData: unknown, formData: FormData) => {
     return { error: null, success: null, db: 'Invalid password' };
   }
 
-  const userId = user.id;
+  if(user.status === 0) {
+    return { error: null, success: null, db: 'This account is not activate' };
+  }
+
+  const userId = user.user_name;
 
   await createSession(userId.toString());
 

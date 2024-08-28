@@ -14,7 +14,7 @@ import {
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import Sidebar from "./Sidebar";
+import Sidebar from "../sidenav/Sidebar";
 
 export default function Nav() {
   const [showSidebar, setShowSidebar] = useState(false);

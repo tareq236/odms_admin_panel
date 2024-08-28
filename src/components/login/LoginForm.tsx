@@ -21,7 +21,7 @@ const LoginForm = () => {
 
   return (
     <main className="flex justify-center items-center min-h-[40rem] h-full">
-      <div className="max-w-xl min-w-[25rem] p-5 border rounded-md bg-white shadow-sm">
+      <div className="max-w-xl min-w-[25rem] p-5 bg-white">
         <header>
           <h2 className="text-primary text-3xl text-center">Sign in</h2>
           <h4 className="text-sm text-center text-gray-400 my-3">Welcome back! Please enter your details</h4>
