@@ -10,6 +10,7 @@ import {
 import Search from "@/components/ui/Search";
 import { Plus, Route } from "lucide-react";
 import React, { useState } from "react";
+import RouteForm from "./RouteForm";
 
 export default function FilterSection() {
   const [add, setAdd] = useState(false);
@@ -17,7 +18,7 @@ export default function FilterSection() {
   return (
     <>
       <section className="filter-section">
-        <Search placeholder="Search by ID, name, mobile" />
+        <Search placeholder="Search by route" />
 
         <Button
           onClick={() => {
@@ -40,7 +41,7 @@ export default function FilterSection() {
           </DialogHeader>
 
           {/* form */}
-          {/* <UserForm onClose={() => setAdd(false)} /> */}
+          <RouteForm onClose={() => setAdd(false)} />
         </DialogContent>
       </Dialog>
     </>
