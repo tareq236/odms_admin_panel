@@ -11,7 +11,7 @@ import db from "../../../../../db/db";
 export default async function UserAttendancePage({
   searchParams,
 }: {
-  searchParams: { q: string; p: string };
+  searchParams: { q: string; p: string; start: string; end: string };
 }) {
   return (
     <>
@@ -38,25 +38,36 @@ export type AttendanceTableProps = Prisma.rdl_attendanceGetPayload<{
 const DataTable = async ({
   searchParams,
 }: {
-  searchParams: { q: string; p: string };
+  searchParams: { q: string; p: string; start: string; end: string };
 }) => {
   let count = 0;
   let data: AttendanceTableProps[] = [];
   const limit = 20;
   let connectionError = false;
 
+  console.log(new Date(searchParams.start))
+
   try {
-    if (searchParams.q) {
+    if (searchParams.end) {
       [data, count] = await Promise.all([
         db.rdl_attendance.findMany({
           include: { rdl_user_list: true },
-          where: {sap_id: Number(searchParams.q) || 0},
-          orderBy: { created_at: "desc" },
+          where: {
+            start_date_time: {
+              gte: new Date(searchParams.start),
+              lte: new Date(searchParams.end),
+            },
+          },
           take: limit,
           skip: limit * (Number(searchParams.p || 1) - 1),
         }),
         db.rdl_attendance.count({
-          where: {sap_id: Number(searchParams.q) || 0},
+          where: {
+            start_date_time: {
+              gte: new Date(searchParams.start),
+              lte: new Date(searchParams.end),
+            },
+          },
         }),
       ]);
     } else {
@@ -70,8 +81,6 @@ const DataTable = async ({
         db.rdl_attendance.count(),
       ]);
     }
-
-    
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if ((error.code = "P1001")) {

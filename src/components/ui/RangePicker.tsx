@@ -19,12 +19,12 @@ import { useRouter } from "next-nprogress-bar"
 export default function RangePicker({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const searchParams = useSearchParams()
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: undefined,
-    to: undefined,
+    from: searchParams.has('start') ? new Date(searchParams.get('start') as string) : undefined,
+    to: searchParams.has('end') ? new Date(searchParams.get('end') as string) : undefined,
   })
 
-  const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
 
@@ -34,12 +34,12 @@ export default function RangePicker({
     console.log(date)
     if(date != undefined) {
         if(date.from) {
-            params.set('start', format(date.from, 'dd-MM-yyyy'))
+            params.set('start', format(date.from, 'yyyy-MM-dd'))
             params.delete("p");
             params.delete("q");
         }
         if(date.to != undefined) {
-            params.set('end', format(date.to, 'dd-MM-yyyy'))
+            params.set('end', format(date.to, 'yyyy-MM-dd'))
             params.delete("p");
             params.delete("q");
         }

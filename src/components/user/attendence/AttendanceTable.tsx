@@ -42,7 +42,7 @@ export default function AttendanceTable({
           {connectionError ? (
             <TableRow>
               <TableCell
-                colSpan={7}
+                colSpan={6}
                 align="center"
                 className="py-20 text-gray-400 pointer-events-none"
               >
@@ -65,7 +65,7 @@ export default function AttendanceTable({
             <>
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={6}
                   align="center"
                   className="py-20 text-gray-400 pointer-events-none"
                 >
