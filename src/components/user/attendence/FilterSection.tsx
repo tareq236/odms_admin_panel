@@ -1,9 +1,5 @@
-'use client'
-
-import { Button } from '@/components/ui/button'
 import RangePicker from '@/components/ui/RangePicker'
 import Search from '@/components/ui/Search'
-import { Plus } from 'lucide-react'
 import React from 'react'
 
 export default function FilterSection() {
@@ -18,14 +14,6 @@ export default function FilterSection() {
             <RangePicker />
         </div>
 
-        {/* right */}
-        <div className="right">
-            {/* buttons */}
-            <Button>
-                <Plus className='size-4 mr-2'/>
-                <span>Add</span>
-            </Button>
-        </div>
     </section>
   )
 }

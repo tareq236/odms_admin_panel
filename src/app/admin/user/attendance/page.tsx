@@ -31,7 +31,9 @@ export default async function UserAttendancePage({
   );
 }
 
-export type AttendanceTableProps = Prisma.rdl_attendanceGetPayload<{include: {rdl_user_list: true}}>
+export type AttendanceTableProps = Prisma.rdl_attendanceGetPayload<{
+  include: { rdl_user_list: true };
+}>;
 
 const DataTable = async ({
   searchParams,
@@ -44,15 +46,32 @@ const DataTable = async ({
   let connectionError = false;
 
   try {
-    [data, count] = await Promise.all([
-      db.rdl_attendance.findMany({
-        include: { rdl_user_list: true },
-        orderBy: { created_at: "desc" },
-        take: limit,
-        skip: limit * (Number(searchParams.p || 1) - 1),
-      }),
-      db.rdl_attendance.count(),
-    ]);
+    if (searchParams.q) {
+      [data, count] = await Promise.all([
+        db.rdl_attendance.findMany({
+          include: { rdl_user_list: true },
+          where: {sap_id: Number(searchParams.q) || 0},
+          orderBy: { created_at: "desc" },
+          take: limit,
+          skip: limit * (Number(searchParams.p || 1) - 1),
+        }),
+        db.rdl_attendance.count({
+          where: {sap_id: Number(searchParams.q) || 0},
+        }),
+      ]);
+    } else {
+      [data, count] = await Promise.all([
+        db.rdl_attendance.findMany({
+          include: { rdl_user_list: true },
+          orderBy: { created_at: "desc" },
+          take: limit,
+          skip: limit * (Number(searchParams.p || 1) - 1),
+        }),
+        db.rdl_attendance.count(),
+      ]);
+    }
+
+    
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if ((error.code = "P1001")) {

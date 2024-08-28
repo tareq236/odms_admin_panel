@@ -24,6 +24,7 @@ function Search({ placeholder = "Search..." }: { placeholder?: string }) {
       params.delete("p");
     } else {
       params.delete("q");
+      params.delete("p");
     }
     router.push(pathname + "?" + params.toString());
   }, [debounceValue]);
