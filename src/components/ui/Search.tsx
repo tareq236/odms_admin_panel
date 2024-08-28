@@ -9,10 +9,10 @@ import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 function Search({ placeholder = "Search..." }: { placeholder?: string }) {
-  const [search, setSearch] = useState("");
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('q') || "");
   const debounceValue = useDebounce(search);
 
-  const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 

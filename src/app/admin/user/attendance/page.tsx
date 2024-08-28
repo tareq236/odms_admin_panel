@@ -45,10 +45,46 @@ const DataTable = async ({
   const limit = 20;
   let connectionError = false;
 
-  console.log(new Date(searchParams.start))
+  console.log(new Date(searchParams.start));
 
   try {
-    if (searchParams.end) {
+    if (searchParams.end && searchParams.q) {
+      [data, count] = await Promise.all([
+        db.rdl_attendance.findMany({
+          include: { rdl_user_list: true },
+          where: {
+            AND: [
+              {
+                start_date_time: {
+                  gte: new Date(searchParams.start),
+                  lte: new Date(searchParams.end),
+                },   
+              },
+              {
+                sap_id: Number(searchParams.q) || null
+              }
+            ]
+          },
+          take: limit,
+          skip: limit * (Number(searchParams.p || 1) - 1),
+        }),
+        db.rdl_attendance.count({
+          where: {
+            AND: [
+              {
+                start_date_time: {
+                  gte: new Date(searchParams.start),
+                  lte: new Date(searchParams.end),
+                },   
+              },
+              {
+                sap_id: Number(searchParams.q) || null
+              }
+            ]
+          },
+        }),
+      ]);
+    } else if (searchParams.end) {
       [data, count] = await Promise.all([
         db.rdl_attendance.findMany({
           include: { rdl_user_list: true },
@@ -68,6 +104,19 @@ const DataTable = async ({
               lte: new Date(searchParams.end),
             },
           },
+        }),
+      ]);
+    } else if (searchParams.q) {
+      [data, count] = await Promise.all([
+        db.rdl_attendance.findMany({
+          include: { rdl_user_list: true },
+          where: { sap_id: Number(searchParams.q) || null },
+          orderBy: { created_at: "desc" },
+          take: limit,
+          skip: limit * (Number(searchParams.p || 1) - 1),
+        }),
+        db.rdl_attendance.count({
+          where: { sap_id: Number(searchParams.q) || null },
         }),
       ]);
     } else {
