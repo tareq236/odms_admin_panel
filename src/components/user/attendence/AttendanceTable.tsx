@@ -1,5 +1,3 @@
-"use client";
-
 import {
     Table,
     TableBody,
@@ -8,12 +6,9 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table";
-import { Edit, MessageSquareOff, ServerOff, Trash } from "lucide-react";
+import { MessageSquareOff, ServerOff } from "lucide-react";
 import React from "react";
-import UserStatusTag from "../UserStatusTag";
-import Tooltips from "@/components/ui/Tooltips";
-import { Button } from "@/components/ui/button";
-import { formatDate, formatNumber } from "@/lib/formatters";
+import { formatNumber } from "@/lib/formatters";
 import { AttendanceTableProps } from "@/app/admin/user/attendance/page";
 import { format } from "date-fns";
 
@@ -55,8 +50,8 @@ export default function AttendanceTable({
               <TableRow key={item.sap_id}>
                 <TableCell>{item.sap_id}</TableCell>
                 <TableCell>{item.rdl_user_list?.full_name}</TableCell>
-                <TableCell>{item.start_date_time ? format(item.start_date_time,'yyyy-MM-dd | h:mm aaaa') : '-'}</TableCell>
-                <TableCell>{item.end_date_time ? format(item.end_date_time,'yyyy-MM-dd | h:mm aaaa') : '-'}</TableCell>
+                <TableCell>{item.start_date_time ? format(item.start_date_time,'dd LLL, yy - h:mm aaaa') : '-'}</TableCell>
+                <TableCell>{item.end_date_time ? format(item.end_date_time,'dd LLL, yy - h:mm aaaa') : '-'}</TableCell>
                 <TableCell>{item.late_time_min ? formatNumber(item.late_time_min): '-'}</TableCell>
                 <TableCell>{item.over_time_min ? formatNumber(item.over_time_min): '-'}</TableCell>
               </TableRow>

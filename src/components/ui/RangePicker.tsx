@@ -49,7 +49,7 @@ export default function RangePicker({
         params.delete('end')
         params.delete('p')
         params.delete('q')
-        router.push(`${pathname}?${params.toString()}`)
+        router.push(`${pathname}?${params.toString()}`,)
     }
   }, [date])
   

@@ -41,11 +41,10 @@ const DataTable = async ({
   searchParams: { q: string; p: string; start: string; end: string };
 }) => {
   let count = 0;
-  let data: AttendanceTableProps[] = [];
+  let data;
   const limit = 20;
   let connectionError = false;
 
-  console.log(new Date(searchParams.start));
 
   try {
     if (searchParams.end && searchParams.q) {
@@ -141,7 +140,7 @@ const DataTable = async ({
 
   return (
     <section className="data-table-section">
-      <AttendanceTable data={data} connectionError={connectionError} />
+      <AttendanceTable data={data as AttendanceTableProps[]} connectionError={connectionError} />
       <PagePagination limit={limit} count={count} />
     </section>
   );
