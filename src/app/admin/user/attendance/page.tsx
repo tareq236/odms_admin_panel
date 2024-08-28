@@ -45,8 +45,9 @@ const DataTable = async ({
   const limit = 20;
   let connectionError = false;
 
-
   try {
+    let endDate = new Date(searchParams.end as string);
+
     if (searchParams.end && searchParams.q) {
       [data, count] = await Promise.all([
         db.rdl_attendance.findMany({
@@ -56,13 +57,17 @@ const DataTable = async ({
               {
                 start_date_time: {
                   gte: new Date(searchParams.start),
-                  lte: new Date(searchParams.end),
-                },   
+                  lte: new Date(
+                    endDate.getFullYear(),
+                    endDate.getMonth(),
+                    endDate.getDate() + 1,
+                  ),
+                },
               },
               {
-                sap_id: Number(searchParams.q) || null
-              }
-            ]
+                sap_id: Number(searchParams.q) || null,
+              },
+            ],
           },
           take: limit,
           skip: limit * (Number(searchParams.p || 1) - 1),
@@ -73,13 +78,17 @@ const DataTable = async ({
               {
                 start_date_time: {
                   gte: new Date(searchParams.start),
-                  lte: new Date(searchParams.end),
-                },   
+                  lte: new Date(
+                    endDate.getFullYear(),
+                    endDate.getMonth(),
+                    endDate.getDate() + 1,
+                  ),
+                },
               },
               {
-                sap_id: Number(searchParams.q) || null
-              }
-            ]
+                sap_id: Number(searchParams.q) || null,
+              },
+            ],
           },
         }),
       ]);
@@ -90,7 +99,11 @@ const DataTable = async ({
           where: {
             start_date_time: {
               gte: new Date(searchParams.start),
-              lte: new Date(searchParams.end),
+              lte: new Date(
+                endDate.getFullYear(),
+                endDate.getMonth(),
+                endDate.getDate() + 1,
+              ),
             },
           },
           take: limit,
@@ -100,7 +113,11 @@ const DataTable = async ({
           where: {
             start_date_time: {
               gte: new Date(searchParams.start),
-              lte: new Date(searchParams.end),
+              lte: new Date(
+                endDate.getFullYear(),
+                endDate.getMonth(),
+                endDate.getDate() + 1,
+              ),
             },
           },
         }),
@@ -140,7 +157,10 @@ const DataTable = async ({
 
   return (
     <section className="data-table-section">
-      <AttendanceTable data={data as AttendanceTableProps[]} connectionError={connectionError} />
+      <AttendanceTable
+        data={data as AttendanceTableProps[]}
+        connectionError={connectionError}
+      />
       <PagePagination limit={limit} count={count} />
     </section>
   );
