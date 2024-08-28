@@ -35,7 +35,7 @@ export default async function FilterSection() {
 
       {/* attendance card */}
       <article className="card flex items-center gap-5 border rounded-md px-6 py-2">
-          <h6 className="text-[12px] text-gray-500">Today's Attendance</h6>
+          <h6 className="text-[12px] text-gray-500">Today&apos;s Attendance</h6>
           <Separator orientation="vertical" className="h-5" />
           <h5 className="text-xl text-primary">
             {formatNumber(dailyAttendance)}
