@@ -6,7 +6,7 @@ import FilterSection from "@/components/user/attendence/FilterSection";
 import { Prisma } from "@prisma/client";
 import { ListTodo } from "lucide-react";
 import React, { Suspense } from "react";
-import db from "../../../../../db/db";
+import { getAttendance } from "@/app/actions/attendance";
 
 export default async function UserAttendancePage({
   searchParams,
@@ -41,111 +41,14 @@ const DataTable = async ({
   searchParams: { q: string; p: string; start: string; end: string };
 }) => {
   let count = 0;
-  let data;
+  let data: any[] = [];
   const limit = 20;
   let connectionError = false;
 
   try {
-    let endDate = new Date(searchParams.end as string);
-
-    if (searchParams.end && searchParams.q) {
-      [data, count] = await Promise.all([
-        db.rdl_attendance.findMany({
-          include: { rdl_user_list: true },
-          where: {
-            AND: [
-              {
-                start_date_time: {
-                  gte: new Date(searchParams.start),
-                  lte: new Date(
-                    endDate.getFullYear(),
-                    endDate.getMonth(),
-                    endDate.getDate() + 1,
-                  ),
-                },
-              },
-              {
-                sap_id: Number(searchParams.q) || null,
-              },
-            ],
-          },
-          take: limit,
-          skip: limit * (Number(searchParams.p || 1) - 1),
-        }),
-        db.rdl_attendance.count({
-          where: {
-            AND: [
-              {
-                start_date_time: {
-                  gte: new Date(searchParams.start),
-                  lte: new Date(
-                    endDate.getFullYear(),
-                    endDate.getMonth(),
-                    endDate.getDate() + 1,
-                  ),
-                },
-              },
-              {
-                sap_id: Number(searchParams.q) || null,
-              },
-            ],
-          },
-        }),
-      ]);
-    } else if (searchParams.end) {
-      [data, count] = await Promise.all([
-        db.rdl_attendance.findMany({
-          include: { rdl_user_list: true },
-          where: {
-            start_date_time: {
-              gte: new Date(searchParams.start),
-              lte: new Date(
-                endDate.getFullYear(),
-                endDate.getMonth(),
-                endDate.getDate() + 1,
-              ),
-            },
-          },
-          take: limit,
-          skip: limit * (Number(searchParams.p || 1) - 1),
-        }),
-        db.rdl_attendance.count({
-          where: {
-            start_date_time: {
-              gte: new Date(searchParams.start),
-              lte: new Date(
-                endDate.getFullYear(),
-                endDate.getMonth(),
-                endDate.getDate() + 1,
-              ),
-            },
-          },
-        }),
-      ]);
-    } else if (searchParams.q) {
-      [data, count] = await Promise.all([
-        db.rdl_attendance.findMany({
-          include: { rdl_user_list: true },
-          where: { sap_id: Number(searchParams.q) || null },
-          orderBy: { created_at: "desc" },
-          take: limit,
-          skip: limit * (Number(searchParams.p || 1) - 1),
-        }),
-        db.rdl_attendance.count({
-          where: { sap_id: Number(searchParams.q) || null },
-        }),
-      ]);
-    } else {
-      [data, count] = await Promise.all([
-        db.rdl_attendance.findMany({
-          include: { rdl_user_list: true },
-          orderBy: { created_at: "desc" },
-          take: limit,
-          skip: limit * (Number(searchParams.p || 1) - 1),
-        }),
-        db.rdl_attendance.count(),
-      ]);
-    }
+    const {data:attendanceData, count:attendanceCount} = await getAttendance({searchParams, limit})
+    data = attendanceData
+    count = attendanceCount
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if ((error.code = "P1001")) {
