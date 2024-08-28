@@ -32,6 +32,7 @@ import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { toast } from "sonner";
 import { rdl_route_sap } from "@prisma/client";
 import RouteForm from "./RouteForm";
+import { deleteRoute } from "@/app/actions/route";
 
 export default function RouteTable({
     data,
@@ -149,10 +150,10 @@ export default function RouteTable({
             <AlertDialogAction
               disabled={isPending}
               onClick={() => {
-                // startTransition(async () => {
-                //   await deleteUser(delUser);
-                //   toast.success("User is deleted");
-                // });
+                startTransition(async () => {
+                  await deleteRoute(delRoute);
+                  toast.success("Route is deleted");
+                });
               }}
             >
               Continue

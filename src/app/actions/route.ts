@@ -4,6 +4,7 @@ import { z } from "zod";
 import db from "../../../db/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { notFound } from "next/navigation";
 
 const addSchema = z.object({
   route: z.string().min(1).max(6),
@@ -108,3 +109,16 @@ export const updateRoute = async (
     }
   }
 };
+
+
+export const deleteRoute = async(id: string) => {
+    const route = await db.rdl_route_sap.findUnique({where: {route: id}})
+
+    if(route == null) return notFound()
+
+    await db.rdl_route_sap.delete({where: {route: id}})
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/route");
+    
+}
