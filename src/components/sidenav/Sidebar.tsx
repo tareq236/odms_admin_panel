@@ -34,7 +34,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             href="/admin/user/attendance"
             onClick={onClose}
           />
-          <NavLink icon={<Route className="size-5" />} name="Route" href="" />
+          <NavLink icon={<Route className="size-5" />} name="Route" href="/admin/route" />
           <NavLink
             icon={<Truck className="size-5" />}
             name="Delivery"
