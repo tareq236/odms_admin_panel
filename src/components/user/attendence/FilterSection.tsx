@@ -1,10 +1,12 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import RangePicker from '@/components/ui/RangePicker'
 import Search from '@/components/ui/Search'
 import { Plus } from 'lucide-react'
 import React from 'react'
 
-function FilterSection() {
+export default function FilterSection() {
   return (
     <section className='my-6 flex justify-between items-center gap-5 flex-wrap'>
         {/* left */}
@@ -27,5 +29,3 @@ function FilterSection() {
     </section>
   )
 }
-
-export default FilterSection

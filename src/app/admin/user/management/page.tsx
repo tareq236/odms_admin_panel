@@ -6,7 +6,7 @@ import React, { Suspense } from "react";
 import db from "../../../../../db/db";
 import PagePagination from "@/components/ui/PagePagination";
 import TableSkeleton from "@/components/ui/TableSkeletion";
-import { rdl_user_list } from "@prisma/client";
+import { Prisma, rdl_user_list } from "@prisma/client";
 
 export default async function UserManagementPage({
   searchParams,
@@ -77,8 +77,12 @@ const DataTable = async ({
       ]);
     }
   } catch (error) {
-    data = [] as rdl_user_list[];
-    connectionError = true
+    if(error instanceof Prisma.PrismaClientKnownRequestError){
+      if(error.code = 'P1001') {
+        data = [] as rdl_user_list[];
+        connectionError = true
+      }
+    }
   }
 
   return (

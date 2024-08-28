@@ -20,8 +20,8 @@ export default function RangePicker({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+    from: undefined,
+    to: undefined,
   })
 
   const searchParams = useSearchParams()

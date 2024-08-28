@@ -71,7 +71,7 @@ function UserTable({
                 className="py-20 text-gray-400 pointer-events-none"
               >
                 <ServerOff className="size-10" />
-                <span className="text-[11px]">Check Internet Connection</span>
+                <span className="text-[11px]">Database Discounted</span>
               </TableCell>
             </TableRow>
           ) : data.length > 0 ? (
