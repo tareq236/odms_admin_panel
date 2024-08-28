@@ -91,7 +91,7 @@ export const updateUser = async (
     return {
       error: null,
       success: null,
-      toast: "User is not exist",
+      toast: "User is not found",
     };
   }
 

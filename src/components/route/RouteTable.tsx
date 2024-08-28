@@ -30,8 +30,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { toast } from "sonner";
-import { deleteUser } from "@/app/actions/user";
 import { rdl_route_sap } from "@prisma/client";
+import RouteForm from "./RouteForm";
 
 export default function RouteTable({
     data,
@@ -128,7 +128,7 @@ export default function RouteTable({
           </DialogHeader>
 
           {/* form */}
-          {/* <UserForm user={editUser} onClose={() => setEditUser(false)} /> */}
+          <RouteForm route={editRoute} onClose={() => setEditRoute(false)} />
         </DialogContent>
       </Dialog>
 

@@ -5,15 +5,17 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useFormState, useFormStatus } from "react-dom";
-import { createRoute } from "@/app/actions/route";
+import { createRoute, updateRoute } from "@/app/actions/route";
 import { toast } from "sonner";
+import { rdl_route_sap } from "@prisma/client";
 
 type RouteFormProps = {
-    onClose: () => void
+    onClose: () => void,
+    route?: rdl_route_sap
 }
 
-export default function RouteForm({onClose}: RouteFormProps) {
-  const [data, action] = useFormState(createRoute, null);
+export default function RouteForm({route, onClose}: RouteFormProps) {
+  const [data, action] = useFormState(route == null ? createRoute : updateRoute.bind(null, route.route), null);
 
   useEffect(() => {
     if (data?.toast) {
@@ -29,12 +31,12 @@ export default function RouteForm({onClose}: RouteFormProps) {
       <form className="flex flex-col gap-5" action={action}>
         <p>
           <Label htmlFor="route">Route</Label>
-          <Input id="route" name="route" />
+          <Input id="route" name="route" defaultValue={route?.route || ''} />
           {data?.error && <p className="error-msg">{data.error.route}</p>}
         </p>
         <p>
           <Label htmlFor="description">Description</Label>
-          <Input id="description" name="description" />
+          <Input id="description" name="description" defaultValue={route?.description || ''} />
           {data?.error && <p className="error-msg">{data.error.description}</p>}
         </p>
 
