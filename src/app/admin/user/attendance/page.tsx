@@ -21,7 +21,7 @@ export default async function UserAttendancePage({
       />
 
       <Suspense>
-        <FilterSection />
+        <FilterSection searchParams={searchParams} />
       </Suspense>
 
       <Suspense fallback={<TableSkeleton />}>
@@ -46,9 +46,10 @@ const DataTable = async ({
   let connectionError = false;
 
   try {
-    const {data:attendanceData, count:attendanceCount} = await getAttendance({searchParams, limit})
-    data = attendanceData
-    count = attendanceCount
+    const { data: attendanceData, count: attendanceCount } =
+      await getAttendance({ searchParams, limit });
+    data = attendanceData;
+    count = attendanceCount;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if ((error.code = "P1001")) {

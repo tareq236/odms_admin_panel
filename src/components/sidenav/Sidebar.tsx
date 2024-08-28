@@ -1,5 +1,6 @@
 "use client";
 
+import { format } from "date-fns";
 import { Home, ListTodo, Map, Route, Truck, UserRoundPen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -31,7 +32,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           <NavLink
             icon={<ListTodo className="size-5" />}
             name="Attendance"
-            href="/admin/user/attendance"
+            href={`/admin/user/attendance?start=${format(new Date(), 'yyyy-MM-dd')}`}
             onClick={onClose}
           />
           <NavLink icon={<Route className="size-5" />} name="Route" href="/admin/route" />

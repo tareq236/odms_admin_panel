@@ -31,7 +31,6 @@ export default function RangePicker({
   const params = new URLSearchParams(searchParams)
 
   React.useEffect(() => {
-    console.log(date)
     if(date != undefined) {
         if(date.from) {
             params.set('start', format(date.from, 'yyyy-MM-dd'))

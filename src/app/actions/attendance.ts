@@ -4,14 +4,16 @@ export const getAttendance = async ({
   searchParams,
   limit = 20,
 }: {
-  searchParams: { q: string; p: string; start: string; end: string };
+  searchParams: { q: string; p: string; start: string };
   limit?: number;
 }) => {
   let data;
   let count;
-  let endDate = new Date(searchParams.end as string);
+  let startDate =
+    searchParams.start == undefined ? new Date() : new Date(searchParams.start);
 
-  if (searchParams.end && searchParams.q) {
+
+  if (searchParams.start && searchParams.q) {
     [data, count] = await Promise.all([
       db.rdl_attendance.findMany({
         include: { rdl_user_list: true },
@@ -19,11 +21,11 @@ export const getAttendance = async ({
           AND: [
             {
               start_date_time: {
-                gte: new Date(searchParams.start),
+                equals: startDate,
                 lte: new Date(
-                  endDate.getFullYear(),
-                  endDate.getMonth(),
-                  endDate.getDate() + 1,
+                  startDate.getFullYear(),
+                  startDate.getMonth(),
+                  startDate.getDate() + 1,
                 ),
               },
             },
@@ -40,11 +42,11 @@ export const getAttendance = async ({
           AND: [
             {
               start_date_time: {
-                gte: new Date(searchParams.start),
+                gte: startDate,
                 lte: new Date(
-                  endDate.getFullYear(),
-                  endDate.getMonth(),
-                  endDate.getDate() + 1,
+                  startDate.getFullYear(),
+                  startDate.getMonth(),
+                  startDate.getDate() + 1,
                 ),
               },
             },
@@ -55,17 +57,17 @@ export const getAttendance = async ({
         },
       }),
     ]);
-  } else if (searchParams.end) {
+  } else if (searchParams.start) {
     [data, count] = await Promise.all([
       db.rdl_attendance.findMany({
         include: { rdl_user_list: true },
         where: {
           start_date_time: {
-            gte: new Date(searchParams.start),
+            gte: startDate,
             lte: new Date(
-              endDate.getFullYear(),
-              endDate.getMonth(),
-              endDate.getDate() + 1,
+              startDate.getFullYear(),
+              startDate.getMonth(),
+              startDate.getDate() + 1,
             ),
           },
         },
@@ -75,11 +77,11 @@ export const getAttendance = async ({
       db.rdl_attendance.count({
         where: {
           start_date_time: {
-            gte: new Date(searchParams.start),
+            gte: startDate,
             lte: new Date(
-              endDate.getFullYear(),
-              endDate.getMonth(),
-              endDate.getDate() + 1,
+              startDate.getFullYear(),
+              startDate.getMonth(),
+              startDate.getDate() + 1,
             ),
           },
         },
@@ -98,17 +100,37 @@ export const getAttendance = async ({
         where: { sap_id: Number(searchParams.q) || null },
       }),
     ]);
-  } else {
+  } else  {
     [data, count] = await Promise.all([
       db.rdl_attendance.findMany({
         include: { rdl_user_list: true },
-        orderBy: { created_at: "desc" },
+        where: {
+          start_date_time: {
+            gte: startDate,
+            lte: new Date(
+              startDate.getFullYear(),
+              startDate.getMonth(),
+              startDate.getDate() + 1,
+            ),
+          },
+        },
         take: limit,
         skip: limit * (Number(searchParams.p || 1) - 1),
       }),
-      db.rdl_attendance.count(),
+      db.rdl_attendance.count({
+        where: {
+          start_date_time: {
+            gte: new Date(),
+            lte: new Date(
+              new Date().getFullYear(),
+              new Date().getMonth(),
+              new Date().getDate() + 1,
+            ),
+          },
+        },
+      }),
     ]);
   }
 
-  return {data, count}
+  return { data, count };
 };
