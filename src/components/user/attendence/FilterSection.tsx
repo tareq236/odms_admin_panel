@@ -23,7 +23,7 @@ export default async function FilterSection() {
   });
 
   return (
-    <section className="my-6 flex flex-wrap-reverse justify-between items-center gap-5 flex-wrap">
+    <section className="my-6 flex flex-wrap-reverse justify-between items-center gap-5">
       {/* left */}
       <div className="left flex items-center gap-3 flex-wrap">
         {/* search by sap id */}
