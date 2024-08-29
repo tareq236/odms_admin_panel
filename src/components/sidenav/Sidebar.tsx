@@ -67,7 +67,7 @@ const NavLink = ({
     <>
       <Link
         className={`${
-          href === pathname && "text-primary bg-primary/5"
+          href.split('?')[0] === pathname && "text-primary bg-primary/5"
         } text-sm flex gap-3 items-center p-2 rounded hover:bg-primary/10 hover:text-primary transition-all duration-300`}
         href={href}
         onClick={onClick}

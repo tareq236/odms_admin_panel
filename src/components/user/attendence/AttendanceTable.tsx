@@ -50,9 +50,9 @@ export default function AttendanceTable({
               <TableRow key={item.sap_id}>
                 <TableCell>{item.sap_id}</TableCell>
                 <TableCell>{item.rdl_user_list?.full_name}</TableCell>
-                <TableCell>{item.start_date_time ? format(item.start_date_time,'dd LLL, yy - h:mm aaaa') : '-'}</TableCell>
-                <TableCell>{item.end_date_time ? format(item.end_date_time,'dd LLL, yy - h:mm aaaa') : '-'}</TableCell>
-                <TableCell>{item.late_time_min ? formatNumber(item.late_time_min): '-'}</TableCell>
+                <TableCell className="min-w-[180px]">{item.start_date_time ? format(item.start_date_time,'dd LLL, yy - h:mm aaaa') : '-'}</TableCell>
+                <TableCell className="min-w-[180px]">{item.end_date_time ? format(item.end_date_time,'dd LLL, yy - h:mm aaaa') : '-'}</TableCell>
+                <TableCell >{item.late_time_min ? formatNumber(item.late_time_min): '-'}</TableCell>
                 <TableCell>{item.over_time_min ? formatNumber(item.over_time_min): '-'}</TableCell>
               </TableRow>
             ))

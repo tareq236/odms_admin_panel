@@ -20,9 +20,7 @@ export default async function UserAttendancePage({
         icon={<ListTodo className="size-5 fill-primary/20" />}
       />
 
-      <Suspense>
-        <FilterSection searchParams={searchParams} />
-      </Suspense>
+      <FilterSection searchParams={searchParams} />
 
       <Suspense fallback={<TableSkeleton />}>
         <DataTable searchParams={searchParams} />
