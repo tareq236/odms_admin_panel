@@ -90,8 +90,14 @@
     @apply flex flex-col gap-5
   }
 
+  
 
 }
+
+.data-table-section :where(td, th) {
+  text-wrap: nowrap;
+}
+
 
 * {
   font-family: 'Inter';
