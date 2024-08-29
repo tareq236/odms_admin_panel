@@ -37,7 +37,7 @@ function Search({ placeholder = "Search..." }: { placeholder?: string }) {
         id="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="pl-8 border-transparent min-w-[5rem] md:border-input"
+        className="pl-8 min-w-[5rem]"
         placeholder={placeholder}
       />
       <Label

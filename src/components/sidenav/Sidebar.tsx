@@ -18,28 +18,36 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         {/* links */}
         <div className="flex flex-col gap-2">
           <NavLink
-            icon={<Home className="size-5" />}
+            icon={<Home className="size-4" />}
             name="Dashboard"
             href="/admin"
             onClick={onClose}
           />
           <NavLink
-            icon={<UserRoundPen className="size-5" />}
+            icon={<UserRoundPen className="size-4" />}
             name="User Management"
             href="/admin/user/management"
             onClick={onClose}
           />
           <NavLink
-            icon={<ListTodo className="size-5" />}
+            icon={<ListTodo className="size-4" />}
             name="Attendance"
-            href={`/admin/user/attendance?start=${format(new Date(), 'yyyy-MM-dd')}`}
+            href={`/admin/user/attendance?start=${format(
+              new Date(),
+              "yyyy-MM-dd",
+            )}`}
             onClick={onClose}
           />
-          <NavLink icon={<Route className="size-5" />} name="Route" href="/admin/route" />
           <NavLink
-            icon={<Truck className="size-5" />}
+            icon={<Route className="size-4" />}
+            name="Route"
+            href="/admin/route"
+            onClick={onClose}
+          />
+          <NavLink
+            icon={<Truck className="size-4" />}
             name="Delivery"
-            href=""
+            href="/admin/delivery"
             onClick={onClose}
           />
         </div>
@@ -67,7 +75,7 @@ const NavLink = ({
     <>
       <Link
         className={`${
-          href.split('?')[0] === pathname && "text-primary bg-primary/5"
+          href.split("?")[0] === pathname && "text-primary bg-primary/5"
         } text-sm flex gap-3 items-center p-2 rounded hover:bg-primary/10 hover:text-primary transition-all duration-300`}
         href={href}
         onClick={onClick}
