@@ -4,7 +4,9 @@ import { z } from "zod";
 import db from "../../../db/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { verifySession } from "@/lib/dal";
+import { deleteSession } from "@/lib/session";
 
 const addSchema = z.object({
   sap_id: z.string().min(1),
@@ -40,6 +42,12 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
     };
   }
 
+  const auth = await verifySession();
+  if (!auth.isAuth) {
+    deleteSession();
+    redirect("/login");
+  }
+
   try {
     await db.rdl_user_list.create({
       data: {
@@ -71,6 +79,12 @@ export const updateUser = async (
   prevState: unknown,
   formData: FormData,
 ) => {
+  const auth = await verifySession();
+  if (!auth.isAuth) {
+    deleteSession();
+    redirect("/login");
+  }
+
   const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (result.success === false) {
@@ -117,7 +131,6 @@ export const updateUser = async (
       success: "User is updated",
       toast: null,
     };
-    
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -131,14 +144,19 @@ export const updateUser = async (
   }
 };
 
-export const deleteUser = async(id: number) => {
-    const user = await db.rdl_user_list.findUnique({where: {sap_id: id}})
+export const deleteUser = async (id: number) => {
+  const auth = await verifySession();
+  if (!auth.isAuth) {
+    deleteSession();
+    redirect("/login");
+  }
 
-    if(user == null) return notFound()
+  const user = await db.rdl_user_list.findUnique({ where: { sap_id: id } });
 
-    await db.rdl_user_list.delete({where: {sap_id: id}})
+  if (user == null) return notFound();
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/user/management");
-    
-}
+  await db.rdl_user_list.delete({ where: { sap_id: id } });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/user/management");
+};

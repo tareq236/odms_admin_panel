@@ -37,7 +37,7 @@ export const adminLogin = async (prevData: unknown, formData: FormData) => {
     return { error: null, success: null, db: 'This account is not activate' };
   }
 
-  const userId = user.user_name;
+  const userId = user.id;
 
   await createSession(userId.toString());
 

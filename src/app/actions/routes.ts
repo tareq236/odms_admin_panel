@@ -4,7 +4,9 @@ import { z } from "zod";
 import db from "../../../db/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { verifySession } from "@/lib/dal";
+import { deleteSession } from "@/lib/session";
 
 const addSchema = z.object({
   route: z.string().min(1).max(6),
@@ -36,6 +38,12 @@ export const createRoute = async (prevState: unknown, formData: FormData) => {
     };
   }
 
+  const auth = await verifySession();
+  if (!auth.isAuth) {
+    deleteSession();
+    redirect("/login");
+  }
+
   try {
     await db.rdl_route_sap.create({
       data: { ...data },
@@ -59,6 +67,12 @@ export const updateRoute = async (
   prevState: unknown,
   formData: FormData,
 ) => {
+  const auth = await verifySession();
+  if (!auth.isAuth) {
+    deleteSession();
+    redirect("/login");
+  }
+
   const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (result.success === false) {
@@ -110,15 +124,19 @@ export const updateRoute = async (
   }
 };
 
+export const deleteRoute = async (id: string) => {
+  const auth = await verifySession();
+  if (!auth.isAuth) {
+    deleteSession();
+    redirect("/login");
+  }
 
-export const deleteRoute = async(id: string) => {
-    const route = await db.rdl_route_sap.findUnique({where: {route: id}})
+  const route = await db.rdl_route_sap.findUnique({ where: { route: id } });
 
-    if(route == null) return notFound()
+  if (route == null) return notFound();
 
-    await db.rdl_route_sap.delete({where: {route: id}})
+  await db.rdl_route_sap.delete({ where: { route: id } });
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/route");
-    
-}
+  revalidatePath("/admin");
+  revalidatePath("/admin/route");
+};
