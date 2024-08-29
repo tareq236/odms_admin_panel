@@ -32,7 +32,7 @@ import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { toast } from "sonner";
 import { rdl_route_sap } from "@prisma/client";
 import RouteForm from "./RouteForm";
-import { deleteRoute } from "@/app/actions/route";
+import { deleteRoute } from "@/app/actions/routes";
 
 export default function RouteTable({
     data,

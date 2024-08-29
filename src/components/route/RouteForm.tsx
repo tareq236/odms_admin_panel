@@ -5,7 +5,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useFormState, useFormStatus } from "react-dom";
-import { createRoute, updateRoute } from "@/app/actions/route";
+import { createRoute, updateRoute } from "@/app/actions/routes";
 import { toast } from "sonner";
 import { rdl_route_sap } from "@prisma/client";
 
