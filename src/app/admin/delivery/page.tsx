@@ -44,16 +44,18 @@ const DataTable = async ({
   let data;
 
   try {
+    if(searchParams.q) {
       [data, count] = await Promise.all([
         db.$queryRaw(
           Prisma.sql`
           SELECT a.*,
-          COUNT(b.billing_doc_no), 
+          COUNT(b.billing_doc_no) as no_of_bill , b.gate_pass_no,
           SUM(b.quantity), SUM(b.vat), SUM(b.net_val), sum(b.tp),
-          c.description address, b.partner
+          c.description address, d.name1 partner_name
           FROM rdl_delivery_info_sap as a
           INNER JOIN rpl_sales_info_sap as b on a.billing_doc_no = b.billing_doc_no
           INNER JOIN rdl_route_sap as c on a.route = c.route
+          INNER JOIN rpl_customer as d ON b.partner = d.partner
           WHERE a.billing_date = ${searchParams.start ? new Date(searchParams.start) : new Date()} 
           AND a.da_code = ${Number(searchParams.q) || 0}
           GROUP BY b.billing_doc_no
@@ -66,10 +68,13 @@ const DataTable = async ({
           AND da_code = ${Number(searchParams.q) || 0}
         `,
       ]);
+    } else {
+      data = []
+    }
 
       console.log(count)
   } catch (error) {
-    data = [] as DeliveryTableProps[];
+    data = [] as any[];
     connectionError = true;
   }
 
@@ -78,7 +83,7 @@ const DataTable = async ({
   return (
     <div className="data-table-section">
       <DeliveryTable
-        data={data as DeliveryTableProps[]}
+        data={data as any[]}
         connectionError={connectionError}
       />
       <PagePagination limit={limit} count={Number(count[0].total)} />

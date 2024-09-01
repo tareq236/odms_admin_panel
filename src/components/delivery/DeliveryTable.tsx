@@ -1,61 +1,65 @@
-'use client'
+"use client";
 
 import React from "react";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-  } from "@/components/ui/table";
-import { MessageSquareOff, ServerOff } from "lucide-react";
-import { formatDate, formatNumber } from "@/lib/formatters";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { MessageSquareOff, Search, ServerOff } from "lucide-react";
+import { formatDate } from "@/lib/formatters";
 
-import { DeliveryTableProps } from "@/lib/definitions";
-import { rdl_delivery_info_sap } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
+import { Button } from "../ui/button";
 
 function DeliveryTable({
-    data,
-    connectionError
-}: {data: DeliveryTableProps[], connectionError: boolean}) {
+  data,
+  connectionError,
+}: {
+  data: any[];
+  connectionError: boolean;
+}) {
+  const searchParams = useSearchParams();
 
-  const searchParams = useSearchParams()
-
-  // if()
 
   return (
     <>
       <Table className="[tr:text-nowrap]">
         <TableHeader>
           <TableRow>
-            <TableHead>SAP ID</TableHead>
-            <TableHead>Name</TableHead>
+            <TableHead>DA Code</TableHead>
+            <TableHead>DA Name</TableHead>
             <TableHead>Billing No.</TableHead>
             <TableHead>Billing Date</TableHead>
-            <TableHead>Route</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Vehicle No.</TableHead>
             <TableHead>Partner</TableHead>
             <TableHead>Gate Pass No.</TableHead>
-            <TableHead>Total Count</TableHead>
-            <TableHead>Total Quantity</TableHead>
-            <TableHead>Total Value</TableHead>
-            <TableHead>Total TP</TableHead>
-            <TableHead>Total VAT</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {!searchParams.has('q') ?<>
-            <TableRow>
-              <TableCell>Pick a date and enter SAP Id</TableCell>
-            </TableRow>
-          </> :connectionError ? (
+          {!searchParams.has("q") ? (
+            <>
+              <TableRow>
+                <TableCell
+                  colSpan={8}
+                  align="center"
+                  className="py-20 text-gray-400 pointer-events-none"
+                >
+                  <Search className="size-10" />
+                  <span className="text-[11px]">Search by DA Code</span>
+                </TableCell>
+              </TableRow>
+            </>
+          ) : connectionError ? (
             <TableRow className="table-row-nowrap">
               <TableCell
-                colSpan={6}
+                colSpan={8}
                 align="center"
                 className="py-20 text-gray-400 pointer-events-none"
               >
@@ -66,27 +70,26 @@ function DeliveryTable({
           ) : data.length > 0 ? (
             data.map((item, index) => (
               <TableRow key={index}>
-                {/* <TableCell className="min-w-fit">{item.sap_id}</TableCell> */}
-                {/* <TableCell className="min-w-fit">{item.full_name}</TableCell> */}
+                <TableCell className="min-w-fit">{item.da_code}</TableCell>
+                <TableCell className="min-w-fit">{item.da_name}</TableCell>
                 <TableCell>{item.billing_doc_no}</TableCell>
-                {/* <TableCell>{formatDate(item.billing_date)}</TableCell> */}
-                <TableCell>{item.route}</TableCell>
-                <TableCell>{item.description}</TableCell>
+                <TableCell>{formatDate(item.billing_date)}</TableCell>
+                <TableCell>{item.address}</TableCell>
                 <TableCell>{item.vehicle_no}</TableCell>
                 <TableCell>{item.partner_name}</TableCell>
                 <TableCell>{item.gate_pass_no}</TableCell>
-                <TableCell>{Number(item.total_count)}</TableCell>
-                <TableCell>{formatNumber(item.total_quantity)}</TableCell>
-                <TableCell>{formatNumber(item.total_net_val)}</TableCell>
-                <TableCell>{formatNumber(item.total_tp)}</TableCell>
-                <TableCell>{formatNumber(item.total_vat)}</TableCell>
+                <TableCell>
+                    <Button variant={'link'} className="rounded-full">
+                      Details
+                    </Button>
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <>
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={8}
                   align="center"
                   className="py-20 text-gray-400 pointer-events-none"
                 >
