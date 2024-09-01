@@ -50,7 +50,9 @@ const DataTable = async ({
           Prisma.sql`
           SELECT a.*,
           COUNT(b.billing_doc_no) as no_of_bill , b.gate_pass_no,
-          SUM(b.quantity), SUM(b.vat), SUM(b.net_val), sum(b.tp),
+          SUM(b.quantity) as total_quantity, 
+          SUM(b.vat) as total_vat, SUM(b.net_val) as total_net_val, 
+          sum(b.tp) as total_tp,
           c.description address, d.name1 partner_name
           FROM rdl_delivery_info_sap as a
           INNER JOIN rpl_sales_info_sap as b on a.billing_doc_no = b.billing_doc_no

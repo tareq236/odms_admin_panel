@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,11 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MessageSquareOff, Search, ServerOff } from "lucide-react";
+import { MessageSquareOff, Package, Search, ServerOff } from "lucide-react";
 import { formatDate } from "@/lib/formatters";
 
 import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import DeliveryDetailsView from "./DeliveryDetailsView";
 
 function DeliveryTable({
   data,
@@ -23,9 +25,12 @@ function DeliveryTable({
   connectionError: boolean;
 }) {
   const searchParams = useSearchParams();
+  const [view, setView] = useState<any>(false)
 
 
   return (
+
+
     <>
       <Table className="[tr:text-nowrap]">
         <TableHeader>
@@ -79,7 +84,7 @@ function DeliveryTable({
                 <TableCell>{item.partner_name}</TableCell>
                 <TableCell>{item.gate_pass_no}</TableCell>
                 <TableCell>
-                    <Button variant={'link'} className="rounded-full">
+                    <Button variant={'link'} className="rounded-full" onClick={() => setView(item)}>
                       Details
                     </Button>
                 </TableCell>
@@ -101,6 +106,23 @@ function DeliveryTable({
           )}
         </TableBody>
       </Table>
+
+
+      {/* delivery details modal */}
+      <Dialog open={view} onOpenChange={setView}>
+        <DialogContent className="md:w-[90vw] md:max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Package className="size-4 text-primary" />
+              <span>Delivery Details</span>
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* form */}
+          <DeliveryDetailsView details={view}/>
+        </DialogContent>
+      </Dialog>
+
     </>
   );
 }
