@@ -1,16 +1,17 @@
 export interface DeliveryTableProps {
     sap_id: number,
-    full_name: string,        
-    route: string,        
+    full_name: string,
+    route: string,
+    partner: string,
+    partner_name: string,
+    description: string,
     billing_doc_no: string,
     billing_date: Date,
     vehicle_no: string,
-    partner: string,
     gate_pass_no: string,
-    description: string,
     total_net_val: number,
     total_quantity: number,
     total_tp: number,
-    total_vat: number,
-    total_count: any
+    total_count: any,
+    total_vat: number
 }

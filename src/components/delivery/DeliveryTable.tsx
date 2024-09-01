@@ -1,3 +1,5 @@
+'use client'
+
 import React from "react";
 import {
     Table,
@@ -10,14 +12,18 @@ import {
 import { MessageSquareOff, ServerOff } from "lucide-react";
 import { formatDate, formatNumber } from "@/lib/formatters";
 
-import { format } from "date-fns";
 import { DeliveryTableProps } from "@/lib/definitions";
+import { rdl_delivery_info_sap } from "@prisma/client";
+import { useSearchParams } from "next/navigation";
 
 function DeliveryTable({
     data,
     connectionError
 }: {data: DeliveryTableProps[], connectionError: boolean}) {
 
+  const searchParams = useSearchParams()
+
+  // if()
 
   return (
     <>
@@ -42,7 +48,11 @@ function DeliveryTable({
         </TableHeader>
 
         <TableBody>
-          {connectionError ? (
+          {!searchParams.has('q') ?<>
+            <TableRow>
+              <TableCell>Pick a date and enter SAP Id</TableCell>
+            </TableRow>
+          </> :connectionError ? (
             <TableRow className="table-row-nowrap">
               <TableCell
                 colSpan={6}
@@ -56,14 +66,14 @@ function DeliveryTable({
           ) : data.length > 0 ? (
             data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="min-w-fit">{item.sap_id}</TableCell>
-                <TableCell className="min-w-fit">{item.full_name}</TableCell>
+                {/* <TableCell className="min-w-fit">{item.sap_id}</TableCell> */}
+                {/* <TableCell className="min-w-fit">{item.full_name}</TableCell> */}
                 <TableCell>{item.billing_doc_no}</TableCell>
-                <TableCell>{formatDate(item.billing_date)}</TableCell>
+                {/* <TableCell>{formatDate(item.billing_date)}</TableCell> */}
                 <TableCell>{item.route}</TableCell>
                 <TableCell>{item.description}</TableCell>
                 <TableCell>{item.vehicle_no}</TableCell>
-                <TableCell>{item.partner}</TableCell>
+                <TableCell>{item.partner_name}</TableCell>
                 <TableCell>{item.gate_pass_no}</TableCell>
                 <TableCell>{Number(item.total_count)}</TableCell>
                 <TableCell>{formatNumber(item.total_quantity)}</TableCell>

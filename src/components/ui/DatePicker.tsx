@@ -50,7 +50,6 @@ export default function DatePicker() {
             setDate(value);
             params.set("start", format(value || new Date(), "yyyy-MM-dd"));
             params.delete("p");
-            params.delete("q");
             router.push(`${pathname}?${params.toString()}`);
           }}
           initialFocus

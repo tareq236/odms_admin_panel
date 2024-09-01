@@ -89,6 +89,7 @@ function PagePagination({ limit, count }: { limit: number; count: number }) {
           {noOfPages > 1 && (
             <PaginationItem>
               <PaginationLink
+                isActive={currentPage === noOfPages}
                 onClick={() => {
                   params.set('p', noOfPages.toString());
                   params.toString();

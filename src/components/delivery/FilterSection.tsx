@@ -1,11 +1,11 @@
 import React from "react";
 import Search from "../ui/Search";
-import RangePicker from "../ui/RangePicker";
+import DatePicker from "../ui/DatePicker";
 
 export default function FilterSection() {
   return (
     <section className="filter-section flex-wrap">
-      <RangePicker />
+      <DatePicker />
       <Search placeholder="Search by DA code" />
     </section>
   );
