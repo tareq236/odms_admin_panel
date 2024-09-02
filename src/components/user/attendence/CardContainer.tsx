@@ -12,18 +12,21 @@ export default async function CardContainer({
   searchParams,
 }: CardContainerProps) {
   const currentDate = new Date(searchParams.start) || new Date();
+  let date = searchParams.start ? searchParams.start.split("-") : undefined;
+  let startDate =
+    date == undefined ? new Date() : new Date(Number(date[0]), Number(date[1]) - 1, Number(date[2]));
+
+  let endDate = new Date(startDate.getFullYear(),startDate.getMonth(), startDate.getDate() + 1, 
+  );
+
   let dailyAttendance, userCount;
   try {
     [dailyAttendance, userCount] = await Promise.all([
       db.rdl_attendance.count({
         where: {
           start_date_time: {
-            gte: currentDate,
-            lte: new Date(
-              currentDate.getFullYear(),
-              currentDate.getMonth(),
-              currentDate.getDate() + 1,
-            ),
+            gte: startDate,
+            lt: endDate,
           },
         },
       }),

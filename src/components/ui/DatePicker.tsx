@@ -52,6 +52,7 @@ export default function DatePicker() {
             params.delete("p");
             router.push(`${pathname}?${params.toString()}`);
           }}
+          defaultMonth={date}
           initialFocus
         />
       </PopoverContent>

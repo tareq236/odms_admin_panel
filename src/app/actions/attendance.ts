@@ -69,11 +69,7 @@ export const getAttendance = async ({
         where: {
           start_date_time: {
             gte: startDate,
-            lt: new Date(
-              startDate.getFullYear(),
-              startDate.getMonth(),
-              startDate.getDate() + 1,
-            ),
+            lt: endDate,
           },
         },
       }),
@@ -98,11 +94,7 @@ export const getAttendance = async ({
         where: {
           start_date_time: {
             gte: startDate,
-            lt: new Date(
-              startDate.getFullYear(),
-              startDate.getMonth(),
-              startDate.getDate() + 1,
-            ),
+            lt: endDate,
           },
         },
         take: limit,
@@ -111,12 +103,8 @@ export const getAttendance = async ({
       db.rdl_attendance.count({
         where: {
           start_date_time: {
-            gte: new Date(),
-            lt: new Date(
-              new Date().getFullYear(),
-              new Date().getMonth(),
-              new Date().getDate() + 1,
-            ),
+            gte: startDate,
+            lt: endDate,
           },
         },
       }),
