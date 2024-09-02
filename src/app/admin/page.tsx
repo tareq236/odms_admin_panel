@@ -3,6 +3,7 @@ import React from "react";
 import db from "../../../db/db";
 import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
+import Header from "@/containers/home/Header";
 
 export type CartData = {
   day: Date;
@@ -36,6 +37,7 @@ export default async function Home() {
 
   return (
     <div className="">
+      <Header />
       <ChartSection data={data as CartData[]} count={count} />
     </div>
   );
