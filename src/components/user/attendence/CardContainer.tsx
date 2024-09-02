@@ -40,3 +40,35 @@ export default async function CardContainer({
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+// const currentDate = new Date(searchParams.start) || new Date();
+
+//   let currentFormatDate = format(currentDate, 'yyyy-MM-dd')
+//   let nextFormatDate = format(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()+1), 'yyyy-MM-dd')
+
+//   let dailyAttendance: any | unknown, userCount;
+//   try {
+//     [dailyAttendance, userCount] = await Promise.all([
+//       db.$queryRaw(
+//         Prisma.sql`
+//         SELECT COUNT(sap_id) as count 
+//         FROM rdl_attendance 
+//         WHERE start_date_time > ${currentFormatDate} 
+//         AND start_date_time < ${nextFormatDate} 
+//         `,
+//       ),
+//       db.rdl_user_list.count(),
+//     ]);
+//   } catch (error) {
+//     dailyAttendance = [{count: 0}];
+//     userCount = 0;
+//   }

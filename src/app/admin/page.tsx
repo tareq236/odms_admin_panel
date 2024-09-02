@@ -1,14 +1,22 @@
+import { ChartSection } from "@/containers/home/ChartSections";
 import React from "react";
+import db from "../../../db/db";
+import { Prisma } from "@prisma/client";
 
-function Home() {
+export default async function Home() {
+  const currentDate = new Date('2024-08-26');
+
+  // const data = await db.$queryRaw(
+  //   Prisma.sql`
+  //   SELECT DATE_
+  //   `
+  // )
+
+  // console.log(data);
+
   return (
     <div className="">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia dolore harum
-      sapiente odit, minima velit porro vero temporibus, adipisci a animi odio
-      sequi nesciunt blanditiis laudantium sint, necessitatibus recusandae!
-      Quos!
+      <ChartSection />
     </div>
   );
 }
-
-export default Home;

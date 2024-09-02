@@ -20,7 +20,7 @@ export default async function FilterSection({
       </div>
 
       {/* attendance card */}
-      <Suspense>
+      <Suspense fallback={<p>loading</p>}>
         <CardContainer searchParams={searchParams} />
       </Suspense>
     </section>

@@ -9,9 +9,12 @@ export const getAttendance = async ({
 }) => {
   let data;
   let count;
+  let date = searchParams.start ? searchParams.start.split("-") : undefined;
   let startDate =
-    searchParams.start == undefined ? new Date() : new Date(searchParams.start);
+    date == undefined ? new Date() : new Date(Number(date[0]), Number(date[1]) - 1, Number(date[2]));
 
+  let endDate = new Date(startDate.getFullYear(),startDate.getMonth(), startDate.getDate() + 1, 
+  );
 
   if (searchParams.start && searchParams.q) {
     [data, count] = await Promise.all([
@@ -21,12 +24,8 @@ export const getAttendance = async ({
           AND: [
             {
               start_date_time: {
-                equals: startDate,
-                lte: new Date(
-                  startDate.getFullYear(),
-                  startDate.getMonth(),
-                  startDate.getDate() + 1,
-                ),
+                gte: startDate,
+                lt: endDate,
               },
             },
             {
@@ -43,11 +42,7 @@ export const getAttendance = async ({
             {
               start_date_time: {
                 gte: startDate,
-                lte: new Date(
-                  startDate.getFullYear(),
-                  startDate.getMonth(),
-                  startDate.getDate() + 1,
-                ),
+                lt: endDate,
               },
             },
             {
@@ -64,11 +59,7 @@ export const getAttendance = async ({
         where: {
           start_date_time: {
             gte: startDate,
-            lte: new Date(
-              startDate.getFullYear(),
-              startDate.getMonth(),
-              startDate.getDate() + 1,
-            ),
+            lt: endDate,
           },
         },
         take: limit,
@@ -78,7 +69,7 @@ export const getAttendance = async ({
         where: {
           start_date_time: {
             gte: startDate,
-            lte: new Date(
+            lt: new Date(
               startDate.getFullYear(),
               startDate.getMonth(),
               startDate.getDate() + 1,
@@ -100,14 +91,14 @@ export const getAttendance = async ({
         where: { sap_id: Number(searchParams.q) || null },
       }),
     ]);
-  } else  {
+  } else {
     [data, count] = await Promise.all([
       db.rdl_attendance.findMany({
         include: { rdl_user_list: true },
         where: {
           start_date_time: {
             gte: startDate,
-            lte: new Date(
+            lt: new Date(
               startDate.getFullYear(),
               startDate.getMonth(),
               startDate.getDate() + 1,
@@ -121,7 +112,7 @@ export const getAttendance = async ({
         where: {
           start_date_time: {
             gte: new Date(),
-            lte: new Date(
+            lt: new Date(
               new Date().getFullYear(),
               new Date().getMonth(),
               new Date().getDate() + 1,
@@ -134,3 +125,32 @@ export const getAttendance = async ({
 
   return { data, count };
 };
+
+// let data: any | unknown;
+//   let count: any | unknown;
+//   const currentDate = new Date(searchParams.start) || new Date();
+
+//   let currentFormatDate = format(currentDate, 'yyyy-MM-dd')
+//   let nextFormatDate = format(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()+1), 'yyyy-MM-dd')
+
+//   let startDate =
+//     searchParams.start == undefined ? new Date() : new Date(searchParams.start);
+
+//     [data, count] = await Promise.all([
+//       db.$queryRaw(
+//         Prisma.sql`
+//         SELECT *
+//         FROM rdl_attendance
+//         WHERE start_date_time > ${currentFormatDate}
+//         AND start_date_time < ${nextFormatDate}
+//         `,
+//       ),
+//       db.$queryRaw(
+//         Prisma.sql`
+//         SELECT COUNT(sap_id) as count
+//         FROM rdl_attendance
+//         WHERE start_date_time > ${currentFormatDate}
+//         AND start_date_time < ${nextFormatDate}
+//         `,
+//       ),
+//     ])
