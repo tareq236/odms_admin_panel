@@ -17,7 +17,7 @@ export default async function Header() {
   return (
     <section className="mb-6">
       <h2 className="text-foreground text-lg">Welcome, <strong>{user.full_name}</strong></h2>
-      <h5 className="text-xs text-gray-500">Let's explore</h5>
+      <h5 className="text-xs text-gray-500">Let&apos;s explore</h5>
       <section className="my-5">
         <div className="flex gap-3 flex-wrap">
           <Card

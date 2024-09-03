@@ -45,21 +45,21 @@ export function ChartSection({
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>("attendance");
 
-  let cartList: any[] = [];
+  let chartList: any[] = [];
 
   for (let i = 0; i < data.length; i++) {
-    cartList.push({
+    chartList.push({
       date: data[i].day,
       attendance: Number(data[i].total_attendance),
       absence: count - Number(data[i].total_attendance),
     });
   }
-  console.log(cartList)
+  console.log(chartList)
 
   const total = React.useMemo(
     () => ({
-      attendance: cartList[cartList.length - 1].attendance,
-      absence: cartList[cartList.length - 1].absence,
+      attendance: chartList[chartList.length - 1].attendance,
+      absence: chartList[chartList.length - 1].absence,
     }),
     [],
   );
@@ -102,7 +102,7 @@ export function ChartSection({
           >
             <BarChart
               accessibilityLayer
-              data={cartList}
+              data={chartList}
               margin={{
                 left: 12,
                 right: 12,
