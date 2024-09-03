@@ -21,7 +21,7 @@ export default async function Home() {
     [data, count] = await Promise.all([
       db.$queryRaw(
         Prisma.sql`
-    SELECT CONVERT_TZ(start_date_time, '+00:00', '+06:00') as day, COUNT(sap_id) as total_attendance
+    SELECT CAST(CONVERT_TZ(start_date_time, '+00:00', '+06:00') as DATE)  as day, COUNT(sap_id) as total_attendance
     FROM rdl_attendance 
     WHERE start_date_time > ${prevMonth} AND start_date_time < ${currentDate} 
     GROUP BY CAST(CONVERT_TZ(start_date_time, '+00:00', '+06:00') as DATE) 

@@ -31,7 +31,7 @@ const chartConfig = {
   },
   absence: {
     label: "Absence",
-    color: "hsl(var(--chart-3))",
+    color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
 
@@ -54,6 +54,7 @@ export function ChartSection({
       absence: count - Number(data[i].total_attendance),
     });
   }
+  console.log(cartList)
 
   const total = React.useMemo(
     () => ({
