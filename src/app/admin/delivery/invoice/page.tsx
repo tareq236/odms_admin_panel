@@ -8,7 +8,7 @@ import { Prisma } from "@prisma/client";
 import DeliveryTable from "@/components/delivery/DeliveryTable";
 import db from "../../../../../db/db";
 
-export default async function page({
+export default async function DevlierInvoicePage({
   searchParams,
 }: {
   searchParams: { p: string; q: string; start: string };
