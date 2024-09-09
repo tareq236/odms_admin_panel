@@ -5,7 +5,9 @@ import {
   Home,
   ListTodo,
   Map,
+  PackageCheck,
   Route,
+  ScrollText,
   Truck,
   UserRoundPen,
 } from "lucide-react";
@@ -52,8 +54,18 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           />
 
           <Accordion name="Delivery" icon={<Truck className="size-4" />}>
-            <NavLink name="Invoice" href="/admin/delivery/invoice" onClick={onClose} />
-            <NavLink name="Collection" href="/admin/delivery/collection" onClick={onClose} />
+            <NavLink
+              name="Invoice"
+              icon={<ScrollText className="size-4" />}
+              href="/admin/delivery/invoice"
+              onClick={onClose}
+            />
+            <NavLink
+              name="Collection"
+              icon={<PackageCheck className="size-4" />}
+              href="/admin/delivery/collection"
+              onClick={onClose}
+            />
           </Accordion>
         </div>
       </div>
