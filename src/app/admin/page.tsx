@@ -1,9 +1,10 @@
-import { ChartSection } from "@/containers/home/ChartSections";
 import React from "react";
 import db from "../../../db/db";
 import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
-import Header from "@/containers/home/Header";
+import Header from "@/components/home/Header";
+import { ChartSection } from "@/components/home/ChartSections";
+
 
 export type CartData = {
   day: Date;
