@@ -9,11 +9,12 @@ import React, { Suspense } from "react";
 import db from "../../../../../db/db";
 import { Prisma } from "@prisma/client";
 import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
+import CollectionDetailsView from "@/components/delivery/collection/CollectionDetailsView";
 
 export default function DeliveryCollectionPage({
   searchParams,
 }: {
-  searchParams: { p: string; q: string; start: string };
+  searchParams: { p: string; q: string; start: string, dId: string };
 }) {
   return (
     <>
@@ -50,7 +51,7 @@ export default function DeliveryCollectionPage({
 const DataTable = async ({
   searchParams,
 }: {
-  searchParams: { p: string; q: string; start: string };
+  searchParams: { p: string; q: string; start: string, dId: string };
 }) => {
   let count: any = 0;
   const limit = 20;
@@ -78,7 +79,6 @@ const DataTable = async ({
     console.log(error);
   }
 
-  console.log(data);
 
   return (
     <>
@@ -86,7 +86,9 @@ const DataTable = async ({
         <DeliveryCollectionTable
           data={data as any[]}
           connectionError={connectionError}
-        />
+        >
+          <CollectionDetailsView searchParams={searchParams} />
+        </DeliveryCollectionTable>
         <PagePagination limit={limit} count={count} />
       </div>
     </>
