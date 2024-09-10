@@ -6,11 +6,11 @@ import {
   Package2,
   PackageCheck,
   PackageMinus,
-  Sigma,
-  SquareSigma,
 } from "lucide-react";
 
 function CardSection() {
+
+
   return (
     <section>
       <h3 className="text-muted-foreground mb-3">Statistics</h3>

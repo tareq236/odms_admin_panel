@@ -34,14 +34,13 @@ function DeliveryCollectionTable({
       <Table className="[tr:text-nowrap]">
         <TableHeader>
           <TableRow>
-            <TableHead>DA Code</TableHead>
-            <TableHead>DA Name</TableHead>
             <TableHead>Billing No.</TableHead>
             <TableHead>Billing Date</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Vehicle No.</TableHead>
-            <TableHead>Partner</TableHead>
-            <TableHead>Gate Pass No.</TableHead>
+            <TableHead>Delivery Status</TableHead>
+            <TableHead>Collection Status</TableHead>
+            <TableHead>Collection</TableHead>
+            <TableHead>Due</TableHead>
+            <TableHead>Net Value</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -74,14 +73,13 @@ function DeliveryCollectionTable({
           ) : data.length > 0 ? (
             data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="min-w-fit">{item.da_code}</TableCell>
-                <TableCell className="min-w-fit">{item.da_name}</TableCell>
                 <TableCell>{item.billing_doc_no}</TableCell>
                 <TableCell>{formatDate(item.billing_date)}</TableCell>
-                <TableCell>{item.address}</TableCell>
-                <TableCell>{item.vehicle_no}</TableCell>
-                <TableCell>{item.partner_name}</TableCell>
-                <TableCell>{item.gate_pass_no}</TableCell>
+                <TableCell>{item.delivery_status}</TableCell>
+                <TableCell>{item.cash_collection_status}</TableCell>
+                <TableCell>{item.cash_collection}</TableCell>
+                <TableCell>{item.due_amount}</TableCell>
+                <TableCell>{item.net_val}</TableCell>
                 <TableCell>
                     <Button variant={'link'} className="rounded-full" onClick={() => setView(item)}>
                       Details
