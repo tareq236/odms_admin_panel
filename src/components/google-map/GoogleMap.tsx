@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { APIProvider, Map, Marker, useMarkerRef } from "@vis.gl/react-google-maps";
 
-function GoogleMap() {
+function GoogleMap({latitude, longitude}: {longitude: number, latitude: number}) {
   const [markerRef, marker] = useMarkerRef();
 
   useEffect(() => {
@@ -17,13 +17,14 @@ function GoogleMap() {
     <div>
       <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string}>
         <Map
-          style={{ width: "50vw", height: "100vh" }}
-          defaultCenter={{ lat: 24.89, lng: 91.8 }}
+          style={{ width: "100%", height: "10rem" }}
+          defaultCenter={{ lat: latitude, lng: longitude }}
           defaultZoom={15}
           gestureHandling={"greedy"}
           disableDefaultUI={true}
+          center={{lat: latitude, lng: longitude}}
         >
-          <Marker ref={markerRef} position={{lat: 24.89, lng: 91.8}} />
+          <Marker ref={markerRef} position={{lat: latitude, lng: longitude}} />
         </Map>
       </APIProvider>
     </div>
