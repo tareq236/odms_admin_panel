@@ -10,11 +10,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { MessageSquareOff, Package, Search, ServerOff } from "lucide-react";
-import { formatDate } from "@/lib/formatters";
+import { formatDate, formatNumber } from "@/lib/formatters";
 
 import { useSearchParams } from "next/navigation";
 import { Button } from "../../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
+import StatusTag from "./StatusTag";
 
 function DeliveryCollectionTable({
   data,
@@ -75,11 +76,11 @@ function DeliveryCollectionTable({
               <TableRow key={index}>
                 <TableCell>{item.billing_doc_no}</TableCell>
                 <TableCell>{formatDate(item.billing_date)}</TableCell>
-                <TableCell>{item.delivery_status}</TableCell>
-                <TableCell>{item.cash_collection_status}</TableCell>
-                <TableCell>{item.cash_collection}</TableCell>
-                <TableCell>{item.due_amount}</TableCell>
-                <TableCell>{item.net_val}</TableCell>
+                <TableCell><StatusTag status={item.delivery_status || ''} /></TableCell>
+                <TableCell><StatusTag status={item.cash_collection_status || ''} /></TableCell>
+                <TableCell>{formatNumber(item.cash_collection)}</TableCell>
+                <TableCell>{formatNumber(item.due_amount)}</TableCell>
+                <TableCell>{formatNumber(item.net_val)}</TableCell>
                 <TableCell>
                     <Button variant={'link'} className="rounded-full" onClick={() => setView(item)}>
                       Details
