@@ -33,7 +33,9 @@ export default function DeliveryCollectionPage({
           </Suspense>
 
           {/* stats cards */}
-          <CardSection />
+          <Suspense>
+            <CardSection searchParams={searchParams} />
+          </Suspense>
         </>
       )}
 
