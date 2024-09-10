@@ -8,6 +8,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -23,25 +24,35 @@ export default async function CollectionDetailsView({
     where: { id: Number(searchParams.dId || 0) },
   });
 
-  const [daInfo, partnerInfo, routeInfo, deliveryList] = await Promise.all([
-    db.rdl_user_list.findUnique({
-      where: { sap_id: Number(deliveryDetails?.da_code || 0) },
-      select: { full_name: true },
-    }),
-    db.rpl_customer.findUnique({
-      where: { partner: deliveryDetails?.partner || "" },
-      select: { name1: true },
-    }),
-    db.rdl_route_sap.findUnique({
-      where: { route: deliveryDetails?.route_code || "" },
-      select: { description: true },
-    }),
-    db.rdl_delivery_list.findMany({
-      where: {
-        delivery_id: Number(searchParams.dId || 0),
-      },
-    }),
-  ]);
+  const [daInfo, partnerInfo, routeInfo, deliveryList, totalValue] =
+    await Promise.all([
+      db.rdl_user_list.findUnique({
+        where: { sap_id: Number(deliveryDetails?.da_code || 0) },
+        select: { full_name: true },
+      }),
+      db.rpl_customer.findUnique({
+        where: { partner: deliveryDetails?.partner || "" },
+        select: { name1: true },
+      }),
+      db.rdl_route_sap.findUnique({
+        where: { route: deliveryDetails?.route_code || "" },
+        select: { description: true },
+      }),
+      db.rdl_delivery_list.findMany({
+        where: {
+          delivery_id: Number(searchParams.dId || 0),
+        },
+      }),
+      db.rdl_delivery_list.aggregate({
+        where: {
+          delivery_id: Number(searchParams.dId || 0),
+        },
+        _sum: {
+          delivery_net_val: true,
+          return_net_val: true,
+        },
+      }),
+    ]);
 
   return (
     <article className="w-full mx-auto max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-5xl">
@@ -88,7 +99,7 @@ export default async function CollectionDetailsView({
           fieldContent={deliveryDetails?.gate_pass_no}
         />
       </section>
-      <section className="mt-5">
+      <section className="mt-5 w-full max-h-[12rem] overflow-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -103,30 +114,38 @@ export default async function CollectionDetailsView({
               <TableHead>Returned Value</TableHead>
             </TableRow>
           </TableHeader>
+
+          <TableBody>
+            {deliveryList.map((item) => (
+              <TableRow key={item.id} className="text-right">
+                <TableCell className="text-left">{item.batch}</TableCell>
+                <TableCell>{Number(item.quantity)}</TableCell>
+                <TableCell>{formatNumber(Number(item.tp))}</TableCell>
+                <TableCell>{formatNumber(Number(item.vat))}</TableCell>
+                <TableCell>{formatNumber(Number(item.net_val))}</TableCell>
+                <TableCell>{Number(item.delivery_quantity)}</TableCell>
+                <TableCell>
+                  {formatNumber(Number(item.delivery_net_val))}
+                </TableCell>
+                <TableCell>{Number(item.return_quantity)}</TableCell>
+                <TableCell>
+                  {formatNumber(Number(item.return_net_val))}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell>Total</TableCell>
+              <TableCell colSpan={6} align="right">
+                {formatNumber(Number(totalValue._sum.delivery_net_val))}
+              </TableCell>
+              <TableCell colSpan={2} align="right">
+                {formatNumber(Number(totalValue._sum.return_net_val))}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
-        <section className="w-full max-h-[12rem] overflow-auto">
-          <Table>
-            <TableBody>
-              {deliveryList.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.batch}</TableCell>
-                  <TableCell>{Number(item.quantity)}</TableCell>
-                  <TableCell>{formatNumber(Number(item.tp))}</TableCell>
-                  <TableCell>{formatNumber(Number(item.vat))}</TableCell>
-                  <TableCell>{formatNumber(Number(item.net_val))}</TableCell>
-                  <TableCell>{Number(item.delivery_quantity)}</TableCell>
-                  <TableCell>
-                    {formatNumber(Number(item.delivery_net_val))}
-                  </TableCell>
-                  <TableCell>{Number(item.return_quantity)}</TableCell>
-                  <TableCell>
-                    {formatNumber(Number(item.return_net_val))}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </section>
       </section>
     </article>
   );
