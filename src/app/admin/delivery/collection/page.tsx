@@ -6,12 +6,16 @@ import PagePagination from "@/components/ui/PagePagination";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import { PackageCheck } from "lucide-react";
 import React, { Suspense } from "react";
+import db from "../../../../../db/db";
+import { Prisma } from "@prisma/client";
+import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
+import CollectionDetailsView from "@/components/delivery/collection/CollectionDetailsView";
 
 export default function DeliveryCollectionPage({
-    searchParams,
-  }: {
-    searchParams: { p: string; q: string; start: string };
-  }) {
+  searchParams,
+}: {
+  searchParams: { p: string; q: string; start: string, dId: string };
+}) {
   return (
     <>
       <PageHeader
@@ -23,8 +27,18 @@ export default function DeliveryCollectionPage({
         <FilterSection />
       </Suspense>
 
-      {/* stats cards */}
-      <CardSection />
+      {searchParams.q != null && (
+        <>
+          <Suspense>
+            <DaInfoSection searchParams={searchParams} />
+          </Suspense>
+
+          {/* stats cards */}
+          <Suspense>
+            <CardSection searchParams={searchParams} />
+          </Suspense>
+        </>
+      )}
 
       {/* table section */}
       <Suspense fallback={<TableSkeleton />}>
@@ -37,17 +51,45 @@ export default function DeliveryCollectionPage({
 const DataTable = async ({
   searchParams,
 }: {
-  searchParams: { p: string; q: string; start: string };
+  searchParams: { p: string; q: string; start: string, dId: string };
 }) => {
-  let count: any = [{ total: 0 }];
+  let count: any = 0;
   const limit = 20;
   let connectionError = false;
   let data;
+
+  try {
+    if (searchParams.q) {
+      [data, count] = await Promise.all([
+        db.rdl_delivery.findMany({
+          where: {
+            da_code: searchParams.q,
+          },
+        }),
+        db.rdl_delivery.count({ where: { da_code: searchParams.q } }),
+      ]);
+    } else {
+      data = [];
+    }
+
+    console.log(count);
+  } catch (error) {
+    data = [] as any[];
+    connectionError = true;
+    console.log(error);
+  }
+
+
   return (
     <>
       <div className="data-table-section my-6">
-        <DeliveryCollectionTable data={[]} connectionError={true} />
-        <PagePagination limit={10} count={Number(0)} />
+        <DeliveryCollectionTable
+          data={data as any[]}
+          connectionError={connectionError}
+        >
+          <CollectionDetailsView searchParams={searchParams} />
+        </DeliveryCollectionTable>
+        <PagePagination limit={limit} count={count} />
       </div>
     </>
   );

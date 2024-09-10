@@ -10,38 +10,49 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { MessageSquareOff, Package, Search, ServerOff } from "lucide-react";
-import { formatDate } from "@/lib/formatters";
+import { formatDate, formatNumber } from "@/lib/formatters";
 
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Button } from "../../ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../ui/dialog";
+import StatusTag from "./StatusTag";
+import { useRouter } from "next-nprogress-bar";
+import { rdl_delivery } from "@prisma/client";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function DeliveryCollectionTable({
   data,
   connectionError,
+  children,
 }: {
-  data: any[];
+  data: rdl_delivery[];
   connectionError: boolean;
+  children: React.ReactNode;
 }) {
   const searchParams = useSearchParams();
-  const [view, setView] = useState<any>(false)
+  const [view, setView] = useState<any>(false);
 
+  const pathName = usePathname();
+  const router = useRouter();
+  const params = new URLSearchParams(searchParams);
 
   return (
-
-
     <>
       <Table className="[tr:text-nowrap]">
         <TableHeader>
           <TableRow>
-            <TableHead>DA Code</TableHead>
-            <TableHead>DA Name</TableHead>
             <TableHead>Billing No.</TableHead>
             <TableHead>Billing Date</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Vehicle No.</TableHead>
-            <TableHead>Partner</TableHead>
-            <TableHead>Gate Pass No.</TableHead>
+            <TableHead>Delivery Status</TableHead>
+            <TableHead>Collection Status</TableHead>
+            <TableHead>Collection</TableHead>
+            <TableHead>Due</TableHead>
+            <TableHead>Net Value</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -74,18 +85,33 @@ function DeliveryCollectionTable({
           ) : data.length > 0 ? (
             data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="min-w-fit">{item.da_code}</TableCell>
-                <TableCell className="min-w-fit">{item.da_name}</TableCell>
                 <TableCell>{item.billing_doc_no}</TableCell>
                 <TableCell>{formatDate(item.billing_date)}</TableCell>
-                <TableCell>{item.address}</TableCell>
-                <TableCell>{item.vehicle_no}</TableCell>
-                <TableCell>{item.partner_name}</TableCell>
-                <TableCell>{item.gate_pass_no}</TableCell>
                 <TableCell>
-                    <Button variant={'link'} className="rounded-full" onClick={() => setView(item)}>
-                      Details
-                    </Button>
+                  <StatusTag status={item.delivery_status || ""} />
+                </TableCell>
+                <TableCell>
+                  <StatusTag status={item.cash_collection_status || ""} />
+                </TableCell>
+                <TableCell>
+                  {formatNumber(Number(item.cash_collection))}
+                </TableCell>
+                <TableCell>{formatNumber(Number(item.due_amount))}</TableCell>
+                <TableCell>{formatNumber(Number(item.net_val))}</TableCell>
+                <TableCell>
+                  <Button
+                    variant={"link"}
+                    className="rounded-full"
+                    onClick={() => {
+                      setView(true);
+                      params.set("dId", `${item.id}`);
+                      router.push(`${pathName}?${params.toString()}`, {
+                        scroll: false,
+                      });
+                    }}
+                  >
+                    Details
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
@@ -106,22 +132,29 @@ function DeliveryCollectionTable({
         </TableBody>
       </Table>
 
-
       {/* delivery details modal */}
-      <Dialog open={view} onOpenChange={setView}>
-        <DialogContent className="md:w-[90vw] md:max-w-xl">
+      <Dialog
+        open={view}
+        onOpenChange={() => {
+          setView(false);
+          params.delete("dId");
+          router.push(pathName + "?" + params.toString(), { scroll: false });
+        }}
+      >
+        <DialogContent className="md:w-[90vw] md:max-w-5xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Package className="size-4 text-primary" />
-              <span>Delivery Details</span>
+              <span>Delivery Collection Details</span>
             </DialogTitle>
           </DialogHeader>
 
           {/* form */}
+          {children}
+          {/* <CollectionDetailsView details={view} /> */}
           {/* <DeliveryDetailsView details={view}/> */}
         </DialogContent>
       </Dialog>
-
     </>
   );
 }
