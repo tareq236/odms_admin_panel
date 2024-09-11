@@ -3,6 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
+import { usePathname } from "next/navigation";
 
 function Accordion({
   icon,
@@ -14,12 +15,15 @@ function Accordion({
   children: React.ReactNode;
 }) {
   const [showContent, setShowContent] = useState(false);
+  const pathname = usePathname()
 
   return (
     <div className="w-full">
       <Button
         variant={"ghost"}
-        className="text-sm font-normal w-full flex justify-between items-center p-2 rounded hover:bg-primary/10 hover:text-primary transition-all duration-300"
+        className={`text-sm font-normal w-full flex justify-between items-center
+           p-2 rounded hover:bg-primary/10 hover:text-primary ${pathname.includes(name.toLowerCase()) ? 'text-primary bg-primary/5' : ''}
+           transition-all duration-300`}
         onClick={() => {
           setShowContent(!showContent);
         }}
