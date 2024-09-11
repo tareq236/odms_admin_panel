@@ -23,7 +23,6 @@ import {
 import StatusTag from "./StatusTag";
 import { useRouter } from "next-nprogress-bar";
 import { rdl_delivery } from "@prisma/client";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 function DeliveryCollectionTable({
   data,
@@ -151,8 +150,6 @@ function DeliveryCollectionTable({
 
           {/* form */}
           {children}
-          {/* <CollectionDetailsView details={view} /> */}
-          {/* <DeliveryDetailsView details={view}/> */}
         </DialogContent>
       </Dialog>
     </>

@@ -7,14 +7,14 @@ import TableSkeleton from "@/components/ui/TableSkeletion";
 import { PackageCheck } from "lucide-react";
 import React, { Suspense } from "react";
 import db from "../../../../../db/db";
-import { Prisma } from "@prisma/client";
 import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
 import CollectionDetailsView from "@/components/delivery/collection/CollectionDetailsView";
+
 
 export default function DeliveryCollectionPage({
   searchParams,
 }: {
-  searchParams: { p: string; q: string; start: string, dId: string };
+  searchParams: { p: string; q: string; start: string; dId: string };
 }) {
   return (
     <>
@@ -51,7 +51,7 @@ export default function DeliveryCollectionPage({
 const DataTable = async ({
   searchParams,
 }: {
-  searchParams: { p: string; q: string; start: string, dId: string };
+  searchParams: { p: string; q: string; start: string; dId: string };
 }) => {
   let count: any = 0;
   const limit = 20;
@@ -63,10 +63,30 @@ const DataTable = async ({
       [data, count] = await Promise.all([
         db.rdl_delivery.findMany({
           where: {
-            da_code: searchParams.q,
+            AND: [
+              {
+                da_code: searchParams.q,
+              },
+              {
+                billing_date:
+                  searchParams.start ? new Date(searchParams.start) : new Date(),
+              },
+            ],
           },
         }),
-        db.rdl_delivery.count({ where: { da_code: searchParams.q } }),
+        db.rdl_delivery.count({
+          where: {
+            AND: [
+              {
+                da_code: searchParams.q,
+              },
+              {
+                billing_date:
+                  searchParams.start ? new Date(searchParams.start) : new Date(),
+              },
+            ],
+          },
+        }),
       ]);
     } else {
       data = [];
@@ -78,7 +98,6 @@ const DataTable = async ({
     connectionError = true;
     console.log(error);
   }
-
 
   return (
     <>

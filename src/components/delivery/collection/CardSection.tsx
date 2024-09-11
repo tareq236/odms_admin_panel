@@ -15,15 +15,44 @@ export default async function CardSection({
   searchParams: { p: string; q: string; start: string };
 }) {
   const [totalDelivery, deliveryDone, collectionDone] = await Promise.all([
-    db.rdl_delivery.count({ where: { da_code: searchParams.q || "" } }),
-    db.rdl_delivery.count({ where: { AND: [
-      {da_code: searchParams.q || ""},
-      {delivery_status: 'Done'}
-    ] } }),
-    db.rdl_delivery.count({ where: { AND: [
-      {da_code: searchParams.q || ""},
-      {cash_collection_status: 'Done'}
-    ] } }),
+    db.rdl_delivery.count({
+      where: {
+        AND: [
+          { da_code: searchParams.q || "" },
+          {
+            billing_date: searchParams.start
+              ? new Date(searchParams.start)
+              : new Date(),
+          },
+        ],
+      },
+    }),
+    db.rdl_delivery.count({
+      where: {
+        AND: [
+          { da_code: searchParams.q || "" },
+          { delivery_status: "Done" },
+          {
+            billing_date: searchParams.start
+              ? new Date(searchParams.start)
+              : new Date(),
+          },
+        ],
+      },
+    }),
+    db.rdl_delivery.count({
+      where: {
+        AND: [
+          { da_code: searchParams.q || "" },
+          { cash_collection_status: "Done" },
+          {
+            billing_date: searchParams.start
+              ? new Date(searchParams.start)
+              : new Date(),
+          },
+        ],
+      },
+    }),
   ]);
 
   return (
@@ -32,7 +61,7 @@ export default async function CardSection({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 border-t border-l">
         <Card
           name="Delivery Remaining"
-          stats={(totalDelivery-deliveryDone)}
+          stats={totalDelivery - deliveryDone}
           icon={<Package2 className="size-5" />}
         />
         <Card
@@ -42,7 +71,7 @@ export default async function CardSection({
         />
         <Card
           name="Collection Remainig"
-          stats={(totalDelivery - collectionDone)}
+          stats={totalDelivery - collectionDone}
           icon={<HandCoins className="size-5" />}
         />
         <Card
