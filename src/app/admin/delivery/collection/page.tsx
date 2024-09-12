@@ -14,7 +14,13 @@ import { Prisma } from "@prisma/client";
 export default function DeliveryCollectionPage({
   searchParams,
 }: {
-  searchParams: { p: string; q: string; start: string; dId: string };
+  searchParams: {
+    p: string;
+    q: string;
+    start: string;
+    dId: string;
+    status: string;
+  };
 }) {
   return (
     <>
@@ -51,7 +57,13 @@ export default function DeliveryCollectionPage({
 const DataTable = async ({
   searchParams,
 }: {
-  searchParams: { p: string; q: string; start: string; dId: string };
+  searchParams: {
+    p: string;
+    q: string;
+    start: string;
+    dId: string;
+    status: string;
+  };
 }) => {
   let count: any = [{ total: 0 }];
   const limit = 20;
@@ -59,7 +71,177 @@ const DataTable = async ({
   let data;
 
   try {
-    if (searchParams.q) {
+    if (searchParams.q && searchParams.status) {
+      // delivery done
+      if (searchParams.status == "dd") {
+        [data, count] = await Promise.all([
+          db.$queryRaw(
+            Prisma.sql`
+          SELECT a.billing_date, a.billing_doc_no, 
+          b.delivery_status, b.cash_collection_status,
+          b.cash_collection, b.due_amount, c.net_val,
+          c.partner, b.id,
+          d.name1
+          FROM rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
+          INNER JOIN rpl_customer as d ON c.partner=d.partner
+          WHERE a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0} 
+          AND b.delivery_status='Done'
+          LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+            `,
+          ),
+          db.$queryRaw`
+          select count(*) as total from rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          where a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0}
+          AND b.delivery_status = 'Done'
+        `,
+        ]);
+      }
+      // delivery remaining
+      else if (searchParams.status == "dr") {
+        [data, count] = await Promise.all([
+          db.$queryRaw(
+            Prisma.sql`
+          SELECT a.billing_date, a.billing_doc_no, 
+          b.delivery_status, b.cash_collection_status,
+          b.cash_collection, b.due_amount, c.net_val,
+          c.partner, b.id,
+          d.name1
+          FROM rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
+          INNER JOIN rpl_customer as d ON c.partner=d.partner
+          WHERE a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0} 
+          AND b.delivery_status IS NULL
+          LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+            `,
+          ),
+          db.$queryRaw`
+          select count(*) as total from rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          where a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0}
+          AND b.delivery_status IS NULL
+        `,
+        ]);
+      }
+      // collection done
+      else if (searchParams.status == "cd") {
+        [data, count] = await Promise.all([
+          db.$queryRaw(
+            Prisma.sql`
+          SELECT a.billing_date, a.billing_doc_no, 
+          b.delivery_status, b.cash_collection_status,
+          b.cash_collection, b.due_amount, c.net_val,
+          c.partner, b.id,
+          d.name1
+          FROM rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
+          INNER JOIN rpl_customer as d ON c.partner=d.partner
+          WHERE a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0} 
+          AND b.cash_collection_status='Done'
+          LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+            `,
+          ),
+          db.$queryRaw`
+          select count(*) as total from rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          where a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0}
+          AND b.cash_collection_status = 'Done'
+        `,
+        ]);
+      }
+      // collection remaining
+      else if (searchParams.status == "cr") {
+        [data, count] = await Promise.all([
+          db.$queryRaw(
+            Prisma.sql`
+          SELECT a.billing_date, a.billing_doc_no, 
+          b.delivery_status, b.cash_collection_status,
+          b.cash_collection, b.due_amount, c.net_val,
+          c.partner, b.id,
+          d.name1
+          FROM rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
+          INNER JOIN rpl_customer as d ON c.partner=d.partner
+          WHERE a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0} 
+          AND b.cash_collection_status IS NULL
+          LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+            `,
+          ),
+          db.$queryRaw`
+          select count(*) as total from rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          where a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0}
+          AND b.cash_collection_status IS NULL
+        `,
+        ]);
+      }
+      else if (searchParams.status == "r") {
+        [data, count] = await Promise.all([
+          db.$queryRaw(
+            Prisma.sql`
+          SELECT a.billing_date, a.billing_doc_no, 
+          b.delivery_status, b.cash_collection_status,
+          b.cash_collection, b.due_amount, c.net_val,
+          c.partner, b.id,
+          d.name1,
+          e.return_quantity
+          FROM rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
+          INNER JOIN rpl_customer as d ON c.partner=d.partner
+          LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
+          WHERE a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0} 
+          AND e.return_quantity IS NOT NULL
+          LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+            `,
+          ),
+          db.$queryRaw`
+          select count(*) as total from rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
+          where a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0}
+          AND e.return_quantity IS NOT NULL
+        `,
+        ]);
+      } else {
+        throw new Error()
+      }
+    } else if (searchParams.q) {
       [data, count] = await Promise.all([
         db.$queryRaw(
           Prisma.sql`
@@ -75,7 +257,7 @@ const DataTable = async ({
           WHERE a.billing_date = ${
             searchParams.start ? new Date(searchParams.start) : new Date()
           } 
-          AND a.da_code = ${Number(searchParams.q) || 0}
+          AND a.da_code = ${Number(searchParams.q) || 0} 
           LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
         ),
@@ -93,6 +275,7 @@ const DataTable = async ({
 
     console.log(count);
   } catch (error) {
+    console.log(error);
     data = [] as any[];
     connectionError = true;
   }
