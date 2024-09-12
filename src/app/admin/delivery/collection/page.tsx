@@ -9,7 +9,7 @@ import React, { Suspense } from "react";
 import db from "../../../../../db/db";
 import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
 import CollectionDetailsView from "@/components/delivery/collection/CollectionDetailsView";
-
+import { Prisma } from "@prisma/client";
 
 export default function DeliveryCollectionPage({
   searchParams,
@@ -53,7 +53,7 @@ const DataTable = async ({
 }: {
   searchParams: { p: string; q: string; start: string; dId: string };
 }) => {
-  let count: any = 0;
+  let count: any = [{ total: 0 }];
   const limit = 20;
   let connectionError = false;
   let data;
@@ -61,32 +61,31 @@ const DataTable = async ({
   try {
     if (searchParams.q) {
       [data, count] = await Promise.all([
-        db.rdl_delivery.findMany({
-          where: {
-            AND: [
-              {
-                da_code: searchParams.q,
-              },
-              {
-                billing_date:
-                  searchParams.start ? new Date(searchParams.start) : new Date(),
-              },
-            ],
-          },
-        }),
-        db.rdl_delivery.count({
-          where: {
-            AND: [
-              {
-                da_code: searchParams.q,
-              },
-              {
-                billing_date:
-                  searchParams.start ? new Date(searchParams.start) : new Date(),
-              },
-            ],
-          },
-        }),
+        db.$queryRaw(
+          Prisma.sql`
+          SELECT a.billing_date, a.billing_doc_no, 
+          b.delivery_status, b.cash_collection_status,
+          b.cash_collection, b.due_amount, c.net_val,
+          c.partner,
+          d.name1
+          FROM rdl_delivery_info_sap as a
+          LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+          INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
+          INNER JOIN rpl_customer as d ON c.partner=d.partner
+          WHERE a.billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND a.da_code = ${Number(searchParams.q) || 0}
+          LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+            `,
+        ),
+        db.$queryRaw`
+          select count(*) as total from rdl_delivery_info_sap
+          where billing_date = ${
+            searchParams.start ? new Date(searchParams.start) : new Date()
+          } 
+          AND da_code = ${Number(searchParams.q) || 0}
+        `,
       ]);
     } else {
       data = [];
@@ -96,7 +95,6 @@ const DataTable = async ({
   } catch (error) {
     data = [] as any[];
     connectionError = true;
-    console.log(error);
   }
 
   return (
@@ -108,7 +106,7 @@ const DataTable = async ({
         >
           <CollectionDetailsView searchParams={searchParams} />
         </DeliveryCollectionTable>
-        <PagePagination limit={limit} count={count} />
+        <PagePagination limit={limit} count={Number(count[0].total)} />
       </div>
     </>
   );

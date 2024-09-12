@@ -22,14 +22,13 @@ import {
 } from "../../ui/dialog";
 import StatusTag from "./StatusTag";
 import { useRouter } from "next-nprogress-bar";
-import { rdl_delivery } from "@prisma/client";
 
 function DeliveryCollectionTable({
   data,
   connectionError,
   children,
 }: {
-  data: rdl_delivery[];
+  data: any[];
   connectionError: boolean;
   children: React.ReactNode;
 }) {
@@ -95,7 +94,7 @@ function DeliveryCollectionTable({
                 <TableCell>
                   {formatNumber(Number(item.cash_collection))}
                 </TableCell>
-                <TableCell>{formatNumber(Number(item.due_amount))}</TableCell>
+                <TableCell>{formatNumber(Number(item.net_val) - Number(item.cash_collection))}</TableCell>
                 <TableCell>{formatNumber(Number(item.net_val))}</TableCell>
                 <TableCell>
                   <Button
