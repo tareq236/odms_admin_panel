@@ -17,7 +17,7 @@ function GoogleMap({latitude, longitude}: {longitude: number, latitude: number})
     <div>
       <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string}>
         <Map
-          style={{ width: "100%", height: "10rem" }}
+          style={{ width: "100%", minHeight: "10rem", height: '13.5rem' }}
           defaultCenter={{ lat: latitude, lng: longitude }}
           defaultZoom={15}
           gestureHandling={"greedy"}

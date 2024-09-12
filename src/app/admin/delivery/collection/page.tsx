@@ -66,7 +66,7 @@ const DataTable = async ({
           SELECT a.billing_date, a.billing_doc_no, 
           b.delivery_status, b.cash_collection_status,
           b.cash_collection, b.due_amount, c.net_val,
-          c.partner,
+          c.partner, b.id,
           d.name1
           FROM rdl_delivery_info_sap as a
           LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
@@ -104,7 +104,10 @@ const DataTable = async ({
           data={data as any[]}
           connectionError={connectionError}
         >
-          <CollectionDetailsView searchParams={searchParams} />
+          {/* anc */}
+          <Suspense fallback={<p>Loading...</p>}>
+            <CollectionDetailsView searchParams={searchParams} />
+          </Suspense>
         </DeliveryCollectionTable>
         <PagePagination limit={limit} count={Number(count[0].total)} />
       </div>

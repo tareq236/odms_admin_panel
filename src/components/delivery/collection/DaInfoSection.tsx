@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import UserStatusTag from "@/components/user/UserStatusTag";
 import React from "react";
 import db from "../../../../db/db";
@@ -9,9 +8,14 @@ export default async function DaInfoSection({
 }: {
   searchParams: { p: string; q: string; start: string };
 }) {
-  const daInfo = await db.rdl_user_list.findUnique({
-    where: { sap_id: Number(searchParams.q || 0) },
-  });
+  let daInfo;
+  try {
+    daInfo = await db.rdl_user_list.findUnique({
+      where: { sap_id: Number(searchParams.q || 0) },
+    });
+  } catch (error) {
+    daInfo = null
+  }
 
   return (
     <section className="my-6">

@@ -46,6 +46,7 @@ function DeliveryCollectionTable({
           <TableRow>
             <TableHead>Billing No.</TableHead>
             <TableHead>Billing Date</TableHead>
+            <TableHead>Partner</TableHead>
             <TableHead>Delivery Status</TableHead>
             <TableHead>Collection Status</TableHead>
             <TableHead>Collection</TableHead>
@@ -85,6 +86,7 @@ function DeliveryCollectionTable({
               <TableRow key={index}>
                 <TableCell>{item.billing_doc_no}</TableCell>
                 <TableCell>{formatDate(item.billing_date)}</TableCell>
+                <TableCell>{item.name1} ({item.partner})</TableCell>
                 <TableCell>
                   <StatusTag status={item.delivery_status || ""} />
                 </TableCell>
@@ -102,7 +104,7 @@ function DeliveryCollectionTable({
                     className="rounded-full"
                     onClick={() => {
                       setView(true);
-                      params.set("dId", `${item.id}`);
+                      params.set("dId", `${item.billing_doc_no}`);
                       router.push(`${pathName}?${params.toString()}`, {
                         scroll: false,
                       });
@@ -114,6 +116,7 @@ function DeliveryCollectionTable({
               </TableRow>
             ))
           ) : (
+            // for no data
             <>
               <TableRow>
                 <TableCell

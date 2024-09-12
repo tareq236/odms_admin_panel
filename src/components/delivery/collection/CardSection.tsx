@@ -14,46 +14,53 @@ export default async function CardSection({
 }: {
   searchParams: { p: string; q: string; start: string };
 }) {
-  const [totalDelivery, deliveryDone, collectionDone] = await Promise.all([
-    db.rdl_delivery.count({
-      where: {
-        AND: [
-          { da_code: searchParams.q || "" },
-          {
-            billing_date: searchParams.start
-              ? new Date(searchParams.start)
-              : new Date(),
-          },
-        ],
-      },
-    }),
-    db.rdl_delivery.count({
-      where: {
-        AND: [
-          { da_code: searchParams.q || "" },
-          { delivery_status: "Done" },
-          {
-            billing_date: searchParams.start
-              ? new Date(searchParams.start)
-              : new Date(),
-          },
-        ],
-      },
-    }),
-    db.rdl_delivery.count({
-      where: {
-        AND: [
-          { da_code: searchParams.q || "" },
-          { cash_collection_status: "Done" },
-          {
-            billing_date: searchParams.start
-              ? new Date(searchParams.start)
-              : new Date(),
-          },
-        ],
-      },
-    }),
-  ]);
+
+  let [totalDelivery, deliveryDone, collectionDone] = [0,0,0]
+
+  try {
+    [totalDelivery, deliveryDone, collectionDone] = await Promise.all([
+      db.rdl_delivery.count({
+        where: {
+          AND: [
+            { da_code: searchParams.q || "" },
+            {
+              billing_date: searchParams.start
+                ? new Date(searchParams.start)
+                : new Date(),
+            },
+          ],
+        },
+      }),
+      db.rdl_delivery.count({
+        where: {
+          AND: [
+            { da_code: searchParams.q || "" },
+            { delivery_status: "Done" },
+            {
+              billing_date: searchParams.start
+                ? new Date(searchParams.start)
+                : new Date(),
+            },
+          ],
+        },
+      }),
+      db.rdl_delivery.count({
+        where: {
+          AND: [
+            { da_code: searchParams.q || "" },
+            { cash_collection_status: "Done" },
+            {
+              billing_date: searchParams.start
+                ? new Date(searchParams.start)
+                : new Date(),
+            },
+          ],
+        },
+      }),
+    ]);
+  } catch (error) {
+    console.log(error)
+  }
 
   return (
     <section>

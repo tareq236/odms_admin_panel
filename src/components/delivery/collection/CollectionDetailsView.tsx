@@ -13,58 +13,79 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import GoogleMap from "@/components/google-map/GoogleMap";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { MapPin } from "lucide-react";
 
 export default async function CollectionDetailsView({
   searchParams,
 }: {
   searchParams: { p: string; q: string; start: string; dId: string };
 }) {
-  const deliveryDetails = await db.rdl_delivery.findUnique({
-    where: { id: Number(searchParams.dId || 0) },
-  });
 
-  const [daInfo, partnerInfo, routeInfo, deliveryList, totalValue] =
-    await Promise.all([
-      db.rdl_user_list.findUnique({
-        where: { sap_id: Number(deliveryDetails?.da_code || 0) },
-        select: { full_name: true },
-      }),
-      db.rpl_customer.findUnique({
-        where: { partner: deliveryDetails?.partner || "" },
-        select: { name1: true },
-      }),
-      db.rdl_route_sap.findUnique({
-        where: { route: deliveryDetails?.route_code || "" },
-        select: { description: true },
-      }),
-      db.rdl_delivery_list.findMany({
-        where: {
-          delivery_id: Number(searchParams.dId || 0),
-        },
-      }),
-      db.rdl_delivery_list.aggregate({
-        where: {
-          delivery_id: Number(searchParams.dId || 0),
-        },
-        _sum: {
-          delivery_net_val: true,
-          return_net_val: true,
-        },
-      }),
-    ]);
+  const [deliveryDetails, invoiceInfo,invoiceSalesInfo ] = await Promise.all([
+    db.rdl_delivery.findFirst({
+      where: { billing_doc_no: searchParams.dId },
+      select: {
+        delivery_status: true,
+        cash_collection_status: true,
+        delivery_latitude: true,
+        delivery_longitude: true,
+        id: true,
+      },
+    }),db.rdl_delivery_info_sap.findFirst({
+      where: {
+        billing_doc_no: searchParams.dId,
+      },
+      select: {
+        da_code: true,
+        da_name: true,
+        billing_date: true,
+        vehicle_no: true,
+      },
+    }),
+    db.rpl_sales_info_sap.findMany({
+      where: {
+        billing_doc_no: searchParams.dId,
+      },
+    })
+  ])
+
+  const [partnerInfo, deliveryList, totalValue] = await Promise.all([
+    db.rpl_customer.findUnique({
+      where: { partner: invoiceSalesInfo?.[0]?.partner || "" },
+      select: {
+        name1: true,
+        street: true,
+        street1: true,
+        district: true,
+        upazilla: true,
+        mobile_no: true,
+      },
+    }),
+
+    db.rdl_delivery_list.findMany({
+      where: {
+        delivery_id: Number(deliveryDetails?.id || 0),
+      },
+    }),
+    db.rdl_delivery_list.aggregate({
+      where: {
+        delivery_id: Number(deliveryDetails?.id || 0),
+      },
+      _sum: {
+        delivery_net_val: true,
+        return_net_val: true,
+      },
+    }),
+  ]);
 
   return (
     <article className="w-full mx-auto max-h-[50rem] overflow-y-auto h-[28rem] max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-5xl">
-
+      {/* billing info */}
       <section className="billing-info flex gap-5 text-sm border-b pb-5 flex-wrap">
-        <DetailsField
-          fieldName="Bill No."
-          fieldContent={deliveryDetails?.billing_doc_no}
-        />
+        <DetailsField fieldName="Bill No." fieldContent={searchParams.dId} />
         <DetailsField
           fieldName="Bill Date"
-          fieldContent={formatDate(deliveryDetails?.billing_date as Date)}
+          fieldContent={formatDate(invoiceInfo?.billing_date as Date)}
         />
         <DetailsField
           fieldName="Delivery Status"
@@ -81,36 +102,63 @@ export default async function CollectionDetailsView({
       </section>
 
       <section className="billing-details grid lg:grid-cols-2 gap-3 text-sm border-b py-5">
-        <section className="h-fit grid grid-cols-2 gap-3 md:gap-5">
+        {/*  da and partner info */}
+        <section className="h-fit grid grid-cols-3 gap-3 md:gap-5">
           <DetailsField
             fieldName="DA Code"
-            fieldContent={deliveryDetails?.da_code}
+            fieldContent={invoiceInfo?.da_code}
           />
-          <DetailsField fieldName="DA Name" fieldContent={daInfo?.full_name} />
-          <DetailsField fieldName="Partner" fieldContent={partnerInfo?.name1} />
           <DetailsField
+            className="col-span-2"
+            fieldName="DA Name"
+            fieldContent={invoiceInfo?.da_name}
+          />
+          <DetailsField
+            className="col-span-2"
+            fieldName="Partner"
+            fieldContent={partnerInfo?.name1}
+          />
+          <DetailsField
+            fieldName="Contact"
+            fieldContent={partnerInfo?.mobile_no}
+          />
+          <DetailsField
+            className="col-span-3"
             fieldName="Address"
-            fieldContent={routeInfo?.description}
+            fieldContent={`${partnerInfo?.street || partnerInfo?.street1}
+            ${partnerInfo?.upazilla ? ", " + partnerInfo.upazilla : null}
+            ${partnerInfo?.district ? ", " + partnerInfo.district : null}
+            `}
           />
           <DetailsField
+            className="col-span-2 md:col-span-1"
             fieldName="Vehicle No."
-            fieldContent={deliveryDetails?.vehicle_no}
+            fieldContent={invoiceInfo?.vehicle_no}
           />
           <DetailsField
             fieldName="Gate Pass No."
-            fieldContent={deliveryDetails?.gate_pass_no}
+            fieldContent={invoiceSalesInfo?.[0]?.gate_pass_no}
           />
         </section>
 
         {/* google map */}
-        <section className="w-full rounded overflow-hidden border border-primary p-0.25">
-          <GoogleMap
-            latitude={Number(deliveryDetails?.delivery_latitude || 23.81)}
-            longitude={Number(deliveryDetails?.delivery_longitude || 90.41)}
-          />
-        </section>
+        {deliveryDetails?.delivery_status?.toLowerCase() === "done" && (
+          <section className="flex flex-col gap-3">
+            <h5 className="text-muted-foreground flex items-center">
+              <MapPin className="size-4 mr-2 text-primary" />
+              <span>Delivery Location</span>
+            </h5>
+            <section className="w-full rounded overflow-hidden border border-primary p-0.25">
+              <GoogleMap
+                latitude={Number(deliveryDetails?.delivery_latitude || 23.81)}
+                longitude={Number(deliveryDetails?.delivery_longitude || 90.41)}
+              />
+            </section>
+          </section>
+        )}
       </section>
 
+      {/* product delivery table */}
       <section className="mt-5 w-full overflow-x-auto">
         <Table>
           <TableHeader>
@@ -128,23 +176,37 @@ export default async function CollectionDetailsView({
           </TableHeader>
 
           <TableBody>
-            {deliveryList.map((item) => (
-              <TableRow key={item.id} className="text-right">
-                <TableCell className="text-left">{item.batch}</TableCell>
-                <TableCell>{Number(item.quantity)}</TableCell>
-                <TableCell>{formatNumber(Number(item.tp))}</TableCell>
-                <TableCell>{formatNumber(Number(item.vat))}</TableCell>
-                <TableCell>{formatNumber(Number(item.net_val))}</TableCell>
-                <TableCell>{Number(item.delivery_quantity)}</TableCell>
-                <TableCell>
-                  {formatNumber(Number(item.delivery_net_val))}
-                </TableCell>
-                <TableCell>{Number(item.return_quantity)}</TableCell>
-                <TableCell>
-                  {formatNumber(Number(item.return_net_val))}
-                </TableCell>
-              </TableRow>
-            ))}
+            {deliveryList.length > 0
+              ? deliveryList.map((item) => (
+                  <TableRow key={item.id} className="text-right">
+                    <TableCell className="text-left">{item.batch}</TableCell>
+                    <TableCell>{Number(item.quantity)}</TableCell>
+                    <TableCell>{formatNumber(Number(item.tp))}</TableCell>
+                    <TableCell>{formatNumber(Number(item.vat))}</TableCell>
+                    <TableCell>{formatNumber(Number(item.net_val))}</TableCell>
+                    <TableCell>{Number(item.delivery_quantity)}</TableCell>
+                    <TableCell>
+                      {formatNumber(Number(item.delivery_net_val))}
+                    </TableCell>
+                    <TableCell>{Number(item.return_quantity)}</TableCell>
+                    <TableCell>
+                      {formatNumber(Number(item.return_net_val))}
+                    </TableCell>
+                  </TableRow>
+                ))
+              : invoiceSalesInfo.map((item) => (
+                  <TableRow>
+                    <TableCell className="text-left">{item.batch}</TableCell>
+                    <TableCell>{Number(item.quantity)}</TableCell>
+                    <TableCell>{formatNumber(Number(item.tp))}</TableCell>
+                    <TableCell>{formatNumber(Number(item.vat))}</TableCell>
+                    <TableCell>{formatNumber(Number(item.net_val))}</TableCell>
+                    <TableCell>-</TableCell>
+                    <TableCell>-</TableCell>
+                    <TableCell>-</TableCell>
+                    <TableCell>-</TableCell>
+                  </TableRow>
+                ))}
           </TableBody>
           <TableFooter>
             <TableRow>
