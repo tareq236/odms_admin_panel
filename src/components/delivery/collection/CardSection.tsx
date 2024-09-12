@@ -14,52 +14,59 @@ export default async function CardSection({
 }: {
   searchParams: { p: string; q: string; start: string };
 }) {
+  let totalDelivery: any = [{ total_delivery: 0 }];
+  let deliveryDone: any = [{ total_delivery_done: 0 }];
+  let collectionDone: any = [{ total_collection_done: 0 }];
+  let returnQuantity: any = [{ total_return: 0 }];
 
-  let [totalDelivery, deliveryDone, collectionDone] = [0,0,0]
+  const data = await db.$queryRaw`
+  SELECT COUNT(*) as total_delivery
+  FROM rdl_delivery_info_sap as a
+  LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+  LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
+          WHERE a.da_code = ${Number(searchParams.q)} AND a.billing_date=${searchParams.start ? new Date(searchParams.start) : new Date()}
+
+  AND b.delivery_status = 'Done'
+  LIMIT 100 
+  `;
+  console.log(data);
 
   try {
-    [totalDelivery, deliveryDone, collectionDone] = await Promise.all([
-      db.rdl_delivery.count({
-        where: {
-          AND: [
-            { da_code: searchParams.q || "" },
-            {
-              billing_date: searchParams.start
-                ? new Date(searchParams.start)
-                : new Date(),
-            },
-          ],
-        },
-      }),
-      db.rdl_delivery.count({
-        where: {
-          AND: [
-            { da_code: searchParams.q || "" },
-            { delivery_status: "Done" },
-            {
-              billing_date: searchParams.start
-                ? new Date(searchParams.start)
-                : new Date(),
-            },
-          ],
-        },
-      }),
-      db.rdl_delivery.count({
-        where: {
-          AND: [
-            { da_code: searchParams.q || "" },
-            { cash_collection_status: "Done" },
-            {
-              billing_date: searchParams.start
-                ? new Date(searchParams.start)
-                : new Date(),
-            },
-          ],
-        },
-      }),
+    [totalDelivery, deliveryDone, collectionDone, returnQuantity] = await Promise.all([
+      db.$queryRaw`
+        SELECT COUNT(*) as total_delivery
+        FROM rdl_delivery_info_sap as a
+        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+        LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
+        WHERE a.da_code = ${Number(searchParams.q)} AND a.billing_date=${searchParams.start ? new Date(searchParams.start) : new Date()}
+        `,
+      db.$queryRaw`
+        SELECT COUNT(*) as total_delivery_done
+        FROM rdl_delivery_info_sap as a
+        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+        LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
+        WHERE a.da_code = ${Number(searchParams.q)} AND a.billing_date=${searchParams.start ? new Date(searchParams.start) : new Date()}
+        AND b.delivery_status = 'Done'
+        `,
+      db.$queryRaw`
+        SELECT COUNT(*) as total_collection_done
+        FROM rdl_delivery_info_sap as a
+        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+        LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
+        WHERE a.da_code = ${Number(searchParams.q)} AND a.billing_date=${searchParams.start ? new Date(searchParams.start) : new Date()}
+        AND b.cash_collection_status = 'Done'
+        `,
+        db.$queryRaw`
+        SELECT COUNT(*) as total_return
+        FROM rdl_delivery_info_sap as a
+        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+        LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
+        WHERE a.da_code = ${Number(searchParams.q)} AND a.billing_date=${searchParams.start ? new Date(searchParams.start) : new Date()}
+        AND e.return_quantity IS NOT NULL
+        `,
     ]);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 
   return (
@@ -69,31 +76,34 @@ export default async function CardSection({
         <Card
           paramString="dr"
           name="Delivery Remaining"
-          stats={totalDelivery - deliveryDone}
+          stats={
+            Number(totalDelivery[0].total_delivery) -
+            Number(deliveryDone[0].total_delivery_done)
+          }
           icon={<Package2 className="size-5" />}
         />
         <Card
           paramString="dd"
           name="Delivery Done"
-          stats={deliveryDone}
+          stats={Number(deliveryDone[0].total_delivery_done)}
           icon={<PackageCheck className="size-5" />}
         />
         <Card
           paramString="cr"
           name="Collection Remainig"
-          stats={totalDelivery - collectionDone}
+          stats={Number(totalDelivery[0].total_delivery) - Number(collectionDone[0].total_collection_done)}
           icon={<HandCoins className="size-5" />}
         />
         <Card
           paramString="cd"
           name="Collection Done"
-          stats={collectionDone}
+          stats={Number(collectionDone[0].total_collection_done)}
           icon={<Handshake className="size-5" />}
         />
         <Card
           paramString="r"
           name="Returned"
-          stats={0}
+          stats={Number(returnQuantity[0].total_return)}
           icon={<PackageMinus className="size-5" />}
         />
       </div>
