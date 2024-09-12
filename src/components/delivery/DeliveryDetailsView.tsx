@@ -17,7 +17,7 @@ function DeliveryDetailsView({ details }: { details: any }) {
         </div>
       </section>
 
-      <section className="billing-details grid grid-cols-2 md:grid-cols-3 gap-3 text-sm border-b py-5">
+      <section className="billing-details grid grid-cols-2 gap-3 text-sm border-b py-5">
         <div className="">
           <h3 className="text-[12px] text-gray-500">DA Code</h3>
           <h4>{details.da_code}</h4>
@@ -30,8 +30,8 @@ function DeliveryDetailsView({ details }: { details: any }) {
           <h3 className="text-[12px] text-gray-500">Partner</h3>
           <h4>{details.partner_name}</h4>
         </div>
-        <div className=" col-span-2">
-          <h3 className="text-[12px] text-gray-500">Address</h3>
+        <div className="">
+          <h3 className="text-[12px] text-gray-500">Route Address</h3>
           <h4>{details.address}</h4>
         </div>
         <div className="">
