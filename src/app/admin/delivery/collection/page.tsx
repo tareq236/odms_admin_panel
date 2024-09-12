@@ -104,10 +104,12 @@ const DataTable = async ({
           data={data as any[]}
           connectionError={connectionError}
         >
-          {/* anc */}
-          <Suspense fallback={<p>Loading...</p>}>
-            <CollectionDetailsView searchParams={searchParams} />
-          </Suspense>
+          {searchParams.dId && (
+            <Suspense fallback={<p>Loading...</p>}>
+              {/* anc */}
+              <CollectionDetailsView searchParams={searchParams} />
+            </Suspense>
+          )}
         </DeliveryCollectionTable>
         <PagePagination limit={limit} count={Number(count[0].total)} />
       </div>
