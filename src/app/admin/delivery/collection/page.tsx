@@ -271,10 +271,7 @@ const DataTable = async ({
     } else {
       data = [];
     }
-
-    console.log(count);
   } catch (error) {
-    console.log(error);
     data = [] as any[];
     connectionError = true;
   }

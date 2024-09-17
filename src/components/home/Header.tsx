@@ -35,7 +35,7 @@ export default async function Header() {
             icon={<Route className="size-5" />}
           />
           <Card
-            href="/admin/delivery"
+            href="/admin/delivery/invoice"
             title="Delivery"
             icon={<Truck className="size-5" />}
           />

@@ -1,4 +1,6 @@
-const NUMBER_FORMATTER = new Intl.NumberFormat("en-IN");
+const NUMBER_FORMATTER = new Intl.NumberFormat("en-IN", {
+  maximumFractionDigits: 2,
+});
 
 export const formatNumber = (number: number) => {
   return NUMBER_FORMATTER.format(number);
