@@ -13,10 +13,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatNumber } from "@/lib/formatters";
-import { MessageSquareOff, ServerOff } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronsUpDown,
+  MessageSquareOff,
+  ServerOff,
+} from "lucide-react";
 import React from "react";
+import SortableTableHeader from "./SortableTableHead";
 
-function PartnerDeliveryStatsTable({
+export default function PartnerDeliveryStatsTable({
   data,
   connectionError,
 }: {
@@ -30,10 +36,10 @@ function PartnerDeliveryStatsTable({
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Partner Name</TableHead>
-            <TableHead>Delivery Received (%)</TableHead>
-            <TableHead>Delivery Returned (%)</TableHead>
-            <TableHead>Full Payment (%)</TableHead>
-            <TableHead>Due (%)</TableHead>
+            <SortableTableHeader sortingValue="rec">Delivery Received (%)</SortableTableHeader>
+            <SortableTableHeader sortingValue="ret">Delivery Returned (%)</SortableTableHeader>
+            <SortableTableHeader sortingValue="full">Full Payment (%)</SortableTableHeader>
+            <SortableTableHeader sortingValue="due">Due (%)</SortableTableHeader>
             {/* <TableHead>Actions</TableHead> */}
           </TableRow>
         </TableHeader>
@@ -98,5 +104,3 @@ function PartnerDeliveryStatsTable({
     </>
   );
 }
-
-export default PartnerDeliveryStatsTable;
