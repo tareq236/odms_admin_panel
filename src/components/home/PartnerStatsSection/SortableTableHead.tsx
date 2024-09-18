@@ -37,7 +37,7 @@ export default function SortableTableHeader({
     >
       <div className="flex items-center gap-2">
         <span>{children}</span>
-        <ArrowUpDown className={`size-4 ${params.get('sorting') === sortingValue ? "opacity-100" : "opacity-0"} group-hover:opacity-100`} />
+        <ArrowUpDown className={`size-4 ${params.get('sorting') === sortingValue || (!params.has('sorting') && sortingValue == 'rec') ? "opacity-100" : "opacity-0"} group-hover:opacity-100`} />
       </div>
     </TableHead>
   );
