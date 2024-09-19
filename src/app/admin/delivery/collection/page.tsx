@@ -254,6 +254,7 @@ const DataTable = async ({
           LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
           INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
           INNER JOIN rpl_customer as d ON c.partner=d.partner
+          WHERE a.billing_date = ${
             searchParams.start ? new Date(searchParams.start) : new Date()
           } 
           AND a.da_code = ${Number(searchParams.q) || 0} 
