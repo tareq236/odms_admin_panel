@@ -38,7 +38,7 @@ export const getDeliveryCollection = async ({
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
           db.$queryRaw`
-            select count(*) as total from rdl_delivery_info_sap as a
+            select count(*) over() as total from rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             WHERE a.billing_date = ${
               searchParams.start ? `${searchParams.start}` : `${formateDateDB(new Date())}`
@@ -71,7 +71,7 @@ export const getDeliveryCollection = async ({
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
           db.$queryRaw`
-            select count(*) as total from rdl_delivery_info_sap as a
+            select count(*) over() as total from rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             WHERE a.billing_date = ${
               searchParams.start ? `${searchParams.start}` : `${formateDateDB(new Date())}`
@@ -104,7 +104,7 @@ export const getDeliveryCollection = async ({
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
           db.$queryRaw`
-            select count(*) as total from rdl_delivery_info_sap as a
+            select count(*) over() as total from rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             WHERE a.billing_date = ${
               searchParams.start ? `${searchParams.start}` : `${formateDateDB(new Date())}`
@@ -138,7 +138,7 @@ export const getDeliveryCollection = async ({
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
           db.$queryRaw`
-            select count(*) as total from rdl_delivery_info_sap as a
+            select count(*) over() as total from rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             WHERE a.billing_date = ${
               searchParams.start ? `${searchParams.start}` : `${formateDateDB(new Date())}`
@@ -173,7 +173,7 @@ export const getDeliveryCollection = async ({
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
           db.$queryRaw`
-            select count(*) as total from rdl_delivery_info_sap as a
+            select count(*) over() as total from rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
             WHERE a.billing_date = ${
@@ -205,7 +205,7 @@ export const getDeliveryCollection = async ({
                 LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
                   `,
             db.$queryRaw`
-                select count(*) as total from rdl_delivery_info_sap
+                select count(*) over() as total from rdl_delivery_info_sap
                 where billing_date = ${
                   searchParams.start ? new Date(searchParams.start) : new Date()
                 } 
@@ -234,7 +234,7 @@ export const getDeliveryCollection = async ({
                 LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
                   `,
             db.$queryRaw`
-                select count(*) as total from rdl_delivery_info_sap
+                select count(*) over() as total from rdl_delivery_info_sap
                 WHERE billing_date = ${
                   searchParams.start ? `${searchParams.start}` : `${formateDateDB(new Date())}`
                 }
