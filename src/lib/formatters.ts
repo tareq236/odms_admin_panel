@@ -20,3 +20,7 @@ export const formatDate = (date: Date) => {
 export const formatDateTime = (date:Date) => {
   return format(date, 'MMM d, yyyy - h:mm aaa')
 }
+
+export const formateDateDB = (date: Date) => {
+  return format(date, 'yyyy-MM-dd')
+}
