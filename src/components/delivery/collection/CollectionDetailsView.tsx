@@ -194,8 +194,8 @@ export default async function CollectionDetailsView({
                     </TableCell>
                   </TableRow>
                 ))
-              : invoiceSalesInfo.map((item) => (
-                  <TableRow>
+              : invoiceSalesInfo.map((item, index) => (
+                  <TableRow key={index}>
                     <TableCell className="text-left">{item.batch}</TableCell>
                     <TableCell>{Number(item.quantity)}</TableCell>
                     <TableCell>{formatNumber(Number(item.tp))}</TableCell>
