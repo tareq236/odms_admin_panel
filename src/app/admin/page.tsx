@@ -14,7 +14,7 @@ export type CartData = {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { q: string; p: string };
+  searchParams: { q: string; p: string, sorting: string };
 }) {
   const date = new Date();
   const currentDate = format(new Date(), "yyyy-MM-dd");
