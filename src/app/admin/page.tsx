@@ -4,7 +4,6 @@ import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import Header from "@/components/home/Header";
 import { ChartSection } from "@/components/home/ChartSections";
-import PartnerStatsSection from "@/components/home/PartnerStatsSection/PartnerStatsSection";
 
 export type CartData = {
   day: Date;
@@ -45,7 +44,6 @@ export default async function Home({
     <div className="">
       <Header />
       <ChartSection data={data as CartData[]} count={count} />
-      <PartnerStatsSection searchParams={searchParams} />
     </div>
   );
 }
