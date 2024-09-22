@@ -10,6 +10,7 @@ import {
   ScrollText,
   Truck,
   UserRoundPen,
+  Users,
 } from "lucide-react";
 import NavLink from "./NavLink";
 import Accordion from "./Accordion";
@@ -67,6 +68,19 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
               onClick={onClose}
             />
           </Accordion>
+
+          {/* statistics */}
+          <div className="my-3">
+            <h4 className="text-muted-foreground text-xs mb-3">Analytics</h4>
+
+            <div className="flex flex-col gap-2">
+              <NavLink icon={<Users  className="size-4" />}
+                name="Partner Delivery"
+                href="/admin/analytics/partner-delivery"
+                onClick={onClose}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
