@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { SearchIcon } from "lucide-react";
 import { useRouter } from "next-nprogress-bar";
 import { usePathname, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Button } from "./button";
 
 function Search({ placeholder = "Search...", type='search' }: { placeholder?: string, type?: string }) {
@@ -17,8 +17,20 @@ function Search({ placeholder = "Search...", type='search' }: { placeholder?: st
 
   const params = new URLSearchParams(searchParams);
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    if (search) {
+      params.set("q", search);
+      params.delete("p");
+    } else {
+      params.delete("q");
+      params.delete("p");
+    }
+    router.push(pathname + "?" + params.toString());
+  }
+
   return (
-    <div className="relative min-w-[5rem]">
+    <form onSubmit={handleSubmit} className="relative min-w-[5rem]">
       <Input
         type={type}
         name="search"
@@ -35,22 +47,13 @@ function Search({ placeholder = "Search...", type='search' }: { placeholder?: st
         <SearchIcon className="size-4" />
       </Label>
       <Button
+      type="submit"
         size={"icon"}
         className="absolute right-0 top-0 rounded-l-none"
-        onClick={() => {
-          if (search) {
-            params.set("q", search);
-            params.delete("p");
-          } else {
-            params.delete("q");
-            params.delete("p");
-          }
-          router.push(pathname + "?" + params.toString());
-        }}
       >
         <SearchIcon className="size-4" />
       </Button>
-    </div>
+    </form>
   );
 }
 
