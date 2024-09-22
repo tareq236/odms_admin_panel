@@ -34,6 +34,7 @@ export default async function CardSection({
             : `${formateDateDB(new Date())}`
         }
         GROUP BY a.billing_doc_no
+        limit 1
         `,
         db.$queryRaw`
         SELECT COUNT(*) over() as total_delivery_done
@@ -47,6 +48,7 @@ export default async function CardSection({
         }
         AND b.delivery_status = 'Done'
         GROUP BY a.billing_doc_no
+        limit 1
         `,
         db.$queryRaw`
         SELECT COUNT(*) over() as total_collection_done
@@ -60,6 +62,7 @@ export default async function CardSection({
         }
         AND b.cash_collection_status = 'Done'
         GROUP BY a.billing_doc_no
+        limit 1
         `,
         db.$queryRaw`
         SELECT COUNT(*) as total_return
@@ -74,6 +77,7 @@ export default async function CardSection({
         AND e.return_quantity IS NOT NULL
         AND e.return_quantity != 0
         GROUP BY a.billing_doc_no
+        limit 1
         `,
       ]);
   } catch (error) {

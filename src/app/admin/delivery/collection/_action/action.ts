@@ -46,6 +46,7 @@ export const getDeliveryCollection = async ({
             AND a.da_code = ${Number(searchParams.q) || 0} 
             AND b.delivery_status='Done'
             GROUP BY a.billing_doc_no
+            limit 1
           `,
         ]);
       }
@@ -79,6 +80,7 @@ export const getDeliveryCollection = async ({
             AND a.da_code = ${Number(searchParams.q) || 0} 
             AND b.delivery_status IS NULL
             GROUP BY a.billing_doc_no
+            limit 1
           `,
         ]);
       }
@@ -112,6 +114,7 @@ export const getDeliveryCollection = async ({
             AND a.da_code = ${Number(searchParams.q) || 0} 
             AND b.cash_collection_status='done'
             GROUP BY a.billing_doc_no
+            limit 1
           `,
           ])
       }
@@ -147,6 +150,7 @@ export const getDeliveryCollection = async ({
             AND b.delivery_status='done'
             AND b.cash_collection_status is null
             GROUP BY a.billing_doc_no
+            limit 1
           `,
         ]);
       } else if (searchParams.status == "r") {
@@ -183,6 +187,7 @@ export const getDeliveryCollection = async ({
             AND e.return_quantity IS NOT NULL
             AND e.return_quantity != 0
             GROUP BY a.billing_doc_no
+            limit 1
           `,
         ]);
       } else {
@@ -211,6 +216,7 @@ export const getDeliveryCollection = async ({
                 } 
                 AND da_code = ${Number(searchParams.q) || 0}
                 GROUP BY a.billing_doc_no
+                limit 1
               `,
           ]);
       }
@@ -240,6 +246,7 @@ export const getDeliveryCollection = async ({
                 }
                 AND da_code = ${Number(searchParams.q) || 0}
                 GROUP BY billing_doc_no
+                limit 1
               `,
           ]);
     }
