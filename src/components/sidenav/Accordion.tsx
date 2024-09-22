@@ -22,7 +22,7 @@ function Accordion({
       <Button
         variant={"ghost"}
         className={`text-sm font-normal w-full flex justify-between items-center
-           p-2 rounded hover:bg-primary/10 hover:text-primary ${pathname.includes(name.toLowerCase()) ? 'text-primary bg-primary/5' : ''}
+           p-2 rounded hover:bg-primary/10 hover:text-primary
            transition-all duration-300`}
         onClick={() => {
           setShowContent(!showContent);
