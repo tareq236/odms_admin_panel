@@ -28,9 +28,8 @@ const DataTable = async ({
   searchParams: { q: string; p: string; sorting: string };
 }) => {
   const limit = 20;
-  let count: any = [{ total: 0 }];
 
-  let { data, connectionError } = await getPartnerDeliveryStats({
+  let { data, connectionError, count } = await getPartnerDeliveryStats({
     searchParams: searchParams,
     limit: limit,
   });
