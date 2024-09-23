@@ -114,31 +114,3 @@ export const getAttendance = async ({
   return { data, count };
 };
 
-// let data: any | unknown;
-//   let count: any | unknown;
-//   const currentDate = new Date(searchParams.start) || new Date();
-
-//   let currentFormatDate = format(currentDate, 'yyyy-MM-dd')
-//   let nextFormatDate = format(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()+1), 'yyyy-MM-dd')
-
-//   let startDate =
-//     searchParams.start == undefined ? new Date() : new Date(searchParams.start);
-
-//     [data, count] = await Promise.all([
-//       db.$queryRaw(
-//         Prisma.sql`
-//         SELECT *
-//         FROM rdl_attendance
-//         WHERE start_date_time > ${currentFormatDate}
-//         AND start_date_time < ${nextFormatDate}
-//         `,
-//       ),
-//       db.$queryRaw(
-//         Prisma.sql`
-//         SELECT COUNT(sap_id) as count
-//         FROM rdl_attendance
-//         WHERE start_date_time > ${currentFormatDate}
-//         AND start_date_time < ${nextFormatDate}
-//         `,
-//       ),
-//     ])

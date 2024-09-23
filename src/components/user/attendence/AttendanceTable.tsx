@@ -8,9 +8,8 @@ import {
   } from "@/components/ui/table";
 import { MessageSquareOff, ServerOff } from "lucide-react";
 import React from "react";
-import { formatDate, formatNumber } from "@/lib/formatters";
+import { formatDateTime, formatNumber } from "@/lib/formatters";
 import { AttendanceTableProps } from "@/app/admin/user/attendance/page";
-import { format } from "date-fns";
 
 export default function AttendanceTable({
     data,
@@ -50,8 +49,8 @@ export default function AttendanceTable({
               <TableRow key={item.sap_id}>
                 <TableCell>{item.sap_id}</TableCell>
                 <TableCell>{item.rdl_user_list?.full_name}</TableCell>
-                <TableCell className="min-w-[180px]">{item.start_date_time ? formatDate(item.start_date_time) : '-'}</TableCell>
-                <TableCell className="min-w-[180px]">{item.end_date_time ? formatDate(item.end_date_time) : '-'}</TableCell>
+                <TableCell className="min-w-[180px]">{item.start_date_time ? formatDateTime(item.start_date_time) : '-'}</TableCell>
+                <TableCell className="min-w-[180px]">{item.end_date_time ? formatDateTime(item.end_date_time) : '-'}</TableCell>
                 <TableCell >{item.late_time_min ? formatNumber(item.late_time_min): '-'}</TableCell>
                 <TableCell>{item.over_time_min ? formatNumber(item.over_time_min): '-'}</TableCell>
               </TableRow>

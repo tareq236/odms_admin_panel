@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/chart";
 import { CartData } from "@/app/admin/page";
 import { formatDate } from "@/lib/formatters";
+import ChartMonthSelect from "@/components/home/Select";
 
 export const description = "An interactive bar chart";
 
@@ -45,21 +46,20 @@ export function ChartSection({
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>("attendance");
 
-  let cartList: any[] = [];
+  let chartList: any[] = [];
 
   for (let i = 0; i < data.length; i++) {
-    cartList.push({
+    chartList.push({
       date: data[i].day,
       attendance: Number(data[i].total_attendance),
       absence: count - Number(data[i].total_attendance),
     });
   }
-  console.log(cartList)
 
   const total = React.useMemo(
     () => ({
-      attendance: cartList[cartList.length - 1].attendance,
-      absence: cartList[cartList.length - 1].absence,
+      attendance: chartList[chartList.length - 1].attendance,
+      absence: chartList[chartList.length - 1].absence,
     }),
     [],
   );
@@ -68,11 +68,14 @@ export function ChartSection({
     <>
       <Card>
         <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
-          <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-            <CardTitle>Bar Chart - Monthly Attendance</CardTitle>
-            <CardDescription>
-              Showing total attendance for the last month
-            </CardDescription>
+          <div className="flex flex-1 flex-wrap justify-between items-center gap-5 px-6 py-5 sm:py-6">
+            <div className="flex flex-1 flex-col justify-center gap-1 ">
+              <CardTitle>Monthly Attendance</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
+                Showing total attendance for the last month
+              </CardDescription>
+            </div>
+            <ChartMonthSelect />
           </div>
           <div className="flex">
             {["attendance", "absence"].map((key) => {
@@ -102,7 +105,7 @@ export function ChartSection({
           >
             <BarChart
               accessibilityLayer
-              data={cartList}
+              data={chartList}
               margin={{
                 left: 12,
                 right: 12,

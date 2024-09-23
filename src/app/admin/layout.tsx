@@ -18,7 +18,7 @@ export default async function AdminLayout({
 
       <div className="w-full md:w-4/5">
         {/* nav */}
-        <Nav />
+        {/* <Nav /> */}
         <main className="container py-6">{children}</main>
       </div>
     </div>

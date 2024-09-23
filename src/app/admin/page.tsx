@@ -1,21 +1,28 @@
-import { ChartSection } from "@/containers/home/ChartSections";
 import React from "react";
 import db from "../../../db/db";
 import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
-import Header from "@/containers/home/Header";
+import Header from "@/components/home/Header";
+import { ChartSection } from "@/components/home/ChartSections";
 
 export type CartData = {
   day: Date;
   total_attendance: bigint;
 };
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { q: string; p: string, sorting: string };
+}) {
   const date = new Date();
-  const currentDate = format(new Date(), 'yyyy-MM-dd');
-  const prevMonth = format(new Date(date.getFullYear(), date.getMonth()-1, date.getDate()),'yyyy-MM-dd');
-  let count = 0
-  let data:CartData[] | unknown;
+  const currentDate = format(new Date(), "yyyy-MM-dd");
+  const prevMonth = format(
+    new Date(date.getFullYear(), date.getMonth() - 1, date.getDate()),
+    "yyyy-MM-dd",
+  );
+  let count = 0;
+  let data: CartData[] | unknown;
 
   try {
     [data, count] = await Promise.all([
@@ -28,12 +35,10 @@ export default async function Home() {
     `,
       ),
       db.rdl_user_list.count(),
-
     ]);
   } catch (error) {
     data = [];
   }
-
 
   return (
     <div className="">

@@ -1,10 +1,19 @@
 "use client";
 
 import { format } from "date-fns";
-import { Home, ListTodo, Map, Route, Truck, UserRoundPen } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ReactNode, useEffect } from "react";
+import {
+  Home,
+  ListTodo,
+  Map,
+  PackageCheck,
+  Route,
+  ScrollText,
+  Truck,
+  UserRoundPen,
+  Users,
+} from "lucide-react";
+import NavLink from "./NavLink";
+import Accordion from "./Accordion";
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   return (
@@ -44,45 +53,36 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             href="/admin/route"
             onClick={onClose}
           />
-          <NavLink
-            icon={<Truck className="size-4" />}
-            name="Delivery"
-            href="/admin/delivery"
-            onClick={onClose}
-          />
+
+          <Accordion name="Delivery" icon={<Truck className="size-4" />}>
+            <NavLink
+              name="Invoice"
+              icon={<ScrollText className="size-4" />}
+              href="/admin/delivery/invoice"
+              onClick={onClose}
+            />
+            <NavLink
+              name="Collection"
+              icon={<PackageCheck className="size-4" />}
+              href="/admin/delivery/collection"
+              onClick={onClose}
+            />
+          </Accordion>
+
+          {/* statistics */}
+          <div className="my-3">
+            <h4 className="text-muted-foreground text-xs mb-3">Analytics</h4>
+
+            <div className="flex flex-col gap-2">
+              <NavLink icon={<Users  className="size-4" />}
+                name="Partner Delivery"
+                href="/admin/analytics/partner-delivery"
+                onClick={onClose}
+              />
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className="bottom min-h-[10rem]"></div>
     </div>
   );
 }
-
-const NavLink = ({
-  icon,
-  name,
-  href,
-  onClick,
-}: {
-  icon: ReactNode;
-  name: string;
-  href: string;
-  onClick?: () => void;
-}) => {
-  const pathname = usePathname();
-
-  return (
-    <>
-      <Link
-        className={`${
-          href.split("?")[0] === pathname && "text-primary bg-primary/5"
-        } text-sm flex gap-3 items-center p-2 rounded hover:bg-primary/10 hover:text-primary transition-all duration-300`}
-        href={href}
-        onClick={onClick}
-      >
-        {icon}
-        <span>{name}</span>
-      </Link>
-    </>
-  );
-};

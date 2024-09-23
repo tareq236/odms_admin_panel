@@ -1,12 +1,11 @@
-import "server-only";
+import 'server-only'
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { decrypt } from "./session";
+import { decrypt, deleteSession } from "./session";
 import db from "../../db/db";
-import { cache } from "react";
 
-export const verifySession = cache(async () => {
+export const verifySession = async () => {
   const cookie = cookies().get("session")?.value;
   const session = await decrypt(cookie);
 
@@ -23,9 +22,9 @@ export const verifySession = cache(async () => {
   }
 
   return { isAuth: true, userId: session.userId };
-});
+};
 
-export const getUser = cache(async () => {
+export const getUser = async () => {
   const session = await verifySession();
   if (!session) return null;
 
@@ -38,6 +37,10 @@ export const getUser = cache(async () => {
       },
     });
 
+    if(data == null) {
+      throw new Error()
+    }
+
     const user = data;
 
     return user;
@@ -45,4 +48,4 @@ export const getUser = cache(async () => {
     console.log("Failed to fetch user");
     return null;
   }
-});
+};

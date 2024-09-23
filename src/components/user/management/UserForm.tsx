@@ -4,11 +4,11 @@ import { createUser, updateUser } from "@/app/actions/user";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/Select";
 import { rdl_user_list } from "@prisma/client";
 import React, { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";
+import { Select } from "../SelectStatus";
 
 interface UserFormProps {
     onClose: () => void,
