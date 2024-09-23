@@ -90,7 +90,7 @@ export const getPartnerDeliveryStats = async ({
           ]);
           break;
 
-        case "full":
+        case "due":
           [data, count] = await Promise.all([
             db.$queryRaw(
               Prisma.sql`
@@ -98,11 +98,11 @@ export const getPartnerDeliveryStats = async ({
                     (sum(rds.total_return_quantity) / sum(rds.total_quantity) * 100) total_return_percentage,
                     ABS((sum(rds.total_return_quantity) / sum(rds.total_quantity) - 1) * 100) total_received_percentage,
                     IFNULL((SUM(rds.total_collection) + SUM(rds.total_due)) / SUM(rds.total_net_val) * 100,0) full_payment_percentage,
-                    IFNULL(ABS((SUM(rds.total_collection) + SUM(rds.total_due)) / SUM(rds.total_net_val) * 100) - 100,0) due_percentage
+                    IFNULL(ABS(((SUM(rds.total_collection) + SUM(rds.total_due)) / SUM(rds.total_net_val)) - 1) * 100 ,0) due_percentage
                     FROM rdl_delivery_stats rds
                     INNER JOIN rpl_customer rc ON rds.partner_id = rc.partner
                     GROUP BY rds.partner_id
-                    ORDER BY IFNULL(ABS((SUM(rds.total_collection) + SUM(rds.total_due)) / SUM(rds.total_net_val) * 100) - 100,0) DESC
+                    ORDER BY IFNULL(ABS(((SUM(rds.total_collection) + SUM(rds.total_due)) / SUM(rds.total_net_val)) - 1) * 100 ,0) asc
                     LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
           
                   `,
