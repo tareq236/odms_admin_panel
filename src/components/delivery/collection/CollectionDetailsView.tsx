@@ -42,16 +42,18 @@ export default async function CollectionDetailsView({
         vehicle_no: true,
       },
     }),
-    db.rpl_sales_info_sap.findMany({
-      where: {
-        billing_doc_no: searchParams.dId,
-      },
-    })
+    db.$queryRaw`
+      select rsis.*, rm.material_name FROM rpl_sales_info_sap rsis
+      INNER JOIN rpl_material rm ON rsis.matnr=rm.matnr
+      WHERE rsis.billing_doc_no='9031323745'
+    `
   ])
+
+  let invoiceSalesInfoWithMaterial: any[] = invoiceSalesInfo ? invoiceSalesInfo as any[] : []
 
   const [partnerInfo, deliveryList, totalValue] = await Promise.all([
     db.rpl_customer.findUnique({
-      where: { partner: invoiceSalesInfo?.[0]?.partner || "" },
+      where: { partner: invoiceSalesInfoWithMaterial?.[0]?.partner || "" },
       select: {
         name1: true,
         street: true,
@@ -61,12 +63,12 @@ export default async function CollectionDetailsView({
         mobile_no: true,
       },
     }),
+    db.$queryRaw`
+      SELECT rdl.*, rm.material_name FROM rdl_delivery_list rdl
+      INNER JOIN rpl_material rm ON rdl.matnr=rm.matnr
+      where rdl.delivery_id = ${Number(deliveryDetails?.id || 0)}
+    `,
 
-    db.rdl_delivery_list.findMany({
-      where: {
-        delivery_id: Number(deliveryDetails?.id || 0),
-      },
-    }),
     db.rdl_delivery_list.aggregate({
       where: {
         delivery_id: Number(deliveryDetails?.id || 0),
@@ -77,6 +79,8 @@ export default async function CollectionDetailsView({
       },
     }),
   ]);
+
+  let deliveryListMaterial: any[] = deliveryList ? deliveryList as any[] : []
 
   return (
     <article className="w-full mx-auto max-h-[50rem] overflow-y-auto h-[28rem] max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-5xl">
@@ -137,7 +141,7 @@ export default async function CollectionDetailsView({
           />
           <DetailsField
             fieldName="Gate Pass No."
-            fieldContent={invoiceSalesInfo?.[0]?.gate_pass_no}
+            fieldContent={invoiceSalesInfoWithMaterial?.[0]?.gate_pass_no}
           />
         </section>
 
@@ -163,7 +167,7 @@ export default async function CollectionDetailsView({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Batch</TableHead>
+              <TableHead>Product name</TableHead>
               <TableHead>Qty.</TableHead>
               <TableHead>Unit Price</TableHead>
               <TableHead>VAT</TableHead>
@@ -176,10 +180,10 @@ export default async function CollectionDetailsView({
           </TableHeader>
 
           <TableBody>
-            {deliveryList.length > 0
-              ? deliveryList.map((item) => (
+            {deliveryListMaterial && deliveryListMaterial?.length > 0
+              ? deliveryListMaterial.map((item) => (
                   <TableRow key={item.id} className="text-right">
-                    <TableCell className="text-left">{item.batch}</TableCell>
+                    <TableCell className="text-left">{item.material_name}</TableCell>
                     <TableCell>{Number(item.quantity)}</TableCell>
                     <TableCell>{formatNumber(Number(item.tp))}</TableCell>
                     <TableCell>{formatNumber(Number(item.vat))}</TableCell>
@@ -194,9 +198,9 @@ export default async function CollectionDetailsView({
                     </TableCell>
                   </TableRow>
                 ))
-              : invoiceSalesInfo.map((item, index) => (
+              : invoiceSalesInfoWithMaterial.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="text-left">{item.batch}</TableCell>
+                    <TableCell className="text-left">{item.material_name}</TableCell>
                     <TableCell>{Number(item.quantity)}</TableCell>
                     <TableCell>{formatNumber(Number(item.tp))}</TableCell>
                     <TableCell>{formatNumber(Number(item.vat))}</TableCell>
