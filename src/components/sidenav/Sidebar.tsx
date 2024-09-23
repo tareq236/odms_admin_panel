@@ -11,6 +11,7 @@ import {
   Truck,
   UserRoundPen,
   Users,
+  Waypoints,
 } from "lucide-react";
 import NavLink from "./NavLink";
 import Accordion from "./Accordion";
@@ -68,6 +69,13 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
               onClick={onClose}
             />
           </Accordion>
+
+          <NavLink
+            icon={<Waypoints className="size-4" />}
+            name="Conveyance"
+            href="/admin/conveyance"
+            onClick={onClose}
+          />
 
           {/* statistics */}
           <div className="my-3">

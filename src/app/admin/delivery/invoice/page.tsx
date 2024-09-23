@@ -85,7 +85,7 @@ const DataTable = async ({
   return (
     <div className="data-table-section">
       <DeliveryTable data={data as any[]} connectionError={connectionError} />
-      <PagePagination limit={limit} count={Number(count[0].total)} />
+      <PagePagination limit={limit} count={Number(count[0]?.total || 0)} />
     </div>
   );
 };
