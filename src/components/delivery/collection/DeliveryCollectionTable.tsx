@@ -84,9 +84,25 @@ function DeliveryCollectionTable({
           ) : data.length > 0 ? (
             data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell>{item.billing_doc_no}</TableCell>
+                <TableCell>
+                  <Button
+                    variant={"link"}
+                    className="rounded-full"
+                    onClick={() => {
+                      setView(true);
+                      params.set("dId", `${item.billing_doc_no}`);
+                      router.push(`${pathName}?${params.toString()}`, {
+                        scroll: false,
+                      });
+                    }}
+                  >
+                    {item.billing_doc_no}
+                  </Button>
+                </TableCell>
                 <TableCell>{formatDate(item.billing_date)}</TableCell>
-                <TableCell>{item.name1} ({item.partner})</TableCell>
+                <TableCell>
+                  {item.name1} ({item.partner})
+                </TableCell>
                 <TableCell>
                   <StatusTag status={item.delivery_status || ""} />
                 </TableCell>
@@ -96,7 +112,11 @@ function DeliveryCollectionTable({
                 <TableCell>
                   {formatNumber(Number(item.cash_collection))}
                 </TableCell>
-                <TableCell>{formatNumber(Number(item.net_val) - Number(item.cash_collection))}</TableCell>
+                <TableCell>
+                  {formatNumber(
+                    Number(item.net_val) - Number(item.cash_collection),
+                  )}
+                </TableCell>
                 <TableCell>{formatNumber(Number(item.net_val))}</TableCell>
                 <TableCell>
                   <Button
