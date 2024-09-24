@@ -61,7 +61,7 @@ function DeliveryCollectionTable({
             <>
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={9}
                   align="center"
                   className="py-20 text-gray-400 pointer-events-none"
                 >
@@ -73,7 +73,7 @@ function DeliveryCollectionTable({
           ) : connectionError ? (
             <TableRow className="table-row-nowrap">
               <TableCell
-                colSpan={8}
+                colSpan={9}
                 align="center"
                 className="py-20 text-gray-400 pointer-events-none"
               >
@@ -140,7 +140,7 @@ function DeliveryCollectionTable({
             <>
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={9}
                   align="center"
                   className="py-20 text-gray-400 pointer-events-none"
                 >

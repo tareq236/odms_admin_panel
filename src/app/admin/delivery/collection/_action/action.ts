@@ -218,7 +218,7 @@ export const getDeliveryCollection = async ({
               `,
           ]);
       }
-    } else {
+    } else if(searchParams.q) {
         [data, count] = await Promise.all([
             db.$queryRaw`
                 SELECT a.billing_date, a.billing_doc_no, 
