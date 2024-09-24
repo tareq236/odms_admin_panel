@@ -22,7 +22,7 @@ export const getDeliveryCollection = async ({
           db.$queryRaw`
             SELECT a.billing_date, a.billing_doc_no, 
             b.delivery_status, b.cash_collection_status,
-            sum(b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) as net_val,
+            (b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) + sum(c.vat) as net_val,
             c.partner, b.id,
             d.name1
             FROM rdl_delivery_info_sap as a
@@ -56,7 +56,7 @@ export const getDeliveryCollection = async ({
           db.$queryRaw`
             SELECT a.billing_date, a.billing_doc_no, 
             b.delivery_status, b.cash_collection_status,
-            sum(b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) as net_val,
+            (b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) + sum(c.vat) as net_val,
             c.partner, b.id,
             d.name1
             FROM rdl_delivery_info_sap as a
@@ -90,7 +90,7 @@ export const getDeliveryCollection = async ({
           db.$queryRaw`
             SELECT a.billing_date, a.billing_doc_no, 
             b.delivery_status, b.cash_collection_status,
-            sum(b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) as net_val,
+            (b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) + sum(c.vat) as net_val,
             c.partner, b.id,
             d.name1
             FROM rdl_delivery_info_sap as a
@@ -124,7 +124,7 @@ export const getDeliveryCollection = async ({
           db.$queryRaw`
             SELECT a.billing_date, a.billing_doc_no, 
             b.delivery_status, b.cash_collection_status,
-            sum(b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) as net_val,
+            (b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) + sum(c.vat) as net_val,
             c.partner, b.id,
             d.name1
             FROM rdl_delivery_info_sap as a
@@ -158,15 +158,13 @@ export const getDeliveryCollection = async ({
           db.$queryRaw`
             SELECT a.billing_date, a.billing_doc_no, 
             b.delivery_status, b.cash_collection_status,
-            b.cash_collection, b.due_amount, c.net_val,
+            (b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) + sum(c.vat) as net_val,
             c.partner, b.id,
-            d.name1,
-            e.return_quantity
+            d.name1
             FROM rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
             INNER JOIN rpl_customer as d ON c.partner=d.partner
-            LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
             WHERE a.billing_date = ${
               searchParams.start ? `${searchParams.start}` : `${formateDateDB(new Date())}`
             } 
@@ -195,7 +193,7 @@ export const getDeliveryCollection = async ({
             db.$queryRaw`
                 SELECT a.billing_date, a.billing_doc_no, 
                 b.delivery_status, b.cash_collection_status,
-                b.cash_collection, b.due_amount, c.net_val,
+                (b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) + sum(c.vat) as net_val,
                 c.partner, b.id,
                 d.name1
                 FROM rdl_delivery_info_sap as a
@@ -225,7 +223,7 @@ export const getDeliveryCollection = async ({
             db.$queryRaw`
                 SELECT a.billing_date, a.billing_doc_no, 
                 b.delivery_status, b.cash_collection_status,
-                b.cash_collection, b.due_amount, c.net_val,
+                (b.cash_collection) cash_collection, sum(b.due_amount) due_amount, sum(c.net_val) + sum(c.vat) as net_val,
                 c.partner, b.id,
                 d.name1
                 FROM rdl_delivery_info_sap as a
