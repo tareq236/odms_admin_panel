@@ -1,30 +1,36 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { APIProvider, Map, Marker, useMarkerRef } from "@vis.gl/react-google-maps";
+import middleware from "@/middleware";
+import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 
-function GoogleMap({latitude, longitude}: {longitude: number, latitude: number}) {
-  const [markerRef, marker] = useMarkerRef();
-
-  useEffect(() => {
-    if (!marker) {
-      return;
-    }
-
-    // do something with marker instance here
-  }, [marker]);
+function GoogleMap({
+  latitude,
+  longitude,
+  endLat,
+  endLng,
+  defaultZoom=15
+}: {
+  longitude: number;
+  latitude: number;
+  endLat?: number;
+  endLng?: number;
+  defaultZoom?: number
+}) {
   return (
     <div>
       <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string}>
         <Map
-          style={{ width: "100%", minHeight: "10rem", height: '13.5rem' }}
+          style={{ width: "100%", minHeight: "10rem", height: "13.5rem" }}
           defaultCenter={{ lat: latitude, lng: longitude }}
-          defaultZoom={15}
+          defaultZoom={defaultZoom}
           gestureHandling={"greedy"}
           disableDefaultUI={true}
-          center={{lat: latitude, lng: longitude}}
+          center={{ lat: latitude, lng: longitude }}
         >
-          <Marker ref={markerRef} position={{lat: latitude, lng: longitude}} />
+          <Marker position={{ lat: latitude, lng: longitude }} />
+          {endLat != null && endLng != null && (
+            <Marker position={{ lat: endLat, lng: endLng }} />
+          )}
         </Map>
       </APIProvider>
     </div>

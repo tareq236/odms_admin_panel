@@ -28,6 +28,7 @@ export const formateDateDB = (date: Date) => {
 };
 
 export const titleCase = (str: string) => {
+  if (str == null) return;
   let word: any = str
     .toLowerCase()
     .split(" ")
@@ -35,5 +36,5 @@ export const titleCase = (str: string) => {
       return item.charAt(0).toUpperCase() + item.slice(1);
     });
 
-  return word.join(' ')
+  return word.join(" ");
 };

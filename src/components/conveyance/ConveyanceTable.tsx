@@ -10,17 +10,18 @@ import {
   TableCell,
 } from "../ui/table";
 import { useSearchParams } from "next/navigation";
-import { MessageSquareOff, Search, ServerOff } from "lucide-react";
+import { MessageSquareOff, Search, ServerOff, Waypoints } from "lucide-react";
 import { Button } from "../ui/button";
 import { formatDate, formatDateTime } from "@/lib/formatters";
-import { rdl_conveyance } from "@prisma/client";
 import StatusTag from "./StatusTag";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import DetailsView from "./DetailsView";
 
 function ConveyanceTable({
   data,
   connectionError,
 }: {
-  data: rdl_conveyance[];
+  data: any[];
   connectionError: boolean;
 }) {
   const [view, setView] = useState<any>(false);
@@ -46,7 +47,7 @@ function ConveyanceTable({
             <>
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={7}
                   align="center"
                   className="py-20 text-gray-400 pointer-events-none"
                 >
@@ -58,7 +59,7 @@ function ConveyanceTable({
           ) : connectionError ? (
             <TableRow className="table-row-nowrap">
               <TableCell
-                colSpan={8}
+                colSpan={7}
                 align="center"
                 className="py-20 text-gray-400 pointer-events-none"
               >
@@ -70,7 +71,7 @@ function ConveyanceTable({
             data.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="min-w-fit">{item.da_code}</TableCell>
-                <TableCell className="min-w-fit">{item.da_code}</TableCell>
+                <TableCell className="min-w-fit">{item.full_name}</TableCell>
                 <TableCell>{formatDateTime(item.start_journey_date_time)}</TableCell>
                 <TableCell>{formatDateTime(item.end_journey_date_time as Date)}</TableCell>
                 <TableCell><StatusTag name={item.journey_status} /></TableCell>
@@ -90,7 +91,7 @@ function ConveyanceTable({
             <>
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={7}
                   align="center"
                   className="py-20 text-gray-400 pointer-events-none"
                 >
@@ -102,6 +103,22 @@ function ConveyanceTable({
           )}
         </TableBody>
       </Table>
+
+
+      {/* delivery details modal */}
+      <Dialog open={view} onOpenChange={setView}>
+        <DialogContent className="md:w-[90vw] md:max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Waypoints className="size-4 text-primary" />
+              <span>Conveyance Details</span>
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* form */}
+          <DetailsView details={view} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

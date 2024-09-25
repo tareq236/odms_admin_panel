@@ -31,21 +31,14 @@ export const getConveyanceData = async ({
   try {
     if (searchParams.q) {
       [data, count] = await Promise.all([
-        db.rdl_conveyance.findMany({
-          where: {
-            AND: [
-              { da_code: searchParams?.q || "" },
-              {
-                created_at: {
-                  gte: startDate,
-                  lt: endDate,
-                },
-              },
-            ],
-          },
-          take: limit,
-          skip: limit * (Number(searchParams.p || 1) - 1),
-        }),
+        db.$queryRaw`
+            SELECT rc.*, rul.full_name 
+            FROM rdl_conveyance rc
+            INNER JOIN rdl_user_list rul ON rc.da_code = rul.sap_id
+            WHERE rc.da_code = '50009' 
+            AND rc.created_at >= ${startDate} AND rc.created_at < ${endDate}
+            LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+        `,
         db.rdl_conveyance.count({
           where: {
             AND: [
