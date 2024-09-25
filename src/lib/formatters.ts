@@ -13,14 +13,27 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("en-us", {
 });
 
 export const formatDate = (date: Date) => {
+  if (date == null) return `-`;
   return DATE_FORMATTER.format(date);
 };
 
-
-export const formatDateTime = (date:Date) => {
-  return format(date, 'MMM d, yyyy - h:mm aaa')
-}
+export const formatDateTime = (date: Date) => {
+  if (date == null) return `-`;
+  return format(date, "MMM d, yyyy - h:mm aaa");
+};
 
 export const formateDateDB = (date: Date) => {
-  return format(date, 'yyyy-MM-dd')
-}
+  if (date == null) return `-`;
+  return format(date, "yyyy-MM-dd");
+};
+
+export const titleCase = (str: string) => {
+  let word: any = str
+    .toLowerCase()
+    .split(" ")
+    .map((item) => {
+      return item.charAt(0).toUpperCase() + item.slice(1);
+    });
+
+  return word.join(' ')
+};

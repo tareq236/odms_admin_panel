@@ -12,13 +12,15 @@ import {
 import { useSearchParams } from "next/navigation";
 import { MessageSquareOff, Search, ServerOff } from "lucide-react";
 import { Button } from "../ui/button";
-import { formatDate } from "@/lib/formatters";
+import { formatDate, formatDateTime } from "@/lib/formatters";
+import { rdl_conveyance } from "@prisma/client";
+import StatusTag from "./StatusTag";
 
 function ConveyanceTable({
   data,
   connectionError,
 }: {
-  data: any[];
+  data: rdl_conveyance[];
   connectionError: boolean;
 }) {
   const [view, setView] = useState<any>(false);
@@ -67,22 +69,12 @@ function ConveyanceTable({
           ) : data.length > 0 ? (
             data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="min-w-fit">
-                  <Button
-                    variant={"link"}
-                    className="rounded-full"
-                    onClick={() => setView(item)}
-                  >
-                    {item.da_code}
-                  </Button>
-                </TableCell>
-                <TableCell className="min-w-fit">{item.da_name}</TableCell>
-                <TableCell>{item.billing_doc_no}</TableCell>
-                <TableCell>{formatDate(item.billing_date)}</TableCell>
-                <TableCell>{item.address}</TableCell>
-                <TableCell>{item.vehicle_no}</TableCell>
-                <TableCell>{item.partner_name}</TableCell>
-                <TableCell>{item.gate_pass_no}</TableCell>
+                <TableCell className="min-w-fit">{item.da_code}</TableCell>
+                <TableCell className="min-w-fit">{item.da_code}</TableCell>
+                <TableCell>{formatDateTime(item.start_journey_date_time)}</TableCell>
+                <TableCell>{formatDateTime(item.end_journey_date_time as Date)}</TableCell>
+                <TableCell><StatusTag name={item.journey_status} /></TableCell>
+                <TableCell>{formatDate(item.created_at as Date)}</TableCell>
                 <TableCell>
                   <Button
                     variant={"link"}
