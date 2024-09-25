@@ -25,7 +25,7 @@ function GoogleMap({
           defaultZoom={defaultZoom}
           gestureHandling={"greedy"}
           disableDefaultUI={true}
-          center={{ lat: latitude, lng: longitude }}
+          fullscreenControl={false}
         >
           <Marker position={{ lat: latitude, lng: longitude }} />
           {endLat != null && endLng != null && (

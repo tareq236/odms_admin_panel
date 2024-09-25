@@ -107,7 +107,7 @@ function ConveyanceTable({
 
       {/* delivery details modal */}
       <Dialog open={view} onOpenChange={setView}>
-        <DialogContent className="md:w-[90vw] md:max-w-xl">
+        <DialogContent className="md:min-w-[90vw] md:max-w-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Waypoints className="size-4 text-primary" />
