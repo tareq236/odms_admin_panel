@@ -12,7 +12,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { MessageSquareOff, Search, ServerOff, Waypoints } from "lucide-react";
 import { Button } from "../ui/button";
-import { formatDate, formatDateTime } from "@/lib/formatters";
+import { formatDate, formatDateTime, formatNumber } from "@/lib/formatters";
 import StatusTag from "./StatusTag";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import DetailsView from "./DetailsView";
@@ -36,6 +36,7 @@ function ConveyanceTable({
             <TableHead>DA Name</TableHead>
             <TableHead>Journey Start</TableHead>
             <TableHead>Journey End</TableHead>
+            <TableHead>Cost</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Journey Date</TableHead>
             <TableHead>Actions</TableHead>
@@ -47,7 +48,7 @@ function ConveyanceTable({
             <>
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   align="center"
                   className="py-20 text-gray-400 pointer-events-none"
                 >
@@ -59,7 +60,7 @@ function ConveyanceTable({
           ) : connectionError ? (
             <TableRow className="table-row-nowrap">
               <TableCell
-                colSpan={7}
+                colSpan={8}
                 align="center"
                 className="py-20 text-gray-400 pointer-events-none"
               >
@@ -74,6 +75,7 @@ function ConveyanceTable({
                 <TableCell className="min-w-fit">{item.full_name}</TableCell>
                 <TableCell>{formatDateTime(item.start_journey_date_time)}</TableCell>
                 <TableCell>{formatDateTime(item.end_journey_date_time as Date)}</TableCell>
+                <TableCell>{formatNumber(item.transport_cost)}</TableCell>
                 <TableCell><StatusTag name={item.journey_status} /></TableCell>
                 <TableCell>{formatDate(item.created_at as Date)}</TableCell>
                 <TableCell>
@@ -91,7 +93,7 @@ function ConveyanceTable({
             <>
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   align="center"
                   className="py-20 text-gray-400 pointer-events-none"
                 >

@@ -7,6 +7,7 @@ import React, { Suspense } from "react";
 import { Prisma } from "@prisma/client";
 import DeliveryTable from "@/components/delivery/DeliveryTable";
 import db from "../../../../../db/db";
+import { format } from "date-fns";
 
 export default async function DevlierInvoicePage({
   searchParams,
@@ -44,8 +45,7 @@ const DataTable = async ({
   try {
     if (searchParams.q) {
       [data, count] = await Promise.all([
-        db.$queryRaw(
-          Prisma.sql`
+        db.$queryRaw`
           SELECT a.*,
           COUNT(b.billing_doc_no) as no_of_bill , b.gate_pass_no,
           SUM(b.quantity) as total_quantity, 
@@ -57,17 +57,17 @@ const DataTable = async ({
           INNER JOIN rdl_route_sap as c on a.route = c.route
           INNER JOIN rpl_customer as d ON b.partner = d.partner
           WHERE a.billing_date = ${
-            searchParams.start ? new Date(searchParams.start) : new Date()
+            searchParams.start ? searchParams.start : format(new Date(), 'yyyy-MM-dd')
           } 
           AND a.da_code = ${Number(searchParams.q) || 0}
           GROUP BY b.billing_doc_no
           LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
-        ),
+
         db.$queryRaw`
-          select count(*) as total from rdl_delivery_info_sap
-          where billing_date = ${
-            searchParams.start ? new Date(searchParams.start) : new Date()
+          select count(*) as total from rdl_delivery_info_sap a
+          WHERE a.billing_date = ${
+            searchParams.start ? searchParams.start : format(new Date(), 'yyyy-MM-dd')
           } 
           AND da_code = ${Number(searchParams.q) || 0}
         `,
