@@ -45,7 +45,7 @@ export default async function CollectionDetailsView({
     db.$queryRaw`
       select rsis.*, rm.material_name FROM rpl_sales_info_sap rsis
       INNER JOIN rpl_material rm ON rsis.matnr=rm.matnr
-      WHERE rsis.billing_doc_no='9031323745'
+      WHERE rsis.billing_doc_no=${searchParams.dId || 0}
     `
   ])
 
