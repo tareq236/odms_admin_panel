@@ -65,18 +65,17 @@ export default async function CardSection({
         limit 1
         `,
         db.$queryRaw`
-        SELECT COUNT(*) as total_return
-        FROM rdl_delivery_info_sap as a
-        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
-        LEFT JOIN rdl_delivery_list as e ON b.id = e.delivery_id
-        WHERE a.da_code = ${Number(searchParams.q)} AND a.billing_date=${
+        SELECT COUNT(*) over() as total_return
+        FROM rdl_delivery rd
+        INNER JOIN rdl_delivery_list rds ON rds.delivery_id = rd.id
+        INNER JOIN rpl_customer rc ON rc.partner = rd.partner
+        WHERE rd.da_code = ${Number(searchParams.q)} AND rd.billing_date=${
           searchParams.start
             ? `${searchParams.start}`
             : `${formateDateDB(new Date())}`
         }
-        AND e.return_quantity IS NOT NULL
-        AND e.return_quantity != 0
-        GROUP BY a.billing_doc_no
+        AND rds.return_quantity != 0
+        GROUP BY rd.billing_doc_no
         limit 1
         `,
       ]);
