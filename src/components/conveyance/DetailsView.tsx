@@ -4,8 +4,6 @@ import StatusTag from "./StatusTag";
 import { MapPin } from "lucide-react";
 import { formatDateTime, formatNumber } from "@/lib/formatters";
 import RouteMap from "../google-map/RouteMap";
-import Image from "next/image";
-import { AutoRickshaw, Bus, Car, Rickshaw, Walking } from "@/assets";
 import { Badge } from "../ui/badge";
 
 export default function DetailsView({ details }: { details: any }) {
