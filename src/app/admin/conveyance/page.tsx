@@ -21,7 +21,7 @@ export default async function ConveyancePage({
       />
 
       <Suspense>
-        <FilterSection />
+        <FilterSection searchParams={searchParams} />
       </Suspense>
 
       <Suspense fallback={<TableSkeleton />}>
@@ -42,7 +42,6 @@ const DataTable = async ({
     limit: limit,
   });
 
-  console.log(data);
   return (
     <div className="data-table-section">
       <ConveyanceTable

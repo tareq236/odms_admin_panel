@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import {
   APIProvider,
   Map,
+  Marker,
   useMap,
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
@@ -17,13 +18,13 @@ export default function RouteMap({
 }: {
   startLat: number;
   startLng: number;
-  endLat: number;
-  endLng: number;
+  endLat?: number;
+  endLng?: number;
 }) {
   const position = { lat: startLat, lng: startLng };
 
   return (
-    <div className="w-[100%] aspect-video">
+    <div className="w-[100%] aspect-square md:aspect-video">
       <APIProvider
         apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string}
         language="en"
@@ -35,12 +36,17 @@ export default function RouteMap({
           fullscreenControl={false}
           disableDefaultUI={true}
         >
-          <Directions
-            startLat={startLat}
-            startLng={startLng}
-            endLat={endLat}
-            endLng={endLng}
-          />
+          
+          {endLat && endLng ? (
+            <Directions
+              startLat={startLat}
+              startLng={startLng}
+              endLat={endLat}
+              endLng={endLng}
+            />
+          ) : (
+            <Marker position={{ lat: startLat, lng: startLng }} />
+          )}
         </Map>
       </APIProvider>
     </div>
@@ -73,7 +79,7 @@ const Directions = ({
     if (!routeLibrary || !map) return;
     setDirectionService(new routeLibrary.DirectionsService());
     setDirectionsRenderer(new routeLibrary.DirectionsRenderer({ map }));
-  }, [routeLibrary, map]);
+  }, [routeLibrary, map, startLat]);
 
   useEffect(() => {
     if (!dircetionService || !directionsRenderer) return;
@@ -89,13 +95,13 @@ const Directions = ({
         directionsRenderer.setDirections(response);
         setRoutes(response.routes);
       });
-  }, [dircetionService, directionsRenderer]);
+  }, [dircetionService, directionsRenderer, startLat, startLng]);
 
   if (!leg) return null;
 
   return (
     <>
-      <div className="absolute top-2 bg-white/90 px-4 py-2 right-12 left-12 text-sm flex justify-center gap-14 rounded-full border border-primary">
+      <div className="absolute top-2 bg-white/90 px-4 py-2 right-2 left-2 md:right-12 md:left-12 text-sm flex flex-wrap justify-center gap-2 md:gap-5 rounded-full border border-primary">
         <h2>{selected.summary}</h2>
         <div className="flex items-center gap-2">
           <MapPinPlusInside className="size-4 text-primary" />{" "}
