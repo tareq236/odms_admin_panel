@@ -51,6 +51,7 @@ function DeliveryCollectionTable({
             <TableHead>Collection Status</TableHead>
             <TableHead>Collection</TableHead>
             <TableHead>Due</TableHead>
+            <TableHead>Returned</TableHead>
             <TableHead>Net Value</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -114,10 +115,15 @@ function DeliveryCollectionTable({
                 </TableCell>
                 <TableCell>
                   {formatNumber(
-                    Number(item.net_val) - Number(item.cash_collection),
+                    Number(item.due_amount),
                   )}
                 </TableCell>
-                <TableCell>{formatNumber(Number(item.net_val))}</TableCell>
+                <TableCell>
+                  {formatNumber(
+                    Number(item.return_amount),
+                  )}
+                </TableCell>
+                <TableCell>{formatNumber(Number(item.net_val) - Number(item.return_amount))}</TableCell>
                 <TableCell>
                   <Button
                     variant={"link"}
