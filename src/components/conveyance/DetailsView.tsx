@@ -1,10 +1,10 @@
-import { cn } from "@/lib/utils";
 import React from "react";
 import StatusTag from "./StatusTag";
 import { MapPin } from "lucide-react";
 import { formatDateTime, formatNumber } from "@/lib/formatters";
 import RouteMap from "../google-map/RouteMap";
 import { Badge } from "../ui/badge";
+import DetailsField from "./DetailsField";
 
 export default function DetailsView({ details }: { details: any }) {
   return (
@@ -87,19 +87,3 @@ export default function DetailsView({ details }: { details: any }) {
   );
 }
 
-const DetailsField = ({
-  className,
-  fieldName,
-  fieldContent,
-}: {
-  className?: string;
-  fieldName: string;
-  fieldContent: string | React.ReactNode;
-}) => {
-  return (
-    <div className={cn("", className)}>
-      <h3 className="text-[12px] text-gray-500 mb-1">{fieldName}</h3>
-      <h4>{fieldContent}</h4>
-    </div>
-  );
-};
