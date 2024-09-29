@@ -45,8 +45,8 @@ function TrackDetails({ data }: { data: any[] }) {
             .filter((map) => {
               return map.id === Number(searchParams.get("mid"));
             })
-            .map((details) => (
-              <section className="mt-3 md:mt-6">
+            .map((details, index) => (
+              <section key={index} className="mt-3 md:mt-6">
                 <section className="billing-info flex gap-5 text-sm border-b pb-5 flex-wrap">
                   <DetailsField
                     fieldName="DA Code"
