@@ -8,6 +8,7 @@ import { formatDateTime, formatNumber } from "@/lib/formatters";
 import { Badge } from "../ui/badge";
 import RouteMap from "../google-map/RouteMap";
 import { useRouter } from "next-nprogress-bar";
+import { LocateFixed, Map } from "lucide-react";
 
 function TrackDetails({ data }: { data: any[] }) {
 
@@ -116,10 +117,9 @@ function TrackDetails({ data }: { data: any[] }) {
       </section>
 
       <section className="">
-        {searchParams.has("mid") &&
+        {searchParams.has("mid") ?
           data
             .filter((item) => {
-              console.log(item.id == Number(searchParams.get("mid")));
               return item.id == Number(searchParams.get("mid"));
             })
             .map((value) => (
@@ -130,7 +130,14 @@ function TrackDetails({ data }: { data: any[] }) {
                 endLat={Number(value.end_journey_latitude)}
                 endLng={Number(value.end_journey_longitude)}
               />
-            ))}
+            )): (
+              <>
+                <div className="flex flex-col gap-2 justify-center items-center h-full text-muted-foreground/50">
+                  <Map className="size-10" />
+                  <p className="text-sm">Please select a journey</p>
+                </div>
+              </>
+            )}
       </section>
     </div>
   );

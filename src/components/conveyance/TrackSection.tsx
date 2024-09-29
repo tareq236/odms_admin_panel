@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Compass, Waypoints } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import TrackDetails from "./TrackDetails";
 import { ScrollArea } from "../ui/scroll-area";
 
@@ -12,6 +12,9 @@ function TrackSection({ data }: { data: any[] }) {
   const [view, setView] = useState(false);
 
   const searchParams = useSearchParams();
+  const route = useRouter();
+  const params = new URLSearchParams(searchParams);
+  const pathname = usePathname();
 
   return (
     <>
@@ -25,7 +28,14 @@ function TrackSection({ data }: { data: any[] }) {
       </Button>
 
       {/* dialog */}
-      <Dialog open={view} onOpenChange={setView}>
+      <Dialog
+        open={view}
+        onOpenChange={() => {
+          params.delete("mid");
+          setView(false);
+          route.push(pathname + "?" + params.toString());
+        }}
+      >
         <DialogContent className="md:min-w-[90vw] md:max-w-xl">
           <ScrollArea className="h-[75vh]">
             <DialogHeader>
