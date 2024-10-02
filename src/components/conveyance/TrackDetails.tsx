@@ -11,12 +11,10 @@ import { useRouter } from "next-nprogress-bar";
 import { LocateFixed, Map } from "lucide-react";
 
 function TrackDetails({ data }: { data: any[] }) {
-
   const searchParams = useSearchParams();
   const route = useRouter();
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
-
 
   return (
     <div className="grid lg:grid-cols-[0.25fr_0.75fr] gap-5">
@@ -117,7 +115,7 @@ function TrackDetails({ data }: { data: any[] }) {
       </section>
 
       <section className="">
-        {searchParams.has("mid") ?
+        {searchParams.has("mid") ? (
           data
             .filter((item) => {
               return item.id == Number(searchParams.get("mid"));
@@ -130,14 +128,15 @@ function TrackDetails({ data }: { data: any[] }) {
                 endLat={Number(value.end_journey_latitude)}
                 endLng={Number(value.end_journey_longitude)}
               />
-            )): (
-              <>
-                <div className="flex flex-col gap-2 justify-center items-center h-full text-muted-foreground/50">
-                  <Map className="size-10" />
-                  <p className="text-sm">Please select a journey</p>
-                </div>
-              </>
-            )}
+            ))
+        ) : (
+          <>
+            <div className="flex flex-col gap-2 justify-center items-center h-full text-muted-foreground/50">
+              <Map className="size-10" />
+              <p className="text-sm">Please select a journey</p>
+            </div>
+          </>
+        )}
       </section>
     </div>
   );
