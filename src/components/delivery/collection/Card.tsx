@@ -64,7 +64,7 @@ function Card({ icon, name, stats, paramString, amount=0 }: CardProps) {
           }`}>
         <h5 className="text-xl font-medium flex items-center gap-1"><TakaSign /> {formatNumber(amount)}</h5>
         <h6
-          className={`px-5 py-0.25 text-blue-900 font-semibold rounded-full bg-blue-50 `}
+          className={`px-5 py-0.25 text-blue-950 text-sm font-semibold rounded-full bg-blue-50 `}
         >
           {formatNumber(stats)}
         </h6>

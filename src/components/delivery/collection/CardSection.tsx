@@ -65,7 +65,7 @@ export default async function CardSection({
         `,
 
         db.$queryRaw`
-        select count(*) over() total_return, sum(rd.return_amount) total_return_amount
+        select count(*) over() total_return, sum(rds.return_net_val) over() total_return_amount
             FROM rdl_delivery rd
             INNER JOIN rdl_delivery_list rds ON rds.delivery_id = rd.id
             INNER JOIN rpl_customer rc ON rc.partner = rd.partner

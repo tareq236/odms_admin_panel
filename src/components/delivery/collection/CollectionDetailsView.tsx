@@ -51,7 +51,7 @@ export default async function CollectionDetailsView({
 
   let invoiceSalesInfoWithMaterial: any[] = invoiceSalesInfo ? invoiceSalesInfo as any[] : []
 
-  const [partnerInfo, deliveryList, totalValue] = await Promise.all([
+  const [partnerInfo, deliveryList, totalValue, invoiceTotalValue] = await Promise.all([
     db.rpl_customer.findUnique({
       where: { partner: invoiceSalesInfoWithMaterial?.[0]?.partner || "" },
       select: {
@@ -78,6 +78,15 @@ export default async function CollectionDetailsView({
         return_net_val: true,
       },
     }),
+    db.rpl_sales_info_sap.aggregate({
+      where: {
+        billing_doc_no: searchParams.dId
+      },
+      _sum: {
+        net_val: true,
+        vat: true
+      }
+    })
   ]);
 
   let deliveryListMaterial: any[] = deliveryList ? deliveryList as any[] : []
@@ -215,7 +224,14 @@ export default async function CollectionDetailsView({
           <TableFooter>
             <TableRow>
               <TableCell>Total</TableCell>
-              <TableCell colSpan={6} align="right">
+
+              <TableCell colSpan={3} align="right">
+                {formatNumber(Number(invoiceTotalValue._sum.vat))}
+              </TableCell>
+              <TableCell colSpan={1} align="right">
+                {formatNumber(Number(invoiceTotalValue._sum.net_val))}
+              </TableCell>
+              <TableCell colSpan={2} align="right">
                 {formatNumber(Number(totalValue._sum.delivery_net_val))}
               </TableCell>
               <TableCell colSpan={2} align="right">
