@@ -66,6 +66,8 @@ function ExportSection() {
     document.body.removeChild(link);
   };
 
+  if(!searchParams.has('q')) return null
+
   return (
     <>
       <Button
@@ -81,7 +83,7 @@ function ExportSection() {
         ) : (
           <Download className="size-4 mr-2" />
         )}
-        <span>CSV</span>
+        <span>Export</span>
       </Button>
     </>
   );

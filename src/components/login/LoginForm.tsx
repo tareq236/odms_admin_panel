@@ -8,6 +8,7 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { adminLogin } from '@/app/actions/auth';
+import Spinner from '../ui/Spinner';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -64,6 +65,7 @@ const SubmitButton = () => {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
+      {pending && <Spinner color="white" className="mr-2 size-4" />}
       {pending ? `Login...` : `Login`}
     </Button>
   );

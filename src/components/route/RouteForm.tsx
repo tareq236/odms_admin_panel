@@ -8,6 +8,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { createRoute, updateRoute } from "@/app/actions/routes";
 import { toast } from "sonner";
 import { rdl_route_sap } from "@prisma/client";
+import Spinner from "../ui/Spinner";
 
 type RouteFormProps = {
     onClose: () => void,
@@ -50,6 +51,7 @@ const SubmitButton = () => {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
+      {pending && <Spinner color="white" className="mr-2 size-4" />}
       {pending ? `Saving...` : `Save`}
     </Button>
   );

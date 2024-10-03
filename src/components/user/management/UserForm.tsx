@@ -9,6 +9,7 @@ import React, { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { Select } from "../SelectStatus";
+import Spinner from "@/components/ui/Spinner";
 
 interface UserFormProps {
     onClose: () => void,
@@ -93,6 +94,7 @@ const SubmitButton = () => {
     const { pending } = useFormStatus();
     return (
       <Button type="submit" disabled={pending}>
+        {pending && <Spinner color="white" className="mr-2 size-4" />}
         {pending ? `Saving...` : `Save`}
       </Button>
     );
