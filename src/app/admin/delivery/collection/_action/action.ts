@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import db from "../../../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
 
@@ -290,3 +289,5 @@ export const getDeliveryCollection = async ({
 
   return { data, count, connectionError };
 };
+
+

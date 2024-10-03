@@ -50,11 +50,10 @@ export default async function CardSection({
         limit 1
         `,
         db.$queryRaw`
-        SELECT sum(sum(c.net_val) + sum(c.vat)) over() as total_net_val,
+        SELECT sum(b.cash_collection) over() as total_net_val,
         count(*) over() as total_collection_done
         FROM rdl_delivery_info_sap as a
         LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
-        INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
         WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
               searchParams.start
                 ? `${searchParams.start}`
