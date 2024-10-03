@@ -136,8 +136,7 @@ export default async function CardSection({
           paramString="r"
           name="Returned"
           stats={Number(returnQuantity[0]?.total_return || 0)}
-          // amount={Number(returnQuantity[0]?.total_return_amount || 0)}
-          amount={(5250000)}
+          amount={Number(returnQuantity[0]?.total_return_amount || 0)}
           icon={<PackageMinus className="size-4" />}
           isDown
         />
