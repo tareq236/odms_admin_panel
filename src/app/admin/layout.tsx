@@ -1,3 +1,4 @@
+import Nav from "@/components/Nav/Nav";
 import Sidebar from "@/components/sidenav/Sidebar";
 import React from "react";
 
@@ -16,6 +17,7 @@ export default async function AdminLayout({
       </aside>
 
       <div className="w-full md:w-[calc(100%-15rem)]">
+        <Nav />
         <main className="container py-6 w-full">{children}</main>
       </div>
     </div>
