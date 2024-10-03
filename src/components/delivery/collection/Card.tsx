@@ -12,9 +12,17 @@ type CardProps = {
   stats: number;
   amount: number;
   paramString: string;
+  isDown?: boolean;
 };
 
-function Card({ icon, name, stats, paramString, amount=0 }: CardProps) {
+function Card({
+  icon,
+  name,
+  stats,
+  paramString,
+  amount = 0,
+  isDown = false,
+}: CardProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -22,9 +30,11 @@ function Card({ icon, name, stats, paramString, amount=0 }: CardProps) {
 
   return (
     <article
-      className={`flex gap-2 flex-col justify-center border-r border-b px-4 py-2 cursor-pointer ${
+      className={`flex gap-2 flex-col justify-center border rounded px-4 py-2 cursor-pointer ${
         searchParams.get("status") === paramString
-          ? "bg-primary border-primary"
+          ? isDown
+            ? "bg-red-100 border-red-100"
+            : "bg-green-100 border-green-100"
           : ""
       }`}
       onClick={() => {
@@ -42,7 +52,11 @@ function Card({ icon, name, stats, paramString, amount=0 }: CardProps) {
       <div className="flex items-center gap-2">
         <span
           className={`icon bg-blue-50 p-1 rounded text-primary ${
-            searchParams.get("status") === paramString ? "bg-white" : ""
+            searchParams.get("status") === paramString
+              ? isDown
+                ? "text-red-800 bg-red-200"
+                : "text-teal-800 bg-green-200"
+              : ""
           }`}
         >
           {icon}
@@ -50,7 +64,9 @@ function Card({ icon, name, stats, paramString, amount=0 }: CardProps) {
         <h4
           className={`${
             searchParams.get("status") === paramString
-              ? "text-white"
+              ? isDown
+                ? "text-red-700"
+                : "text-green-700"
               : "text-muted-foreground"
           } text-xs`}
         >
@@ -59,12 +75,22 @@ function Card({ icon, name, stats, paramString, amount=0 }: CardProps) {
       </div>
 
       {/* bottom */}
-      <div className={`flex justify-between items-end w-full ${
-            searchParams.get("status") === paramString ? "text-white" : ""
-          }`}>
-        <h5 className="text-xl font-medium flex items-center gap-1"><TakaSign /> {formatNumber(amount)}</h5>
+      <div
+        className={`flex justify-between items-end w-full ${
+          searchParams.get("status") === paramString
+            ? isDown
+              ? "text-red-800"
+              : "text-green-800"
+            : ""
+        }`}
+      >
+        <h5 className="text-xl font-medium flex items-center gap-1">
+          <TakaSign /> {formatNumber(amount)}
+        </h5>
         <h6
-          className={`px-5 py-0.25 text-blue-950 text-sm font-semibold rounded-full bg-blue-50 `}
+          className={`px-4 py-0.25  text-xs font-semibold rounded-full ${
+            isDown ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+          }  ${searchParams.get("status") === paramString  ? isDown ? "border border-red-300" : "border border-green-300" : ''} `}
         >
           {formatNumber(stats)}
         </h6>

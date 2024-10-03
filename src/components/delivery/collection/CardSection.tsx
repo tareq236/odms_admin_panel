@@ -8,7 +8,7 @@ import {
   PackageMinus,
 } from "lucide-react";
 import db from "../../../../db/db";
-import { formateDateDB } from "@/lib/formatters";
+import { formateDateDB, formatNumber } from "@/lib/formatters";
 
 export default async function CardSection({
   searchParams,
@@ -89,7 +89,7 @@ export default async function CardSection({
   return (
     <section>
       <h3 className="text-muted-foreground mb-3">Statistics</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 border-t border-l">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2">
         <Card
           paramString="dr"
           name="Delivery Remaining"
@@ -102,6 +102,7 @@ export default async function CardSection({
             Number(deliveryDone[0]?.total_net_val || 0)
           }
           icon={<Package2 className="size-4" />}
+          isDown
         />
         <Card
           paramString="dd"
@@ -122,6 +123,7 @@ export default async function CardSection({
             Number(collectionDone[0]?.total_net_val || 0)
           }
           icon={<HandCoins className="size-4" />}
+          isDown
         />
         <Card
           paramString="cd"
@@ -134,8 +136,10 @@ export default async function CardSection({
           paramString="r"
           name="Returned"
           stats={Number(returnQuantity[0]?.total_return || 0)}
-          amount={Number(returnQuantity[0]?.total_return_amount || 0)}
+          // amount={Number(returnQuantity[0]?.total_return_amount || 0)}
+          amount={(5250000)}
           icon={<PackageMinus className="size-4" />}
+          isDown
         />
       </div>
     </section>
