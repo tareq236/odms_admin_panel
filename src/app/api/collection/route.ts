@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
         INNER JOIN rpl_customer rc on rc.partner = rsis.partner
         WHERE rds.da_code = ${daCode} AND rds.billing_date = ${qDate}
         GROUP BY rds.billing_doc_no
+        ORDER BY rd.delivery_status DESC, rd.cash_collection_status DESC
       `;
 
     return Response.json(data);
