@@ -76,6 +76,9 @@ export default async function CollectionDetailsView({
       _sum: {
         delivery_net_val: true,
         return_net_val: true,
+        quantity: true,
+        return_quantity: true,
+        delivery_quantity:true,
       },
     }),
     db.rpl_sales_info_sap.aggregate({
@@ -84,7 +87,8 @@ export default async function CollectionDetailsView({
       },
       _sum: {
         net_val: true,
-        vat: true
+        vat: true,
+        quantity: true
       }
     })
   ]);
@@ -224,17 +228,26 @@ export default async function CollectionDetailsView({
           <TableFooter>
             <TableRow>
               <TableCell>Total</TableCell>
+              <TableCell colSpan={1} align="right">
+                {formatNumber(Number(invoiceTotalValue._sum.quantity))}
+              </TableCell>
 
-              <TableCell colSpan={3} align="right">
+              <TableCell colSpan={2} align="right">
                 {formatNumber(Number(invoiceTotalValue._sum.vat))}
               </TableCell>
               <TableCell colSpan={1} align="right">
                 {formatNumber(Number(invoiceTotalValue._sum.net_val))}
               </TableCell>
-              <TableCell colSpan={2} align="right">
+              <TableCell colSpan={1} align="right">
+                {formatNumber(Number(totalValue._sum.delivery_quantity))}
+              </TableCell>
+              <TableCell colSpan={1} align="right">
                 {formatNumber(Number(totalValue._sum.delivery_net_val))}
               </TableCell>
-              <TableCell colSpan={2} align="right">
+              <TableCell colSpan={1} align="right">
+                {formatNumber(Number(totalValue._sum.return_quantity))}
+              </TableCell>
+              <TableCell colSpan={1} align="right">
                 {formatNumber(Number(totalValue._sum.return_net_val))}
               </TableCell>
             </TableRow>
