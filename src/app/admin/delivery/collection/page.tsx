@@ -53,7 +53,7 @@ export default function DeliveryCollectionPage({
   );
 }
 
-const DataTable = async ({
+export const DataTable = async ({
   searchParams,
 }: {
   searchParams: {

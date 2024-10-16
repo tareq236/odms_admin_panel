@@ -31,7 +31,7 @@ export default async function ConveyancePage({
   );
 }
 
-const DataTable = async ({
+export const DataTable = async ({
   searchParams,
 }: {
   searchParams: { p: string; q: string; start: string };
@@ -49,8 +49,6 @@ const DataTable = async ({
         connectionError={connectionError}
       />
       <PagePagination limit={limit} count={count} />
-
-      {/* <RouteMap /> */}
     </div>
   );
 };
