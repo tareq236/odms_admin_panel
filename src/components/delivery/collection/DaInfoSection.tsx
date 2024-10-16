@@ -35,11 +35,11 @@ export default async function DaInfoSection({
             <span className="text-xs text-muted-foreground">Type</span>
             <span className="font-medium text-sm">{daInfo.user_type}</span>
           </p>
-          <p className="flex flex-col gap-1 self-center">
+          <div className="flex flex-col gap-1 self-center">
             <span className="font-medium text-sm">
               <UserStatusTag status={daInfo.status.toString() as string} />
             </span>
-          </p>
+          </div>
         </article>
       ) : (
         <article className="p-4 border rounded text-muted-foreground flex flex-col justify-center items-center">

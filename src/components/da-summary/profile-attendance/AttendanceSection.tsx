@@ -1,8 +1,13 @@
+import { Badge } from "@/components/ui/badge";
 import { formatDateTime, formatNumber } from "@/lib/formatters";
 import { rdl_attendance } from "@prisma/client";
 import React from "react";
 
-function AttendanceSection({daAttendance}: {daAttendance: rdl_attendance[]}) {
+function AttendanceSection({
+  daAttendance,
+}: {
+  daAttendance: rdl_attendance[];
+}) {
   return (
     <section className="border rounded p-4">
       <div className="header flex flex-wrap justify-between items-center gap-5 mb-3">
@@ -10,17 +15,20 @@ function AttendanceSection({daAttendance}: {daAttendance: rdl_attendance[]}) {
           Attendance
         </h2>
 
-        <p className="flex flex-col items-end gap-0.5">
+        <div className="flex flex-col items-end gap-0.5">
           <span className="text-xs text-muted-foreground">
             Today&apos;s Status
           </span>
           <span className="font-medium text-sm">
-            {daAttendance && daAttendance[0] != undefined
-              ? "Present"
-              : "Absent"}
+            {daAttendance && daAttendance[0] != undefined ? (
+              <Badge className="bg-green-200 text-green-900 hover:bg-green-100">Present</Badge>
+            ) : (
+              <Badge variant={'destructive'} className="bg-rose-200 text-rose-900 hover:bg-rose-100">Absent</Badge>
+            )}
           </span>
-        </p>
+        </div>
       </div>
+
       {daAttendance != undefined && daAttendance[0] != undefined && (
         <article className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <p className="flex flex-col gap-1">
