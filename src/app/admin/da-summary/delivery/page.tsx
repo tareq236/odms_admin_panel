@@ -7,25 +7,26 @@ import { DataTable } from "../../delivery/collection/page";
 export default function DaDeliveryPage({
   searchParams,
 }: {
-  searchParams: { q: string; start: string; p: string, dId:string, status: string };
+  searchParams: {
+    q: string;
+    start: string;
+    p: string;
+    dId: string;
+    status: string;
+  };
 }) {
+  if (!searchParams.q) return <SearchDa />;
+
   return (
     <>
-      {searchParams.q ? (
-        <>
-          <Suspense>
-            <CardSection searchParams={searchParams} />
-          </Suspense>
+      <Suspense>
+        <CardSection searchParams={searchParams} />
+      </Suspense>
 
-          {/* table section */}
-          <Suspense fallback={<TableSkeleton />}>
-            <DataTable searchParams={searchParams} />
-          </Suspense>
-        </>
-      ) : (
-        <SearchDa />
-      )}
+      {/* table section */}
+      <Suspense fallback={<TableSkeleton />}>
+        <DataTable searchParams={searchParams} />
+      </Suspense>
     </>
   );
 }
-

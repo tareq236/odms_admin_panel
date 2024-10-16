@@ -9,19 +9,13 @@ import { DataTable } from "../../conveyance/page";
 export default function DaCoveyancePage({
   searchParams,
 }: {
-  searchParams: { q: string; start: string, p:string };
+  searchParams: { q: string; start: string; p: string };
 }) {
+  if (!searchParams.q) return <SearchDa />;
+
   return (
-    <>
-      {searchParams.q ? (
-        <>
-          <Suspense fallback={<TableSkeleton />}>
-            <DataTable searchParams={searchParams} />
-          </Suspense>
-        </>
-      ) : (
-        <SearchDa />
-      )}
-    </>
+      <Suspense fallback={<TableSkeleton />}>
+        <DataTable searchParams={searchParams} />
+      </Suspense>
   );
 }

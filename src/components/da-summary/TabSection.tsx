@@ -12,14 +12,14 @@ export default function TabSection() {
   const tabList = [
     {
       id: 1,
-      name: "Profile",
+      name: "Profile & Attendance",
       link: "/admin/da-summary",
     },
-    {
-      id: 2,
-      name: "Attendance",
-      link: "/admin/da-summary/attendance",
-    },
+    // {
+    //   id: 2,
+    //   name: "Attendance",
+    //   link: "/admin/da-summary/attendance",
+    // },
     {
       id: 3,
       name: "Delivery",
