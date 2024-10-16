@@ -1,54 +1,33 @@
+import SearchDa from "@/components/constants/SearchDa";
 import CardSection from "@/components/delivery/collection/CardSection";
-import DeliveryCollectionTable from "@/components/delivery/collection/DeliveryCollectionTable";
-import FilterSection from "@/components/delivery/FilterSection";
-import PageHeader from "@/components/ui/PageHeader";
-import PagePagination from "@/components/ui/PagePagination";
-import TableSkeleton from "@/components/ui/TableSkeletion";
-import { PackageCheck } from "lucide-react";
-import React, { Suspense } from "react";
-import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
 import CollectionDetailsView from "@/components/delivery/collection/CollectionDetailsView";
-import { getDeliveryCollection } from "./_action/action";
+import DeliveryCollectionTable from "@/components/delivery/collection/DeliveryCollectionTable";
+import PagePagination from "@/components/ui/PagePagination";
+import React, { Suspense } from "react";
+import { getDeliveryCollection } from "../../delivery/collection/_action/action";
+import TableSkeleton from "@/components/ui/TableSkeletion";
 
-export default function DeliveryCollectionPage({
+export default function DaDeliveryPage({
   searchParams,
 }: {
-  searchParams: {
-    p: string;
-    q: string;
-    start: string;
-    dId: string;
-    status: string;
-  };
+  searchParams: { q: string; start: string; p: string, dId:string, status: string };
 }) {
   return (
     <>
-      <PageHeader
-        title="Delivery Collection"
-        icon={<PackageCheck className="size-5 fill-primary/20" />}
-      />
-
-      <Suspense>
-        <FilterSection />
-      </Suspense>
-
-      {searchParams.q != null && (
+      {searchParams.q ? (
         <>
-          <Suspense>
-            <DaInfoSection searchParams={searchParams} />
-          </Suspense>
-
-          {/* stats cards */}
           <Suspense>
             <CardSection searchParams={searchParams} />
           </Suspense>
-        </>
-      )}
 
-      {/* table section */}
-      <Suspense fallback={<TableSkeleton />}>
-        <DataTable searchParams={searchParams} />
-      </Suspense>
+          {/* table section */}
+          <Suspense fallback={<TableSkeleton />}>
+            <DataTable searchParams={searchParams} />
+          </Suspense>
+        </>
+      ) : (
+        <SearchDa />
+      )}
     </>
   );
 }
@@ -66,7 +45,7 @@ const DataTable = async ({
 }) => {
   const limit = 20;
 
-  const {data, count, connectionError} = await getDeliveryCollection({
+  const { data, count, connectionError } = await getDeliveryCollection({
     searchParams: searchParams,
     limit: limit,
     connectionError: false,

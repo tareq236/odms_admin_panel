@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import {
   Home,
+  IdCard,
   ListTodo,
   LogOut,
   Map,
@@ -82,6 +83,13 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             icon={<Waypoints className="size-4" />}
             name="Conveyance"
             href="/admin/conveyance"
+            onClick={onClose}
+          />
+
+          <NavLink
+            icon={<IdCard className="size-4" />}
+            name="DA Summary"
+            href="/admin/da-summary"
             onClick={onClose}
           />
 
