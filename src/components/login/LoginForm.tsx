@@ -43,14 +43,14 @@ const LoginForm = () => {
               Password
             </Label>
             <Input type={!showPassword ? 'password' : 'text'} name="password" id="password" />
-            <div
+            <span
               className="eye absolute top-9 right-3 cursor-pointer"
               onClick={() => {
                 setShowPassword(!showPassword);
               }}
             >
               {showPassword ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-            </div>
+            </span>
             {data?.error?.password && <p className="error-msg">{data.error.password}</p>}
           </p>
 

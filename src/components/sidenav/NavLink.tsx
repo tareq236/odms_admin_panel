@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ComponentProps, ReactNode } from 'react'
+import { ComponentProps } from 'react'
 
 type NavLinkProps = ComponentProps<"a"> & {
   icon: React.ReactNode,
@@ -19,6 +19,7 @@ const NavLink = ({
   }: NavLinkProps) => {
     const pathname = usePathname();
   
+
     return (
       <>
         <Link {...props}
