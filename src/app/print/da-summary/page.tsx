@@ -2,7 +2,7 @@ import AttendanceSection from "@/components/print/da-summary/AttendanceSection";
 import DaInfoSection from "@/components/print/da-summary/DaInfoSection";
 import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/lib/formatters";
-import React from "react";
+import React, { Suspense } from "react";
 import db from "../../../../db/db";
 import { rdl_attendance, rdl_user_list } from "@prisma/client";
 import DeliverySection from "@/components/print/da-summary/DeliverySection";
@@ -81,7 +81,9 @@ export default async function DaSummaryPrintPage({
               />
               <Separator />
 
-              <DeliverySection />
+              <Suspense fallback={<p>Loading...</p>}>
+                <DeliverySection searchParams={searchParams} />
+              </Suspense>
             </td>
           </tr>
         </tbody>

@@ -64,10 +64,9 @@ export default async function CardSection({
         `,
 
         db.$queryRaw`
-        select count(*) over() total_return, sum(rds.return_net_val) over() total_return_amount
+        select count(*) over() total_return, sum(rds.return_net_val) total_return_amount, rds.*
             FROM rdl_delivery rd
             INNER JOIN rdl_delivery_list rds ON rds.delivery_id = rd.id
-            INNER JOIN rpl_customer rc ON rc.partner = rd.partner
             WHERE rd.billing_date =${
               searchParams.start
                 ? `${searchParams.start}`
@@ -75,7 +74,7 @@ export default async function CardSection({
             }
             AND rd.da_code = ${Number(searchParams.q) || 0} 
             AND rds.return_quantity > 0
-            GROUP BY rd.billing_doc_no
+            GROUP BY rds.delivery_id
             limit 1
         `,
     ]);
@@ -116,10 +115,12 @@ export default async function CardSection({
           stats={
             Number(deliveryDone[0]?.total_delivery_done || 0) -
             Number(collectionDone[0]?.total_collection_done || 0)
+
           }
           amount={
             Number(deliveryDone[0]?.total_net_val || 0) -
-            Number(collectionDone[0]?.total_net_val || 0)
+            Number(collectionDone[0]?.total_net_val || 0) -
+            Number(returnQuantity[0]?.total_return_amount || 0)
           }
           icon={<HandCoins className="size-4" />}
           isDown

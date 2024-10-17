@@ -43,6 +43,19 @@
         text-align: left;
     }
 
+    .table tr {
+        border-bottom: 1px solid gray;
+        border-top: 1px solid gray;
+    }
+
+    .table tr td:nth-child(3) {
+        padding-left: 3rem;
+    }
+
+    .table td {
+        padding: 0.5rem 0;
+    }
+
 
 
     @media print {
