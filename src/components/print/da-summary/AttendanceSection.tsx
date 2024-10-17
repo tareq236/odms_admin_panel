@@ -9,28 +9,29 @@ function AttendanceSection({
   daAttendance: rdl_attendance[];
 }) {
   return (
-    <section className="border rounded p-4">
-      <div className="header flex flex-wrap justify-between items-center gap-5">
-        <h2 className="text-foreground font-semibold mb-5 text-lg">
-          Attendance
-        </h2>
-
-        <div className="flex flex-col items-end gap-0.5">
-          <span className="text-xs text-muted-foreground">
-            Today&apos;s Status
-          </span>
+    <section>
+      <div className="flex justify-between items-center gap-5">
+        <h2 className="h2 mb-3">Attendance Information</h2>
+        <div className="flex flex-col items-end gap-1">
           <span className="font-medium text-sm">
             {daAttendance && daAttendance[0] != undefined ? (
-              <Badge className="bg-green-200 text-green-900 hover:bg-green-100">Present</Badge>
+              <Badge className="bg-green-200 text-green-900 hover:bg-green-100">
+                Present
+              </Badge>
             ) : (
-              <Badge variant={'destructive'} className="bg-rose-200 text-rose-900 hover:bg-rose-100">Absent</Badge>
+              <Badge
+                variant={"destructive"}
+                className="bg-rose-200 text-rose-900 hover:bg-rose-100"
+              >
+                Absent
+              </Badge>
             )}
           </span>
         </div>
       </div>
 
       {daAttendance != undefined && daAttendance[0] != undefined && (
-        <article className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
+        <article className="grid grid-cols-4 gap-4 mt-3">
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Start from</span>
             <span className="font-medium text-sm">

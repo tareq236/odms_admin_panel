@@ -1,0 +1,56 @@
+.page {
+    @page {
+        size: A4;
+        margin: 0.5in;
+    }
+
+
+
+    .container {
+        width: 210mm;
+        min-height: fit-content;
+        padding: 0.5in;
+        font-family: "Inter", sans-serif;
+        font-size: 12px;
+        background: white;
+        border: 1px solid lightgray;
+        position: relative;
+    }
+
+    .h1 {
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .h2 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .font-para {
+        font-size: 12px;
+        font-weight: normal;
+    }
+
+    .display-hidden {
+        display: none;
+    }
+
+    table tr :where(td, th) {
+        font-size: 12px;
+        font-weight: 500;
+        text-align: left;
+    }
+
+
+
+    @media print {
+        .container {
+            border: none;
+            padding: 0;
+        }
+
+
+    }
+}
