@@ -12,7 +12,7 @@ export default async function DaInfoSection({
     <section>
       <h2 className="h2">Delivery Assistant Information</h2>
       {daInfo != null ? (
-        <article className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <article className="grid grid-cols-4 gap-4">
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">DA Name</span>
             <span className="font-medium text-sm">{daInfo.full_name}</span>

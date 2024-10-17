@@ -6,6 +6,7 @@ import React, { Suspense } from "react";
 import db from "../../../../db/db";
 import { rdl_attendance, rdl_user_list } from "@prisma/client";
 import DeliverySection from "@/components/print/da-summary/DeliverySection";
+import DeliveryListSection from "@/components/print/da-summary/DeliveryListSection";
 
 export default async function DaSummaryPrintPage({
   searchParams,
@@ -84,6 +85,10 @@ export default async function DaSummaryPrintPage({
               <Suspense fallback={<p>Loading...</p>}>
                 <DeliverySection searchParams={searchParams} />
               </Suspense>
+
+              <Separator />
+
+              <DeliveryListSection searchParams={searchParams} />
             </td>
           </tr>
         </tbody>

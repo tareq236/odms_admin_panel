@@ -52,8 +52,12 @@
         padding-left: 3rem;
     }
 
-    .table td {
-        padding: 0.5rem 0;
+    .table :where(td, th) {
+        padding: 0.5rem;
+    }
+
+    .table th {
+        font-weight: 700;
     }
 
 
