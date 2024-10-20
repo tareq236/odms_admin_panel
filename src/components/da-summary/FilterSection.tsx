@@ -17,14 +17,14 @@ function FilterSection() {
 
       <div className="right flex gap-5 flex-wrap">
         <Search placeholder="Search by DA code" />
-        {searchParams.has("q") && (
+        {/* {searchParams.has("q") && (
           <Button asChild>
             <Link href={"/print/da-summary" + "?" + searchParams.toString()}>
               <Printer className="size-4 mr-2" />
               Print
             </Link>
           </Button>
-        )}
+        )} */}
       </div>
     </section>
   );
