@@ -15,15 +15,30 @@ export default function TabSection() {
       name: "Profile & Attendance",
       link: "/admin/da-summary",
     },
-    {
-      id: 3,
-      name: "Delivery",
-      link: "/admin/da-summary/delivery",
-    },
+    // {
+    //   id: 2,
+    //   name: "Delivery",
+    //   link: "/admin/da-summary/delivery",
+    // },
+    // {
+    //   id: 3,
+    //   name: "Conveyance",
+    //   link: "/admin/da-summary/conveyance",
+    // },
     {
       id: 4,
-      name: "Conveyance",
-      link: "/admin/da-summary/conveyance",
+      name: "Gate Pass",
+      link: "/admin/da-summary/gate-pass",
+    },
+    {
+      id: 5,
+      name: "Returns",
+      link: "/admin/da-summary/returns",
+    },
+    {
+      id: 6,
+      name: "Due",
+      link: "/admin/da-summary/due",
     },
   ];
 

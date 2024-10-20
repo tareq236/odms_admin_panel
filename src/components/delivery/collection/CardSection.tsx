@@ -8,7 +8,7 @@ import {
   PackageMinus,
 } from "lucide-react";
 import db from "../../../../db/db";
-import { formateDateDB, formatNumber } from "@/lib/formatters";
+import { formateDateDB } from "@/lib/formatters";
 
 export default async function CardSection({
   searchParams,
@@ -18,20 +18,21 @@ export default async function CardSection({
   let totalDelivery: any = [{ total_delivery: 0, total_net_val: 0 }];
   let deliveryDone: any = [{ total_delivery_done: 0, total_net_val: 0 }];
   let collectionDone: any = [{ total_collection_done: 0, total_net_val: 0 }];
-  let returnQuantity: any = [{ total_return: 0,  total_return_amount: 0 }];
+  let returnQuantity: any = [{ total_return: 0, total_return_amount: 0 }];
 
   try {
-    [totalDelivery, deliveryDone, collectionDone, returnQuantity] = await Promise.all([
-      db.$queryRaw`
+    [totalDelivery, deliveryDone, collectionDone, returnQuantity] =
+      await Promise.all([
+        db.$queryRaw`
         SELECT sum(sum(c.net_val) + sum(c.vat)) over() as total_net_val,
         count(*) over() as total_delivery
         FROM rdl_delivery_info_sap as a
         INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
         WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
-              searchParams.start
-                ? `${searchParams.start}`
-                : `${formateDateDB(new Date())}`
-            } 
+          searchParams.start
+            ? `${searchParams.start}`
+            : `${formateDateDB(new Date())}`
+        } 
         GROUP BY a.billing_doc_no
         limit 1
         `,
@@ -42,10 +43,10 @@ export default async function CardSection({
         LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
         INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
         WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
-              searchParams.start
-                ? `${searchParams.start}`
-                : `${formateDateDB(new Date())}`
-            }  AND b.delivery_status='Done'
+          searchParams.start
+            ? `${searchParams.start}`
+            : `${formateDateDB(new Date())}`
+        }  AND b.delivery_status='Done'
         GROUP BY a.billing_doc_no
         limit 1
         `,
@@ -55,29 +56,27 @@ export default async function CardSection({
         FROM rdl_delivery_info_sap as a
         LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
         WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
-              searchParams.start
-                ? `${searchParams.start}`
-                : `${formateDateDB(new Date())}`
-            }  AND b.cash_collection_status='Done'
+          searchParams.start
+            ? `${searchParams.start}`
+            : `${formateDateDB(new Date())}`
+        }  AND b.cash_collection_status='Done'
         GROUP BY a.billing_doc_no
         limit 1
         `,
 
         db.$queryRaw`
-        select count(*) over() total_return, sum(rds.return_net_val) total_return_amount, rds.*
+          select count(DISTINCT rd.billing_doc_no) total_return, sum(rds.return_net_val) total_return_amount
             FROM rdl_delivery rd
             INNER JOIN rdl_delivery_list rds ON rds.delivery_id = rd.id
             WHERE rd.billing_date =${
-              searchParams.start
-                ? `${searchParams.start}`
-                : `${formateDateDB(new Date())}`
-            }
+            searchParams.start
+              ? `${searchParams.start}`
+              : `${formateDateDB(new Date())}`
+          }
             AND rd.da_code = ${Number(searchParams.q) || 0} 
             AND rds.return_quantity > 0
-            GROUP BY rds.delivery_id
-            limit 1
         `,
-    ]);
+      ]);
   } catch (error) {
     console.log(error);
   }
@@ -106,7 +105,10 @@ export default async function CardSection({
           paramString="dd"
           name="Delivery Done"
           stats={Number(deliveryDone[0]?.total_delivery_done || 0)}
-          amount={Number(deliveryDone[0]?.total_net_val || 0)}
+          amount={
+            Number(deliveryDone[0]?.total_net_val || 0) -
+            Number(returnQuantity[0]?.total_return_amount || 0)
+          }
           icon={<PackageCheck className="size-4" />}
         />
         <Card
@@ -115,7 +117,6 @@ export default async function CardSection({
           stats={
             Number(deliveryDone[0]?.total_delivery_done || 0) -
             Number(collectionDone[0]?.total_collection_done || 0)
-
           }
           amount={
             Number(deliveryDone[0]?.total_net_val || 0) -
