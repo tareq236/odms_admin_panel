@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/table";
 import { formatNumber } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
 import React from "react";
+import AccordionHeading from "../AccordionHeading";
 
 function GatePassTable({
   className = "",
@@ -57,17 +57,7 @@ function GatePassTable({
         className,
       )}
     >
-      <h3
-        className="text-sm font-medium flex items-center gap-5 hover:text-primary cursor-pointer transition-all duration-500"
-        onClick={() => setActive(!active)}
-      >
-        {title}
-        <ChevronRight
-          className={`size-4 ${
-            active ? "rotate-90" : ""
-          } transition-all duration-300`}
-        />
-      </h3>
+      <AccordionHeading title={title} active={active} setActive={setActive} />
 
       <Table className="mt-3 [&_td]:p-3 [&_th]:h-fit [&_th]:p-3 [&_tr:last-child]:border-b">
         <TableHeader>

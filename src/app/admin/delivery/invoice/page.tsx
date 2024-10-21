@@ -4,7 +4,6 @@ import PagePagination from "@/components/ui/PagePagination";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import { ScrollText } from "lucide-react";
 import React, { Suspense } from "react";
-import { Prisma } from "@prisma/client";
 import DeliveryTable from "@/components/delivery/DeliveryTable";
 import db from "../../../../../db/db";
 import { format } from "date-fns";
