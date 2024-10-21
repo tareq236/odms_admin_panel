@@ -1,7 +1,7 @@
 import GatePassTable from "@/components/da-summary/gate-pass/GatePassTable";
 import React from "react";
 import db from "../../../../../db/db";
-import { formatNumber, formateDateDB } from "@/lib/formatters";
+import { formateDateDB } from "@/lib/formatters";
 
 async function GatePassSummaryPage({
   searchParams,
@@ -74,6 +74,60 @@ async function GatePassSummaryPage({
     console.log(error);
   }
 
+  let gatePasses: (unknown | any)[];
+  try {
+    gatePasses = await db.$queryRaw`
+      SELECT c.gate_pass_no, (sum(c.net_val) + sum(c.vat)) as total_net_val,
+      count(DISTINCT a.billing_doc_no) as total_delivery
+      FROM rdl_delivery_info_sap as a
+      INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
+      LEFT JOIN rdl_delivery rd ON rd.billing_doc_no = a.billing_doc_no
+      WHERE a.da_code =${Number(searchParams.q) || 0} AND a.billing_date=${
+      searchParams.start
+        ? `${searchParams.start}`
+        : `${formateDateDB(new Date())}`
+    }
+      GROUP BY c.gate_pass_no
+    `;
+  } catch (error) {
+    console.log(error);
+    gatePasses = [];
+  }
+
+  let gatePassData = [];
+  try {
+    if (gatePasses.length > 0) {
+      for (let i = 0; i < gatePasses.length; i++) {
+        let data = await db.$queryRaw`
+          SELECT COUNT(b.gate_pass_no) over() total_invoice,
+          count(rd.delivery_status) over() total_delivered, 
+          COUNT(rd.cash_collection_status) over() total_collection, 
+          COUNT(rd.return_status) over() total_return,
+          sum(rd.due_amount) over() total_due,
+          SUM(rd.cash_collection) OVER() collection_amount,
+          SUM(rd.return_amount) OVER() return_amount
+          FROM rdl_delivery_info_sap as a
+          INNER JOIN rpl_sales_info_sap as b on a.billing_doc_no = b.billing_doc_no
+          LEFT JOIN rdl_delivery rd ON rd.billing_doc_no = a.billing_doc_no
+          WHERE a.billing_date = ${
+            searchParams.start
+              ? `${searchParams.start}`
+              : `${formateDateDB(new Date())}`
+          }
+          AND a.da_code = ${Number(searchParams.q) || 0}
+          and b.gate_pass_no = ${gatePasses[i].gate_pass_no}
+          GROUP BY b.billing_doc_no
+          LIMIT 1
+        `;
+        console.log("i");
+        gatePassData.push(data);
+      }
+    }
+  } catch (error) {
+    gatePassData = [];
+  }
+
+
   return (
     <section className="flex flex-col gap-8">
       {/* overview */}
@@ -111,6 +165,40 @@ async function GatePassSummaryPage({
 
       {/* single gate pass */}
       {/* <GatePassTable title='Gate Pass - 2446002269'/> */}
+      {gatePassData &&
+        gatePassData.map((item: any, index) => (
+          <GatePassTable
+            key={index}
+            title={`Gate pass no. - ${gatePasses[index].gate_pass_no}`}
+            totalAmount={Number(gatePasses[index].total_net_val)}
+            totalInvoice={Number(item[0].total_invoice || 0)}
+            cashCollection={Number(item[0].total_collection || 0)}
+            cashCollectionAmount={Number(item[0].collection_amount || 0)}
+            totalDelivered={Number(item[0].total_delivered || 0)}
+            totalDeliveredAmount={
+              Number(item[0].total_due || 0) +
+              Number(item[0].collection_amount || 0)
+            }
+            deliveryRemaining={
+              Number(item[0].total_invoice || 0) -
+              Number(item[0].total_delivered || 0)
+            }
+            deliveryRemainingAmount={
+              Number(gatePasses[index].total_net_val) -
+              Number(item[0].total_due || 0) -
+              Number(item[0].return_amount || 0)
+            }
+            returnAmount={Number(item[0].return_amount || 0)}
+            totalReturn={Number(item[0].total_return || 0)}
+            cashCollectionRemaining={
+              Number(item[0].total_delivered || 0) -
+              Number(item[0].total_collection || 0)
+            }
+            cashCollectionRemainingAmount={
+              Number(item[0].total_due || 0)
+          }
+          />
+        ))}
     </section>
   );
 }

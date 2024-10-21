@@ -50,7 +50,7 @@ function ReturnsTable({
           <TableRow>
             <TableHead>Id</TableHead>
             <TableHead>Product name</TableHead>
-            <TableHead>Quantity</TableHead>
+            <TableHead align="right" className="text-right">Quantity</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -60,7 +60,7 @@ function ReturnsTable({
               <TableRow key={index}>
                 <TableCell>{item.matnr}</TableCell>
                 <TableCell>{item.material_name}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
+                <TableCell align="right">{item.quantity}</TableCell>
               </TableRow>
             ))}
         </TableBody>

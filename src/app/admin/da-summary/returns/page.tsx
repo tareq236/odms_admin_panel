@@ -2,6 +2,7 @@ import ReturnsTable from "@/components/da-summary/returns/ReturnsTable";
 import React from "react";
 import db from "../../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
+import NoData from "@/components/constants/NoData";
 
 async function ReturnSummaryPage({
   searchParams,
@@ -81,11 +82,15 @@ async function ReturnSummaryPage({
       />
 
       {
-        singleBills && 
+        singleBills &&
+        singleBills.length > 0 ?
         singleBills.map(item => (
           <ReturnsTable key={item} title={`Billing No - ${item[0].billing_doc_no}`}
           returnProducts={item} />
-        ))
+        )) : 
+        <div className="flex justify-center items-center">
+          <NoData />
+        </div>
       }
     </div>
   );

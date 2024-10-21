@@ -1,5 +1,8 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -9,11 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatNumber } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
-import React from "react";
 
-function GatePassTable({
+function SingleGatePassTable({
   className = "",
   title = "Overview",
   totalInvoice,
@@ -28,23 +28,23 @@ function GatePassTable({
   cashCollectionRemainingAmount,
   totalReturn,
   returnAmount,
-  show=false,
+  show = false,
 }: {
   className?: string;
   title?: string;
-  totalInvoice: number,
-  totalAmount: number,
-  totalDelivered: number,
-  totalDeliveredAmount:number,
-  deliveryRemaining: number,
-  deliveryRemainingAmount: number,
-  cashCollection: number,
-  cashCollectionAmount: number,
-  cashCollectionRemaining: number,
-  cashCollectionRemainingAmount: number,
-  totalReturn: number,
-  returnAmount: number
-  show?: boolean
+  totalInvoice: number;
+  totalAmount: number;
+  totalDelivered: number;
+  totalDeliveredAmount: number;
+  deliveryRemaining: number;
+  deliveryRemainingAmount: number;
+  cashCollection: number;
+  cashCollectionAmount: number;
+  cashCollectionRemaining: number;
+  cashCollectionRemainingAmount: number;
+  totalReturn: number;
+  returnAmount: number;
+  show?: boolean;
 }) {
   const [active, setActive] = React.useState(show);
 
@@ -114,4 +114,4 @@ function GatePassTable({
   );
 }
 
-export default GatePassTable;
+export default SingleGatePassTable;
