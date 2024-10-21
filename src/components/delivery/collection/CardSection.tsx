@@ -81,7 +81,7 @@ export default async function CardSection({
     console.log(error);
   }
 
-  console.log(totalDelivery);
+
 
   return (
     <section>
