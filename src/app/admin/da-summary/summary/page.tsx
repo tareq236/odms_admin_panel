@@ -1,4 +1,4 @@
-import GatePassTable from "@/components/da-summary/gate-pass/GatePassTable";
+import GatePassTable from "@/components/da-summary/summary/GatePassTable";
 import React from "react";
 import { getGatePassBill } from "./_actions/action";
 import Accordion from "@/components/da-summary/accordion/Accordion";

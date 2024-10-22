@@ -27,8 +27,8 @@ export default function TabSection() {
     // },
     {
       id: 4,
-      name: "Gate Pass",
-      link: "/admin/da-summary/gate-pass",
+      name: "Summary",
+      link: "/admin/da-summary/summary",
     },
     {
       id: 5,
