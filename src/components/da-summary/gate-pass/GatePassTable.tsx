@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Table,
   TableBody,
@@ -9,13 +7,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatNumber } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
 import React from "react";
-import AccordionHeading from "../AccordionHeading";
 
 function GatePassTable({
-  className = "",
-  title = "Overview",
   totalInvoice,
   totalAmount,
   totalDelivered,
@@ -28,37 +22,23 @@ function GatePassTable({
   cashCollectionRemainingAmount,
   totalReturn,
   returnAmount,
-  show=false,
 }: {
-  className?: string;
-  title?: string;
-  totalInvoice: number,
-  totalAmount: number,
-  totalDelivered: number,
-  totalDeliveredAmount:number,
-  deliveryRemaining: number,
-  deliveryRemainingAmount: number,
-  cashCollection: number,
-  cashCollectionAmount: number,
-  cashCollectionRemaining: number,
-  cashCollectionRemainingAmount: number,
-  totalReturn: number,
-  returnAmount: number
-  show?: boolean
+  totalInvoice: number;
+  totalAmount: number;
+  totalDelivered: number;
+  totalDeliveredAmount: number;
+  deliveryRemaining: number;
+  deliveryRemainingAmount: number;
+  cashCollection: number;
+  cashCollectionAmount: number;
+  cashCollectionRemaining: number;
+  cashCollectionRemainingAmount: number;
+  totalReturn: number;
+  returnAmount: number;
 }) {
-  const [active, setActive] = React.useState(show);
 
   return (
-    <div
-      className={cn(
-        `${
-          active ? "max-h-[500px]" : "max-h-[33px] border-b"
-        } overflow-hidden transition-all duration-300`,
-        className,
-      )}
-    >
-      <AccordionHeading title={title} active={active} setActive={setActive} />
-
+    <>
       <Table className="mt-3 [&_td]:p-3 [&_th]:h-fit [&_th]:p-3 [&_tr:last-child]:border-b">
         <TableHeader>
           <TableRow>
@@ -100,7 +80,7 @@ function GatePassTable({
           </TableRow>
         </TableBody>
       </Table>
-    </div>
+    </>
   );
 }
 
