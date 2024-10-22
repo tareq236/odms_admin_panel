@@ -5,37 +5,39 @@ export const getReturnData = async (searchParams: {
   q: string;
   start: string;
 }) => {
-  let billingDocs: (unknown | any)[];
+
+  let partners: (unknown | any)[];
+
   try {
-    billingDocs = await db.$queryRaw`
-      select rd.billing_doc_no FROM rdl_delivery rd
-      INNER JOIN rdl_delivery_list rdl ON rdl.delivery_id = rd.id
-      WHERE rd.da_code = ${Number(searchParams.q) || 0} and rd.billing_date = ${
+    partners = await db.$queryRaw`
+    SELECT DISTINCT rl.partner
+    FROM rdl_return_list rl
+    where rl.da_code = ${Number(searchParams.q) || 0} AND rl.billing_date=${
       searchParams.start
         ? `${searchParams.start}`
         : `${formateDateDB(new Date())}`
-    } and rdl.return_quantity > 0
-      GROUP BY rd.billing_doc_no
+    }
     `;
   } catch (error) {
-    billingDocs = [];
+    partners = [];
   }
 
   let returnProducts;
   try {
     returnProducts = await db.$queryRaw`
-    SELECT rsis.matnr, rm.material_name, sum(rdl.return_quantity) quantity, rd.billing_doc_no 
-    FROM rdl_delivery rd
-    INNER JOIN rdl_delivery_list rdl ON rdl.delivery_id = rd.id
-    INNER JOIN rpl_sales_info_sap rsis ON rsis.billing_doc_no = rd.billing_doc_no
-    INNER JOIN rpl_material rm ON rm.matnr = rsis.matnr
-    WHERE rd.da_code = ${Number(searchParams.q) || 0} and rd.billing_date = ${
+      select  rl.matnr, rm.material_name, rl.batch, 
+      SUM(rl.return_quantity) quantity, SUM(rl.return_net_val) net_val, 
+      rl.billing_doc_no, rl.partner, rc.name1
+      from rdl_return_list rl
+      INNER JOIN rpl_material rm ON rm.matnr=rl.matnr
+      INNER JOIN rpl_customer rc on rc.partner=rl.partner
+      where rl.da_code = ${Number(searchParams.q) || 0} AND rl.billing_date=${
       searchParams.start
         ? `${searchParams.start}`
         : `${formateDateDB(new Date())}`
-    }  and rdl.return_quantity > 0
-    GROUP BY rsis.matnr
-    ORDER BY rm.material_name
+    }
+      GROUP BY rl.matnr
+      ORDER BY rm.material_name
   `;
   } catch (error) {
     returnProducts = [];
@@ -44,23 +46,24 @@ export const getReturnData = async (searchParams: {
   // single billings
   let singleBills: any[] = [];
   try {
-    for (let i = 0; i < billingDocs.length; i++) {
+    for (let i = 0; i < partners.length; i++) {
       let data = await db.$queryRaw`
-        SELECT rsis.matnr, rm.material_name, (rdl.return_quantity) quantity, rd.billing_doc_no 
-        FROM rdl_delivery rd
-        INNER JOIN rdl_delivery_list rdl ON rdl.delivery_id = rd.id
-        INNER JOIN rpl_sales_info_sap rsis ON rsis.billing_doc_no = rd.billing_doc_no
-        INNER JOIN rpl_material rm ON rm.matnr = rsis.matnr
-        WHERE rd.da_code = ${
+        select  rl.matnr, rm.material_name, rl.batch, 
+        SUM(rl.return_quantity) quantity, SUM(rl.return_net_val) net_val, 
+        rl.billing_doc_no, rl.partner, rc.name1
+        from rdl_return_list rl
+        INNER JOIN rpl_material rm ON rm.matnr=rl.matnr
+        INNER JOIN rpl_customer rc on rc.partner=rl.partner
+        where rl.da_code = ${
           Number(searchParams.q) || 0
-        } and rd.billing_date = ${
+        } AND rl.billing_date=${
         searchParams.start
           ? `${searchParams.start}`
           : `${formateDateDB(new Date())}`
-      } 
-        and rdl.return_quantity > 0 AND rd.billing_doc_no = ${
-          billingDocs[i].billing_doc_no
-        }
+        } 
+        AND rl.partner=${partners[i].partner}
+        GROUP BY rl.matnr
+        ORDER BY rm.material_name
       `;
 
       singleBills.push(data);
@@ -71,7 +74,7 @@ export const getReturnData = async (searchParams: {
 
   return {
     singleBills,
-    billingDocs,
+    partners,
     returnProducts,
   };
 };

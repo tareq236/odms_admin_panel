@@ -42,9 +42,11 @@ function ReturnsTable({
           <TableRow>
             <TableHead>Id</TableHead>
             <TableHead>Product name</TableHead>
+            <TableHead>Batch</TableHead>
             <TableHead align="right" className="text-right">
               Quantity
             </TableHead>
+            <TableHead align="right" className="text-right">Net value</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -54,11 +56,13 @@ function ReturnsTable({
               <TableRow key={index}>
                 <TableCell>{item.matnr}</TableCell>
                 <TableCell>{item.material_name}</TableCell>
+                <TableCell>{item.batch}</TableCell>
                 <TableCell align="right">{item.quantity}</TableCell>
+                <TableCell align="right">{item.net_val}</TableCell>
               </TableRow>
             ))}
         </TableBody>
-      </Table>
+      </Table>      
     </div>
   );
 }

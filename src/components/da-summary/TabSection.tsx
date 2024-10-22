@@ -43,7 +43,7 @@ export default function TabSection() {
   ];
 
   return (
-    <section>
+    <section className="overflow-x-auto">
       <div className="flex items-center gap-3 border-b">
         {tabList.map((item) => (
           <Button

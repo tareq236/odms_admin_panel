@@ -8,7 +8,7 @@ async function ReturnSummaryPage({
 }: {
   searchParams: { q: string; start: string };
 }) {
-  const { returnProducts, billingDocs, singleBills } = await getReturnData(
+  const { returnProducts, singleBills } = await getReturnData(
     searchParams,
   );
 
@@ -24,7 +24,7 @@ async function ReturnSummaryPage({
         singleBills.map((item) => (
           <ReturnsTable
             key={item}
-            title={`Billing No - ${item[0].billing_doc_no}`}
+            title={`Partner - ${item[0].name1}`}
             returnProducts={item}
           />
         ))
