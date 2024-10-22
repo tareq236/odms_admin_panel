@@ -14,13 +14,13 @@ async function ReturnSummaryPage({
   return (
     <div className="flex flex-col gap-5">
       <Accordion name="Overview" show={true}>
-        <ReturnsTable showBillingNo={true} returnProducts={returnProducts as any[]} />
+        <ReturnsTable returnProducts={returnProducts as any[]} />
       </Accordion>
 
       {singleBills && singleBills.length > 0 ? (
         singleBills.map((item) => (
           <Accordion name={`Partner - ${item[0].name1}`} key={item}>
-            <ReturnsTable returnProducts={item} />
+            <ReturnsTable showBillingNo={true} returnProducts={item} />
           </Accordion>
         ))
       ) : (
