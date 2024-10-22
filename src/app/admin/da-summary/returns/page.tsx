@@ -19,7 +19,10 @@ async function ReturnSummaryPage({
 
       {singleBills && singleBills.length > 0 ? (
         singleBills.map((item) => (
-          <Accordion name={`Partner - ${item[0].name1}`} key={item}>
+          <Accordion
+            name={`Partner - ${item[0].name1} (${item[0].partner}) - ${item[0].street}, ${item[0].district}`}
+            key={item}
+          >
             <ReturnsTable showBillingNo={true} returnProducts={item} />
           </Accordion>
         ))

@@ -28,7 +28,7 @@ export const getReturnData = async (searchParams: {
     returnProducts = await db.$queryRaw`
       select  rl.matnr, rm.material_name, rl.batch, 
       SUM(rl.return_quantity) quantity, SUM(rl.return_net_val) net_val, 
-      rl.billing_doc_no, rl.partner, rc.name1
+      rl.billing_doc_no, rl.partner, rc.name1, rc.street, rc.district
       from rdl_return_list rl
       INNER JOIN rpl_material rm ON rm.matnr=rl.matnr
       INNER JOIN rpl_customer rc on rc.partner=rl.partner
@@ -47,7 +47,7 @@ export const getReturnData = async (searchParams: {
       let data = await db.$queryRaw`
         select  rl.matnr, rm.material_name, rl.batch, 
         SUM(rl.return_quantity) quantity, SUM(rl.return_net_val) net_val, 
-        rl.billing_doc_no, rl.partner, rc.name1
+        rl.billing_doc_no, rl.partner, rc.name1, rc.street, rc.district
         from rdl_return_list rl
         INNER JOIN rpl_material rm ON rm.matnr=rl.matnr
         INNER JOIN rpl_customer rc on rc.partner=rl.partner
