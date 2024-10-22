@@ -6,7 +6,23 @@ export const getReturnData = async (searchParams: {
   start: string;
 }) => {
 
-  let returnProducts: (unknown | any)[];
+  let partners: (unknown | any)[];
+
+  try {
+    partners = await db.$queryRaw`
+    SELECT DISTINCT rl.partner
+    FROM rdl_return_list rl
+    where rl.da_code = ${Number(searchParams.q) || 0} AND rl.billing_date=${
+      searchParams.start
+        ? `${searchParams.start}`
+        : `${formateDateDB(new Date())}`
+    }
+    `;
+  } catch (error) {
+    partners = [];
+  }
+
+  let returnProducts;
   try {
     returnProducts = await db.$queryRaw`
       select  rl.matnr, rm.material_name, rl.batch, 
@@ -30,7 +46,7 @@ export const getReturnData = async (searchParams: {
   // single billings
   let singleBills: any[] = [];
   try {
-    for (let i = 0; i < returnProducts.length; i++) {
+    for (let i = 0; i < partners.length; i++) {
       let data = await db.$queryRaw`
         select  rl.matnr, rm.material_name, rl.batch, 
         SUM(rl.return_quantity) quantity, SUM(rl.return_net_val) net_val, 
@@ -45,7 +61,7 @@ export const getReturnData = async (searchParams: {
           ? `${searchParams.start}`
           : `${formateDateDB(new Date())}`
         } 
-        AND rl.partner=${returnProducts[i].partner}
+        AND rl.partner=${partners[i].partner}
         GROUP BY rl.matnr
         ORDER BY rm.material_name
       `;
@@ -58,6 +74,7 @@ export const getReturnData = async (searchParams: {
 
   return {
     singleBills,
+    partners,
     returnProducts,
   };
 };

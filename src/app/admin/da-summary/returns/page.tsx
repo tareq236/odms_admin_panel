@@ -14,7 +14,7 @@ async function ReturnSummaryPage({
   return (
     <div className="flex flex-col gap-5">
       <Accordion name="Overview" show={true}>
-        <ReturnsTable returnProducts={returnProducts as any[]} />
+        <ReturnsTable showBillingNo={true} returnProducts={returnProducts as any[]} />
       </Accordion>
 
       {singleBills && singleBills.length > 0 ? (
