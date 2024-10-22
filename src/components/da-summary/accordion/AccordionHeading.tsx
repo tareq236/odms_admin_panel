@@ -14,7 +14,7 @@ function AccordionHeading({title, className, active, setActive, ...props}: Accor
       className={cn("text-sm text-nowrap overflow-x-auto font-semibold flex items-center gap-3 hover:text-primary cursor-pointer transition-all duration-500", className)}
       onClick={() => setActive(!active)}
     >
-        <span className="w-3 aspect-square bg-primary rounded"></span>
+        <span className="w-3 min-w-3 aspect-square bg-primary rounded"></span>
       {title}
       <ChevronRight
         className={`size-4 ${

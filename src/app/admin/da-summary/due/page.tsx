@@ -18,7 +18,7 @@ async function DueSummaryPage({
       {/* partner wise data */}
       {partnerDues.length > 0 &&
         partnerDues.map((item, index) => (
-          <Accordion show={index===0} name={`Partner - ${item[0].name1} (${item[0].partner}) - ${item[0].street}, ${item[0].district}`} key={index}>
+          <Accordion show={index===0} name={`${item[0].partner} - ${item[0].name1} - ${item[0].street}, ${item[0].district}`} key={index}>
             <DueTable dueData={item as any[]} />
           </Accordion>
         ))}

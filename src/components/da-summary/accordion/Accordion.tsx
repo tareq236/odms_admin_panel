@@ -17,7 +17,7 @@ function Accordion({ className, name, show=false, children, ...props }: Accordio
       {...props}
       className={cn(
         `${
-          active ? "max-h-[500px]" : "max-h-[33px] border-b"
+          active ? "max-h-[100rem]" : "max-h-[33px] border-b"
         } overflow-hidden transition-all duration-300`,
         className,
       )}
