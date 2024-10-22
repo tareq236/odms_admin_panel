@@ -11,7 +11,7 @@ type AccordionHeadingProps = ComponentProps<"h3"> & {
 function AccordionHeading({title, className, active, setActive, ...props}: AccordionHeadingProps) {
   return (
     <h3
-      className={cn("text-sm font-semibold flex items-center gap-3 hover:text-primary cursor-pointer transition-all duration-500", className)}
+      className={cn("text-sm text-nowrap overflow-x-auto font-semibold flex items-center gap-3 hover:text-primary cursor-pointer transition-all duration-500", className)}
       onClick={() => setActive(!active)}
     >
         <span className="w-3 aspect-square bg-primary rounded"></span>
