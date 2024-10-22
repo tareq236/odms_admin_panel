@@ -2,23 +2,30 @@ import DueTable from "@/components/da-summary/due/DueTable";
 import React from "react";
 
 import { getDueList } from "./_action/action";
+import Accordion from "@/components/da-summary/accordion/Accordion";
 
 async function DueSummaryPage({
   searchParams,
 }: {
   searchParams: { q: string; start: string };
 }) {
-  const { dueData } = await getDueList(searchParams);
+  const { dueData, partnerDues } = await getDueList(searchParams);
 
   return (
-    <div>
-      <h3 className="flex items-center gap-3">
-        <span className="w-3 aspect-square bg-primary rounded"></span>
-        Overview
-      </h3>
+    <section className="flex flex-col gap-5">
+      {/* overview */}
+      <Accordion name="Overview" show={true}>
+        <DueTable dueData={dueData as any[]} />
+      </Accordion>
 
-      <DueTable dueData={dueData as any[]} />
-    </div>
+      {/* partner wise data */}
+      {partnerDues.length > 0 &&
+        partnerDues.map((item, index) => (
+          <Accordion name={`Partner - ${item[0].name1}`} key={index}>
+            <DueTable dueData={item as any[]} />
+          </Accordion>
+        ))}
+    </section>
   );
 }
 
