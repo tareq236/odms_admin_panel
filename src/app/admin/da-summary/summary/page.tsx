@@ -2,6 +2,7 @@ import GatePassTable from "@/components/da-summary/summary/GatePassTable";
 import React from "react";
 import { getGatePassBill } from "./_actions/action";
 import Accordion from "@/components/da-summary/accordion/Accordion";
+import SearchDa from "@/components/constants/SearchDa";
 
 async function GatePassSummaryPage({
   searchParams,
@@ -16,6 +17,8 @@ async function GatePassSummaryPage({
     gatePasses,
     collectionDone,
   } = await getGatePassBill(searchParams);
+
+  if(!searchParams.q) return <SearchDa />
 
   return (
     <section className="flex flex-col gap-8">

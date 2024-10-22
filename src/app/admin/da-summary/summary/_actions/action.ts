@@ -5,6 +5,7 @@ export const getGatePassBill = async (searchParams: {
   q: string;
   start: string;
 }) => {
+  
   const startDate = searchParams.start
     ? `${searchParams.start}`
     : `${formateDateDB(new Date())}`;
@@ -110,7 +111,6 @@ export const getGatePassBill = async (searchParams: {
           GROUP BY b.billing_doc_no
           LIMIT 1
         `;
-        console.log("i");
         gatePassData.push(data);
       }
     }
