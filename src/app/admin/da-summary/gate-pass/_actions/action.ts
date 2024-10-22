@@ -5,6 +5,12 @@ export const getGatePassBill = async (searchParams: {
   q: string;
   start: string;
 }) => {
+  const startDate = searchParams.start
+    ? `${searchParams.start}`
+    : `${formateDateDB(new Date())}`;
+
+  const daCode = Number(searchParams.q) || 0;
+
   let totalDelivery: any = [{ total_delivery: 0, total_net_val: 0 }];
   let deliveryDone: any = [{ total_delivery_done: 0, total_net_val: 0 }];
   let collectionDone: any = [{ total_collection_done: 0, total_net_val: 0 }];
@@ -18,11 +24,7 @@ export const getGatePassBill = async (searchParams: {
         count(*) over() as total_delivery
         FROM rdl_delivery_info_sap as a
         INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
-        WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
-          searchParams.start
-            ? `${searchParams.start}`
-            : `${formateDateDB(new Date())}`
-        } 
+        WHERE a.da_code = ${daCode} AND a.billing_date=${startDate} 
         GROUP BY a.billing_doc_no
         limit 1
         `,
@@ -32,11 +34,7 @@ export const getGatePassBill = async (searchParams: {
         FROM rdl_delivery_info_sap as a
         LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
         INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
-        WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
-          searchParams.start
-            ? `${searchParams.start}`
-            : `${formateDateDB(new Date())}`
-        }  AND b.delivery_status='Done'
+        WHERE a.da_code = ${daCode} AND a.billing_date=${startDate}  AND b.delivery_status='Done'
         GROUP BY a.billing_doc_no
         limit 1
         `,
@@ -45,11 +43,7 @@ export const getGatePassBill = async (searchParams: {
         count(*) over() as total_collection_done
         FROM rdl_delivery_info_sap as a
         LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
-        WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
-          searchParams.start
-            ? `${searchParams.start}`
-            : `${formateDateDB(new Date())}`
-        }  AND b.cash_collection_status='Done'
+        WHERE a.da_code = ${daCode} AND a.billing_date=${startDate}  AND b.cash_collection_status='Done'
         GROUP BY a.billing_doc_no
         limit 1
         `,
@@ -63,7 +57,7 @@ export const getGatePassBill = async (searchParams: {
                 ? `${searchParams.start}`
                 : `${formateDateDB(new Date())}`
             }
-            AND rd.da_code = ${Number(searchParams.q) || 0} 
+            AND rd.da_code = ${daCode} 
             AND rds.return_quantity > 0
         `,
       ]);
@@ -79,7 +73,7 @@ export const getGatePassBill = async (searchParams: {
       FROM rdl_delivery_info_sap as a
       INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
       LEFT JOIN rdl_delivery rd ON rd.billing_doc_no = a.billing_doc_no
-      WHERE a.da_code =${Number(searchParams.q) || 0} AND a.billing_date=${
+      WHERE a.da_code =${daCode} AND a.billing_date=${
       searchParams.start
         ? `${searchParams.start}`
         : `${formateDateDB(new Date())}`
@@ -111,7 +105,7 @@ export const getGatePassBill = async (searchParams: {
               ? `${searchParams.start}`
               : `${formateDateDB(new Date())}`
           }
-          AND a.da_code = ${Number(searchParams.q) || 0}
+          AND a.da_code = ${daCode}
           and b.gate_pass_no = ${gatePasses[i].gate_pass_no}
           GROUP BY b.billing_doc_no
           LIMIT 1

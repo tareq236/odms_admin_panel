@@ -9,14 +9,11 @@ async function DueSummaryPage({
 }: {
   searchParams: { q: string; start: string };
 }) {
-  const { dueData, partnerDues } = await getDueList(searchParams);
+  const { partnerDues } = await getDueList(searchParams);
 
   return (
     <section className="flex flex-col gap-5">
-      {/* overview */}
-      <Accordion name="Overview" show={true}>
-        <DueTable dueData={dueData as any[]} />
-      </Accordion>
+     
 
       {/* partner wise data */}
       {partnerDues.length > 0 &&

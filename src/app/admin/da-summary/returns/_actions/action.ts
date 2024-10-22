@@ -5,6 +5,11 @@ export const getReturnData = async (searchParams: {
   q: string;
   start: string;
 }) => {
+  const startDate = searchParams.start
+    ? `${searchParams.start}`
+    : `${formateDateDB(new Date())}`;
+
+  const daCode = Number(searchParams.q) || 0;
 
   let partners: (unknown | any)[];
 
@@ -12,11 +17,7 @@ export const getReturnData = async (searchParams: {
     partners = await db.$queryRaw`
     SELECT DISTINCT rl.partner
     FROM rdl_return_list rl
-    where rl.da_code = ${Number(searchParams.q) || 0} AND rl.billing_date=${
-      searchParams.start
-        ? `${searchParams.start}`
-        : `${formateDateDB(new Date())}`
-    }
+    where rl.da_code = ${daCode} AND rl.billing_date=${startDate}
     `;
   } catch (error) {
     partners = [];
@@ -31,11 +32,7 @@ export const getReturnData = async (searchParams: {
       from rdl_return_list rl
       INNER JOIN rpl_material rm ON rm.matnr=rl.matnr
       INNER JOIN rpl_customer rc on rc.partner=rl.partner
-      where rl.da_code = ${Number(searchParams.q) || 0} AND rl.billing_date=${
-      searchParams.start
-        ? `${searchParams.start}`
-        : `${formateDateDB(new Date())}`
-    }
+      where rl.da_code = ${daCode} AND rl.billing_date=${startDate}
       GROUP BY rl.matnr
       ORDER BY rm.material_name
   `;
@@ -54,13 +51,11 @@ export const getReturnData = async (searchParams: {
         from rdl_return_list rl
         INNER JOIN rpl_material rm ON rm.matnr=rl.matnr
         INNER JOIN rpl_customer rc on rc.partner=rl.partner
-        where rl.da_code = ${
-          Number(searchParams.q) || 0
-        } AND rl.billing_date=${
+        where rl.da_code = ${Number(searchParams.q) || 0} AND rl.billing_date=${
         searchParams.start
           ? `${searchParams.start}`
           : `${formateDateDB(new Date())}`
-        } 
+      } 
         AND rl.partner=${partners[i].partner}
         GROUP BY rl.matnr
         ORDER BY rm.material_name
