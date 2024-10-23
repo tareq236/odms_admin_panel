@@ -7,6 +7,7 @@ import {
   ListTodo,
   LogOut,
   Map,
+  MapPin,
   PackageCheck,
   Route,
   ScrollText,
@@ -80,18 +81,32 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           </Accordion>
 
           <NavLink
-            icon={<Waypoints className="size-4" />}
-            name="Conveyance"
-            href="/admin/conveyance"
-            onClick={onClose}
-          />
-
-          <NavLink
             icon={<IdCard className="size-4" />}
             name="DA Summary"
             href="/admin/da-summary"
             onClick={onClose}
           />
+
+          {/* maps */}
+          <div className="mt-3">
+            <h4 className="text-muted-foreground text-xs mb-3">Map</h4>
+
+            <div className="flex flex-col gap-2">
+              <NavLink
+                icon={<Waypoints className="size-4" />}
+                name="Conveyance"
+                href="/admin/map/conveyance"
+                onClick={onClose}
+              />
+
+              <NavLink
+                icon={<MapPin className="size-4" />}
+                name="DA Tracking"
+                href="/admin/map/da-tracking"
+                onClick={onClose}
+              />
+            </div>
+          </div>
 
           {/* statistics */}
           <div className="my-3">

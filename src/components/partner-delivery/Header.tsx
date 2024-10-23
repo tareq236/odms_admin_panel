@@ -6,7 +6,7 @@ import React from "react";
 
 function Header() {
   return (
-    <div className="header flex justify-between items-center gap-5">
+    <div className="header flex justify-between items-center gap-5 flex-wrap">
       <div className="flex gap-2 items-center">
         <div className="icon rounded-full text-primary">
           <Users className="size-5 fill-primary/20" />

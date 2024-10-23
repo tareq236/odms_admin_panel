@@ -1,5 +1,5 @@
 import { rdl_conveyance } from "@prisma/client";
-import db from "../../../../../db/db";
+import db from "../../../../../../db/db";
 
 export const getConveyanceData = async ({
   searchParams,

@@ -1,4 +1,4 @@
-import PartnerStatsSection from "@/components/home/PartnerStatsSection/PartnerStatsSection";
+import PartnerStatsSection from "@/components/partner-delivery/PartnerStatsSection";
 import React from "react";
 
 function PartnerDeliveryAnalyticsPage({
