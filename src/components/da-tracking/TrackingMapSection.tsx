@@ -66,7 +66,7 @@ const TrackingMapSection = () => {
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyDUF_UU3jlzoS9pKYqB4BWrQM0Nc7CnCiU",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_TRACKING_API as string,
   });
 
   const [map, setMap] = React.useState<any>(null);
