@@ -5,6 +5,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import { MapPin } from "lucide-react";
 import React, { Suspense } from "react";
 import db from "../../../../../db/db";
+import SearchDa from "@/components/constants/SearchDa";
 
 async function DaTrackingPage({
   searchParams,
@@ -29,10 +30,14 @@ async function DaTrackingPage({
 
       <FilterSection />
 
-      {searchParams.q && (
+      {searchParams.q ? (
         <Suspense>
           <DaInfoSection searchParams={searchParams} />
         </Suspense>
+      ): (
+        <section className="py-10 border-t">
+          <SearchDa />
+        </section>
       )}
       {daInfo && <TrackingMapSection />}
     </>
