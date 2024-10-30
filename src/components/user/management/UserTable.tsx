@@ -155,8 +155,13 @@ function UserTable({
               disabled={isPending}
               onClick={() => {
                 startTransition(async () => {
-                  await deleteUser(delUser);
-                  toast.success("User is deleted");
+                  try {
+                    await deleteUser(delUser);
+                    toast.success("User is deleted");
+                  } catch (error) {
+                    toast.warning("Something went wrong!");
+                  }
+                 
                 });
               }}
             >

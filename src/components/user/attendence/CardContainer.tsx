@@ -11,7 +11,6 @@ type CardContainerProps = {
 export default async function CardContainer({
   searchParams,
 }: CardContainerProps) {
-  const currentDate = new Date(searchParams.start) || new Date();
   let date = searchParams.start ? searchParams.start.split("-") : undefined;
   let startDate =
     date == undefined ? new Date() : new Date(Number(date[0]), Number(date[1]) - 1, Number(date[2]));

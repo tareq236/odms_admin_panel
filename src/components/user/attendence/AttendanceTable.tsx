@@ -9,13 +9,12 @@ import {
 import { MessageSquareOff, ServerOff } from "lucide-react";
 import React from "react";
 import { formatDateTime, formatNumber } from "@/lib/formatters";
-import { AttendanceTableProps } from "@/app/admin/user/attendance/page";
 
 export default function AttendanceTable({
     data,
     connectionError,
   }: {
-    data: AttendanceTableProps[];
+    data: any[];
     connectionError: boolean;
   }) {
   return (
@@ -48,7 +47,7 @@ export default function AttendanceTable({
             data.map((item) => (
               <TableRow key={item.sap_id}>
                 <TableCell>{item.sap_id}</TableCell>
-                <TableCell>{item.rdl_user_list?.full_name}</TableCell>
+                <TableCell>{item.full_name}</TableCell>
                 <TableCell className="min-w-[180px]">{item.start_date_time ? formatDateTime(item.start_date_time) : '-'}</TableCell>
                 <TableCell className="min-w-[180px]">{item.end_date_time ? formatDateTime(item.end_date_time) : '-'}</TableCell>
                 <TableCell >{item.late_time_min ? formatNumber(item.late_time_min): '-'}</TableCell>

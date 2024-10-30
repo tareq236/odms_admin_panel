@@ -8,109 +8,37 @@ export const getAttendance = async ({
   limit?: number;
 }) => {
   let data;
-  let count;
+
   let date = searchParams.start ? searchParams.start.split("-") : undefined;
   let startDate =
-    date == undefined ? new Date() : new Date(Number(date[0]), Number(date[1]) - 1, Number(date[2]));
+    date == undefined
+      ? new Date()
+      : new Date(Number(date[0]), Number(date[1]) - 1, Number(date[2]));
 
-  let endDate = new Date(startDate.getFullYear(),startDate.getMonth(), startDate.getDate() + 1, 
+  let endDate = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate() + 1,
   );
 
-  if (searchParams.start && searchParams.q) {
-    [data, count] = await Promise.all([
-      db.rdl_attendance.findMany({
-        include: { rdl_user_list: true },
-        where: {
-          AND: [
-            {
-              start_date_time: {
-                gte: startDate,
-                lt: endDate,
-              },
-            },
-            {
-              sap_id: Number(searchParams.q) || null,
-            },
-          ],
-        },
-        take: limit,
-        skip: limit * (Number(searchParams.p || 1) - 1),
-      }),
-      db.rdl_attendance.count({
-        where: {
-          AND: [
-            {
-              start_date_time: {
-                gte: startDate,
-                lt: endDate,
-              },
-            },
-            {
-              sap_id: Number(searchParams.q) || null,
-            },
-          ],
-        },
-      }),
-    ]);
-  } else if (searchParams.start) {
-    [data, count] = await Promise.all([
-      db.rdl_attendance.findMany({
-        include: { rdl_user_list: true },
-        where: {
-          start_date_time: {
-            gte: startDate,
-            lt: endDate,
-          },
-        },
-        take: limit,
-        skip: limit * (Number(searchParams.p || 1) - 1),
-      }),
-      db.rdl_attendance.count({
-        where: {
-          start_date_time: {
-            gte: startDate,
-            lt: endDate,
-          },
-        },
-      }),
-    ]);
-  } else if (searchParams.q) {
-    [data, count] = await Promise.all([
-      db.rdl_attendance.findMany({
-        include: { rdl_user_list: true },
-        where: { sap_id: Number(searchParams.q) || null },
-        orderBy: { created_at: "desc" },
-        take: limit,
-        skip: limit * (Number(searchParams.p || 1) - 1),
-      }),
-      db.rdl_attendance.count({
-        where: { sap_id: Number(searchParams.q) || null },
-      }),
-    ]);
-  } else {
-    [data, count] = await Promise.all([
-      db.rdl_attendance.findMany({
-        include: { rdl_user_list: true },
-        where: {
-          start_date_time: {
-            gte: startDate,
-            lt: endDate,
-          },
-        },
-        take: limit,
-        skip: limit * (Number(searchParams.p || 1) - 1),
-      }),
-      db.rdl_attendance.count({
-        where: {
-          start_date_time: {
-            gte: startDate,
-            lt: endDate,
-          },
-        },
-      }),
-    ]);
-  }
+  try {
+    if (searchParams.q) {
+      data = await db.$queryRaw`
+      SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
+      INNER JOIN rdl_user_list ru ON ru.sap_id = ra.sap_id
+      WHERE ra.start_date_time >= ${startDate} AND ra.start_date_time < ${endDate}
+      AND ra.sap_id = ${searchParams.q}
+      LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+    `;
+    } else {
+      data = await db.$queryRaw`
+      SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
+      INNER JOIN rdl_user_list ru ON ru.sap_id = ra.sap_id
+      WHERE ra.start_date_time >= ${startDate} AND ra.start_date_time < ${endDate}
+      LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+    `;
+    }
+  } catch (error) {}
 
-  return { data, count };
+  return data as any[];
 };
-

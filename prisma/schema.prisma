@@ -11,8 +11,8 @@ model exf_customer_location {
   id          Int       @id @default(autoincrement())
   work_area_t String?   @db.VarChar(10)
   customer_id String?   @db.VarChar(20)
-  latitude    Float?
-  longitude   Float?
+  latitude    Decimal?  @db.Decimal(27, 16)
+  longitude   Decimal?  @db.Decimal(27, 16)
   created_at  DateTime  @default(now()) @db.Timestamp(0)
   updated_at  DateTime? @db.DateTime(0)
 
@@ -32,22 +32,21 @@ model rdl_admin_user_list {
 }
 
 model rdl_attendance {
-  id              Int            @id @default(autoincrement())
-  start_date_time DateTime?      @db.DateTime(6)
-  end_date_time   DateTime?      @db.DateTime(6)
+  id              Int       @id @default(autoincrement())
+  start_date_time DateTime? @db.DateTime(6)
+  end_date_time   DateTime? @db.DateTime(6)
   late_time_min   Int?
   over_time_min   Int?
-  attendance_type String?        @db.VarChar(20)
-  start_latitude  Decimal?       @db.Decimal(27, 16)
-  start_longitude Decimal?       @db.Decimal(27, 16)
-  end_latitude    Decimal?       @db.Decimal(27, 16)
-  end_longitude   Decimal?       @db.Decimal(27, 16)
-  start_image     String?        @db.VarChar(100)
-  end_image       String?        @db.VarChar(100)
-  created_at      DateTime       @db.DateTime(6)
-  updated_at      DateTime?      @db.DateTime(6)
+  attendance_type String?   @db.VarChar(20)
+  start_latitude  Decimal?  @db.Decimal(27, 16)
+  start_longitude Decimal?  @db.Decimal(27, 16)
+  end_latitude    Decimal?  @db.Decimal(27, 16)
+  end_longitude   Decimal?  @db.Decimal(27, 16)
+  start_image     String?   @db.VarChar(100)
+  end_image       String?   @db.VarChar(100)
+  created_at      DateTime  @db.DateTime(6)
+  updated_at      DateTime? @db.DateTime(6)
   sap_id          Int?
-  rdl_user_list   rdl_user_list? @relation(fields: [sap_id], references: [sap_id], onDelete: Restrict, onUpdate: Restrict, map: "rdl_attendance_sap_id_9aa23378_fk_rdl_user_list_sap_id")
 
   @@index([sap_id], map: "rdl_attendance_sap_id_9aa23378_fk_rdl_user_list_sap_id")
 }
@@ -148,6 +147,8 @@ model rdl_delivery {
   last_status               String?             @db.VarChar(80)
   due_amount                Decimal?            @db.Decimal(8, 2)
   net_val                   Decimal?            @db.Decimal(8, 2)
+  return_amount             Decimal?            @default(0.00) @db.Decimal(8, 2)
+  return_status             Int?                @default(0)
   rdl_delivery_list         rdl_delivery_list[]
 }
 
@@ -236,16 +237,15 @@ model rdl_route_sap {
 }
 
 model rdl_user_list {
-  sap_id         Int              @id
-  full_name      String           @db.VarChar(255)
-  mobile_number  String           @db.VarChar(255)
-  user_type      String?          @db.VarChar(20)
-  password       String           @default("123456") @db.VarChar(255)
-  created_at     DateTime         @default(now()) @db.DateTime(6)
-  updated_at     DateTime?        @db.DateTime(6)
-  status         Int              @default(1) @db.UnsignedSmallInt
-  id             Int              @unique(map: "id_uniq") @default(autoincrement()) @db.UnsignedInt
-  rdl_attendance rdl_attendance[]
+  sap_id        Int       @id
+  full_name     String    @db.VarChar(255)
+  mobile_number String    @db.VarChar(255)
+  user_type     String?   @db.VarChar(20)
+  password      String    @default("123456") @db.VarChar(255)
+  created_at    DateTime  @default(now()) @db.DateTime(6)
+  updated_at    DateTime? @db.DateTime(6)
+  status        Int       @default(1) @db.UnsignedSmallInt
+  id            Int       @unique(map: "id_uniq") @default(autoincrement()) @db.UnsignedInt
 }
 
 model rpl_customer {
@@ -522,6 +522,7 @@ model rdl_delivery_stats {
   id                    Int       @id @default(autoincrement())
   partner_id            String    @db.VarChar(10)
   total_collection      Decimal   @db.Decimal(10, 2)
+  total_delivered       Decimal   @db.Decimal(10, 2)
   total_due             Decimal   @db.Decimal(10, 2)
   total_net_val         Decimal   @db.Decimal(10, 2)
   total_quantity        Int
@@ -539,4 +540,84 @@ model rdl_transport_mode_list {
   status         Int       @db.UnsignedSmallInt
   created_at     DateTime  @db.DateTime(6)
   updated_at     DateTime? @db.DateTime(6)
+}
+
+model rdl_customer_location {
+  id          Int       @id @default(autoincrement())
+  work_area_t String?   @db.VarChar(10)
+  customer_id String?   @unique(map: "unique_rpl_customer_location_customer_id") @db.VarChar(20)
+  latitude    Decimal?  @db.Decimal(27, 16)
+  longitude   Decimal?  @db.Decimal(27, 16)
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @db.DateTime(0)
+
+  @@index([customer_id], map: "idx_rpl_customer_location_customer_id")
+  @@index([work_area_t], map: "idx_rpl_customer_location_work_area_t")
+}
+
+model rdl_payment_history {
+  id                        Int       @id @default(autoincrement())
+  billing_doc_no            String    @db.VarChar(10)
+  partner                   String    @db.VarChar(10)
+  da_code                   String    @db.VarChar(10)
+  cash_collection           Decimal?  @db.Decimal(8, 2)
+  cash_collection_date_time DateTime? @db.DateTime(6)
+  cash_collection_latitude  Decimal?  @db.Decimal(27, 16)
+  cash_collection_longitude Decimal?  @db.Decimal(27, 16)
+  created_at                DateTime  @db.DateTime(6)
+  updated_at                DateTime? @db.DateTime(6)
+  route_code                String?   @db.VarChar(6)
+}
+
+model rdl_return {
+  id               Int       @id @default(autoincrement())
+  billing_doc_no   String    @unique(map: "billing_doc_no") @db.VarChar(10)
+  billing_date     DateTime  @db.Date
+  partner          String    @db.VarChar(10)
+  gate_pass_no     String    @db.VarChar(10)
+  da_code          String    @db.VarChar(8)
+  route_code       String?   @db.VarChar(6)
+  return_date_time DateTime? @db.DateTime(6)
+  return_latitude  Decimal?  @db.Decimal(27, 16)
+  return_longitude Decimal?  @db.Decimal(27, 16)
+  return_status    String?   @db.VarChar(20)
+  return_amount    Decimal?  @db.Decimal(8, 2)
+  created_at       DateTime  @db.DateTime(6)
+  updated_at       DateTime? @db.DateTime(6)
+}
+
+model rdl_return_list {
+  id              Int       @id @default(autoincrement())
+  matnr           String    @db.VarChar(40)
+  batch           String    @db.VarChar(40)
+  return_quantity Decimal?  @db.Decimal(10, 2)
+  return_net_val  Decimal?  @db.Decimal(10, 2)
+  created_at      DateTime? @db.DateTime(6)
+  updated_at      DateTime? @db.DateTime(6)
+  billing_date    DateTime  @db.Date
+  billing_doc_no  String    @db.VarChar(10)
+  da_code         String    @db.VarChar(8)
+  gate_pass_no    String    @db.VarChar(10)
+  partner         String    @db.VarChar(10)
+  route_code      String?   @db.VarChar(6)
+  return_time     String?   @db.VarChar(20)
+}
+
+model rdl_visit_history {
+  id              BigInt                       @id @default(autoincrement())
+  da_code         String                       @db.VarChar(10)
+  route_code      String?                      @db.VarChar(10)
+  partner         String                       @db.VarChar(10)
+  visit_type      rdl_visit_history_visit_type
+  visit_latitude  Decimal?                     @db.Decimal(27, 16)
+  visit_longitude Decimal?                     @db.Decimal(27, 16)
+  comment         String?                      @db.Text
+  created_at      DateTime?                    @default(now()) @db.DateTime(0)
+  updated_at      DateTime?                    @default(now()) @db.DateTime(0)
+}
+
+enum rdl_visit_history_visit_type {
+  Customer_Unavailable
+  Customer_Busy
+  Insufficient_Amount
 }
