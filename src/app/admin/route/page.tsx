@@ -46,9 +46,18 @@ const DataTable = async ({
       [data, count] = await Promise.all([
         db.rdl_route_sap.findMany({
           where: {
-            description: {
-              startsWith: searchParams.q,
-            },
+            OR: [
+              {
+                description: {
+                  startsWith: searchParams.q,
+                },
+              },
+              {
+                route: {
+                  startsWith: searchParams.q
+                }
+              }
+            ]
           },
           orderBy: { created_at: "desc" },
           take: limit,
@@ -56,9 +65,18 @@ const DataTable = async ({
         }),
         db.rdl_route_sap.count({
           where: {
-            description: {
-              contains: searchParams.q,
-            },
+            OR: [
+              {
+                description: {
+                  startsWith: searchParams.q,
+                },
+              },
+              {
+                route: {
+                  startsWith: searchParams.q
+                }
+              }
+            ]
           },
         }),
       ]);
