@@ -6,7 +6,7 @@ import React from "react";
 function AttendanceSection({
   daAttendance,
 }: {
-  daAttendance: rdl_attendance[];
+  daAttendance: any[];
 }) {
   return (
     <section className="border rounded p-4">
@@ -14,6 +14,7 @@ function AttendanceSection({
         <h2 className="text-foreground font-semibold mb-5 text-lg">
           Attendance
         </h2>
+
 
         <div className="flex flex-col items-end gap-0.5">
           <span className="text-xs text-muted-foreground">
