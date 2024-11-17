@@ -21,7 +21,6 @@ export default function Nav() {
 
   return (
     <nav className="sticky top-0 bg-white w-full border-b z-10 md:hidden">
-      
       {/* navbar */}
       <div className="flex justify-between items-center gap-5 px-5 py-6 shadow-sm h-14">
         <div className="left flex gap-5 items-center">
@@ -35,7 +34,6 @@ export default function Nav() {
           >
             <Menu className="size-6" />
           </Button>
-
         </div>
 
         <div className="right">
@@ -63,7 +61,11 @@ export default function Nav() {
       {/* sidebar */}
       <Sheet open={showSidebar} onOpenChange={setShowSidebar}>
         <SheetContent side={"left"}>
-          <Sidebar onClose={() => {setShowSidebar(false)}} />
+          <Sidebar
+            onClose={() => {
+              setShowSidebar(false);
+            }}
+          />
         </SheetContent>
       </Sheet>
     </nav>

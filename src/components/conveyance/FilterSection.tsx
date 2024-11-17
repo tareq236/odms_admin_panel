@@ -21,7 +21,7 @@ export default async function FilterSection({
         <DatePicker />
         <Search placeholder="Search by DA code" />
       </div>
-      {count !== 0 && <TrackSection data={data as any[]} />}
+      {(count > 0) && <TrackSection data={data as any[]} />}
     </section>
   );
 }

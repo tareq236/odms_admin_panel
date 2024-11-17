@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import {
   GoogleMap,
   InfoWindow,
-  LoadScript,
   Marker,
   Polyline,
   useJsApiLoader,

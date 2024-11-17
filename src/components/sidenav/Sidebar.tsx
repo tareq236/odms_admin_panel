@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import {
+  Footprints,
   Home,
   IdCard,
   ListTodo,
@@ -18,10 +19,11 @@ import {
 } from "lucide-react";
 import NavLink from "./NavLink";
 import Accordion from "./Accordion";
-import { useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next-nprogress-bar";
 import { toast } from "sonner";
 import { logout } from "@/app/actions/auth";
+import { socket } from "@/lib/socketIo";
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const router = useRouter();
@@ -34,7 +36,6 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         <div className="logo px-2 text-primary">
           <Map className="size-7" />
         </div>
-
         {/* links */}
         <div className="flex flex-col gap-2">
           <NavLink
@@ -103,6 +104,13 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
                 icon={<MapPin className="size-4" />}
                 name="DA Tracking"
                 href="/admin/map/da-tracking"
+                onClick={onClose}
+              />
+
+              <NavLink
+                icon={<Footprints className="size-4" />}
+                name="Live Tracking"
+                href="/admin/map/live-tracking"
                 onClick={onClose}
               />
             </div>

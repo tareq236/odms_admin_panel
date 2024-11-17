@@ -10,11 +10,7 @@ export type CartData = {
   total_attendance: bigint;
 };
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: { q: string; p: string, sorting: string };
-}) {
+export default async function Home() {
   const date = new Date();
   const currentDate = format(new Date(), "yyyy-MM-dd");
   const prevMonth = format(
@@ -41,7 +37,7 @@ export default async function Home({
   }
 
   return (
-    <div className="">
+    <div>
       <Header />
       <ChartSection data={data as CartData[]} count={count} />
     </div>

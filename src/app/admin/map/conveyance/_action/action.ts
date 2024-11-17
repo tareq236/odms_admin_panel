@@ -12,7 +12,7 @@ export const getConveyanceData = async ({
   };
   limit?: number;
 }) => {
-  let data;
+  let data: (any[]| unknown);
   let count = 0;
   let connectionError = false;
 
