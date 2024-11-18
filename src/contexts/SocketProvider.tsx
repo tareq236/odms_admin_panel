@@ -33,5 +33,5 @@ export default function SocketProvider({
       socket.off("disconnect", onDisconnect);
     };
   }, []);
-  return <>{isConnected ? "Connected": "Not Connected"} {children}</>;
+  return <>{children}</>;
 }

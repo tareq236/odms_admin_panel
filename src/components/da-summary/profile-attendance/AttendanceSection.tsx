@@ -1,13 +1,17 @@
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime, formatNumber } from "@/lib/formatters";
-import { rdl_attendance } from "@prisma/client";
 import React from "react";
 
-function AttendanceSection({
-  daAttendance,
-}: {
-  daAttendance: any[];
-}) {
+function AttendanceSection({ daAttendance }: { daAttendance: any[] }) {
+  const startDate = daAttendance[0].start_date_time as Date;
+  const endDate = daAttendance[0].end_date_time as Date;
+  if (startDate) {
+    startDate.setUTCHours(0);
+  }
+  if (endDate) {
+    endDate.setUTCHours(0);
+  }
+
   return (
     <section className="border rounded p-4">
       <div className="header flex flex-wrap justify-between items-center gap-5">
@@ -15,16 +19,22 @@ function AttendanceSection({
           Attendance
         </h2>
 
-
         <div className="flex flex-col items-end gap-0.5">
           <span className="text-xs text-muted-foreground">
             Today&apos;s Status
           </span>
           <span className="font-medium text-sm">
             {daAttendance && daAttendance[0] != undefined ? (
-              <Badge className="bg-green-200 text-green-900 hover:bg-green-100">Present</Badge>
+              <Badge className="bg-green-200 text-green-900 hover:bg-green-100">
+                Present
+              </Badge>
             ) : (
-              <Badge variant={'destructive'} className="bg-rose-200 text-rose-900 hover:bg-rose-100">Absent</Badge>
+              <Badge
+                variant={"destructive"}
+                className="bg-rose-200 text-rose-900 hover:bg-rose-100"
+              >
+                Absent
+              </Badge>
             )}
           </span>
         </div>
@@ -35,13 +45,13 @@ function AttendanceSection({
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Start from</span>
             <span className="font-medium text-sm">
-              {formatDateTime(daAttendance[0].start_date_time as Date)}
+              {formatDateTime(startDate)}
             </span>
           </p>
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">End at</span>
             <span className="font-medium text-sm">
-              {formatDateTime(daAttendance[0].end_date_time as Date)}
+              {formatDateTime(endDate)}
             </span>
           </p>
           <p className="flex flex-col gap-1">
