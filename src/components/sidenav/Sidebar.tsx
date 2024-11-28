@@ -24,13 +24,14 @@ import { useRouter } from "next-nprogress-bar";
 import { toast } from "sonner";
 import { logout } from "@/app/actions/auth";
 import { socket } from "@/lib/socketIo";
+import { ScrollArea } from "../ui/scroll-area";
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="min-h-[90vh] md:min-h-screen md:p-5 flex flex-col justify-between">
+    <ScrollArea className="min-h-[90vh] max-h-screen md:p-5 flex flex-col justify-between">
       <div className="top min-h-[20rem] flex flex-col gap-8">
         {/* logo */}
         <div className="logo px-2 text-primary">
@@ -146,6 +147,6 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           }}
         />
       </div>
-    </div>
+    </ScrollArea>
   );
 }

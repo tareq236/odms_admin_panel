@@ -1,20 +1,23 @@
+"use client";
+
 import Card from "@/components/home/Card";
-import { getUser } from "@/lib/dal";
+import { useAuthContext } from "@/contexts/AuthProvider";
+import { rdl_admin_user_list } from "@prisma/client";
 import { ListTodo, Route, Truck, UserRoundPen } from "lucide-react";
-import { redirect } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
-export default async function Header() {
+export default function Header({ user }: { user: rdl_admin_user_list }) {
+  const { auth, onAuth } = useAuthContext();
 
-    const user = await getUser()
-
-    if(user == null) {
-      redirect('/login')
-    }
+  useEffect(() => {
+    onAuth(user);
+  }, [auth]);
 
   return (
     <section className="mb-6">
-      <h2 className="text-foreground text-lg">Welcome, <strong>{user?.full_name}</strong></h2>
+      <h2 className="text-foreground text-lg">
+        Welcome, <strong>{auth?.full_name}</strong>
+      </h2>
       <h5 className="text-xs text-gray-500">Let&apos;s explore</h5>
       <section className="my-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
@@ -44,4 +47,3 @@ export default async function Header() {
     </section>
   );
 }
-

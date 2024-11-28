@@ -21,14 +21,16 @@ model exf_customer_location {
 }
 
 model rdl_admin_user_list {
-  id            Int       @id @default(autoincrement())
-  user_name     String    @unique(map: "user_name") @db.VarChar(255)
-  full_name     String    @db.VarChar(255)
-  mobile_number String    @db.VarChar(255)
-  password      String    @db.VarChar(255)
-  status        Int       @db.UnsignedSmallInt
-  created_at    DateTime  @db.DateTime(6)
-  updated_at    DateTime? @db.DateTime(6)
+  id            Int                       @id @default(autoincrement())
+  user_name     String                    @unique(map: "user_name") @db.VarChar(255)
+  full_name     String                    @db.VarChar(255)
+  mobile_number String                    @db.VarChar(255)
+  password      String                    @db.VarChar(255)
+  status        Int                       @db.UnsignedSmallInt
+  role          rdl_admin_user_list_role? @default(admin)
+  deport_code   String?                   @db.VarChar(255)
+  created_at    DateTime                  @db.DateTime(6)
+  updated_at    DateTime?                 @db.DateTime(6)
 }
 
 model rdl_attendance {
@@ -142,7 +144,7 @@ model rdl_delivery {
   delivery_status           String?             @db.VarChar(20)
   cash_collection           Decimal?            @db.Decimal(8, 2)
   cash_collection_status    String?             @db.VarChar(20)
-  created_at                DateTime            @db.DateTime(6)
+  created_at                DateTime            @default(now()) @db.DateTime(0)
   updated_at                DateTime?           @db.DateTime(6)
   last_status               String?             @db.VarChar(80)
   due_amount                Decimal?            @db.Decimal(8, 2)
@@ -616,8 +618,91 @@ model rdl_visit_history {
   updated_at      DateTime?                    @default(now()) @db.DateTime(0)
 }
 
+model rdl_odms_mobile_app {
+  id                              BigInt   @id @default(autoincrement())
+  version                         String   @db.VarChar(20)
+  build_number                    String   @db.VarChar(20)
+  force_to_update                 Boolean
+  remove_cache_on_update          Boolean
+  remove_data_on_update           Boolean
+  remove_cache_and_data_on_update Boolean
+  main_file                       String   @db.VarChar(100)
+  x86_64_file                     String?  @db.VarChar(100)
+  armeabi_v7a_file                String?  @db.VarChar(100)
+  arm64_v8a_file                  String?  @db.VarChar(100)
+  upload_date                     DateTime @db.DateTime(6)
+}
+
+model rdl_return_list_sap {
+  id              BigInt         @id @default(autoincrement())
+  matnr           String         @db.VarChar(10)
+  batch           String         @db.VarChar(10)
+  sales_quantity  Int
+  return_quantity Int
+  return_amount   Decimal        @db.Decimal(12, 2)
+  return_id       BigInt
+  created_at      DateTime       @default(now()) @db.DateTime(0)
+  updated_at      DateTime       @default(now()) @db.Timestamp(0)
+  rdl_return_sap  rdl_return_sap @relation(fields: [return_id], references: [id], onUpdate: Restrict, map: "rdl_return_list_sap_return_id_id_9741a803_fk_rdl_return_sap_id")
+
+  @@index([return_id], map: "rdl_return_list_sap_return_id_id_9741a803_fk_rdl_return_sap_id")
+}
+
+model rdl_return_sap {
+  id                      BigInt                @id @default(autoincrement())
+  gate_pass_no            String                @db.VarChar(10)
+  billing_doc_no          String                @db.VarChar(10)
+  billing_date            DateTime              @db.Date
+  route                   String                @db.VarChar(10)
+  return_type             String                @db.VarChar(1)
+  return_reason           Int
+  da_code                 String                @db.VarChar(10)
+  sales_product_quantity  Int
+  return_product_quantity Int
+  created_at              DateTime              @default(now()) @db.DateTime(0)
+  updated_at              DateTime              @default(now()) @db.Timestamp(0)
+  rdl_return_list_sap     rdl_return_list_sap[]
+}
+
+model rdl_return_sap_audit {
+  id                BigInt    @id @default(autoincrement())
+  action            String?   @db.VarChar(10)
+  billing_doc_no    String?   @db.VarChar(10)
+  old_return_type   String?   @db.VarChar(1)
+  new_return_type   String?   @db.VarChar(1)
+  old_return_reason Int?
+  new_return_reason Int?
+  change_time       DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model rdl_route_wise_depot {
+  id         Int     @unique(map: "id_index") @default(autoincrement()) @db.UnsignedInt
+  depot_code String? @db.VarChar(255)
+  depot_name String? @db.VarChar(255)
+  route_code String? @db.VarChar(255)
+  route_name String? @db.VarChar(255)
+}
+
+model rdl_visit_app_visithistorymodel {
+  id              BigInt    @id @default(autoincrement())
+  da_code         String    @db.VarChar(10)
+  route_code      String?   @db.VarChar(10)
+  partner         String    @db.VarChar(10)
+  visit_type      String    @db.VarChar(50)
+  comment         String?   @db.LongText
+  created_at      DateTime  @db.DateTime(6)
+  updated_at      DateTime? @db.DateTime(6)
+  visit_latitude  Decimal?  @db.Decimal(27, 16)
+  visit_longitude Decimal?  @db.Decimal(27, 16)
+}
+
 enum rdl_visit_history_visit_type {
   Customer_Unavailable
   Customer_Busy
   Insufficient_Amount
+}
+
+enum rdl_admin_user_list_role {
+  admin
+  depot
 }

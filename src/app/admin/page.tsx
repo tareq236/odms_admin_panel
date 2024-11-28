@@ -4,6 +4,8 @@ import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import Header from "@/components/home/Header";
 import { ChartSection } from "@/components/home/ChartSections";
+import { getUser } from "@/lib/dal";
+import { redirect } from "next/navigation";
 
 export type CartData = {
   day: Date;
@@ -36,9 +38,16 @@ export default async function Home() {
     data = [];
   }
 
+  const user = await getUser()
+
+  if(user == null) {
+    redirect('/login')
+  }
+
+
   return (
     <div>
-      <Header />
+      <Header user={user} />
       <ChartSection data={data as CartData[]} count={count} />
     </div>
   );

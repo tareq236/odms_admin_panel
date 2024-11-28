@@ -2,7 +2,7 @@ import 'server-only'
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { decrypt, deleteSession } from "./session";
+import { decrypt } from "./session";
 import db from "../../db/db";
 
 export const verifySession = async () => {
@@ -31,10 +31,6 @@ export const getUser = async () => {
   try {
     const data = await db.rdl_admin_user_list.findUnique({
       where: { id: Number(session.userId) },
-      select: {
-        id: true,
-        full_name: true,
-      },
     });
 
     if(data == null) {
