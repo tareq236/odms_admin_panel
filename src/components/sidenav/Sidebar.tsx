@@ -25,8 +25,16 @@ import { toast } from "sonner";
 import { logout } from "@/app/actions/auth";
 import { socket } from "@/lib/socketIo";
 import { ScrollArea } from "../ui/scroll-area";
+import { useAuthContext } from "@/contexts/AuthProvider";
+import { rdl_admin_user_list_role } from "@prisma/client";
 
-export default function Sidebar({ onClose }: { onClose?: () => void }) {
+export default function Sidebar({
+  onClose,
+  userRole,
+}: {
+  onClose?: () => void;
+  userRole: rdl_admin_user_list_role;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -45,12 +53,15 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             href="/admin"
             onClick={onClose}
           />
-          <NavLink
-            icon={<UserRoundPen className="size-4" />}
-            name="User Management"
-            href="/admin/user/management"
-            onClick={onClose}
-          />
+          {userRole != "depot" && (
+            <NavLink
+              icon={<UserRoundPen className="size-4" />}
+              name="User Management"
+              href="/admin/user/management"
+              onClick={onClose}
+            />
+          )}
+
           <NavLink
             icon={<ListTodo className="size-4" />}
             name="Attendance"
@@ -118,22 +129,24 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           </div>
 
           {/* statistics */}
-          <div className="my-3">
-            <h4 className="text-muted-foreground text-xs mb-3">Analytics</h4>
+          {userRole != "depot" && (
+            <div className="mt-3">
+              <h4 className="text-muted-foreground text-xs mb-3">Analytics</h4>
 
-            <div className="flex flex-col gap-2">
-              <NavLink
-                icon={<Users className="size-4" />}
-                name="Partner Delivery"
-                href="/admin/analytics/partner-delivery"
-                onClick={onClose}
-              />
+              <div className="flex flex-col gap-2">
+                <NavLink
+                  icon={<Users className="size-4" />}
+                  name="Partner Delivery"
+                  href="/admin/analytics/partner-delivery"
+                  onClick={onClose}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
-      <div className="bottom">
+      <div className="bottom mt-3">
         <NavLink
           className="text-destructive hover:bg-red-100 hover:text-red-800"
           icon={<LogOut className="size-4" />}

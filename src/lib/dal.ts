@@ -1,4 +1,4 @@
-import 'server-only'
+import "server-only";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -18,7 +18,7 @@ export const verifySession = async () => {
   });
 
   if (user == null) {
-    return { isAuth: false, userId: null }
+    return { isAuth: false, userId: null };
   }
 
   return { isAuth: true, userId: session.userId };
@@ -31,10 +31,16 @@ export const getUser = async () => {
   try {
     const data = await db.rdl_admin_user_list.findUnique({
       where: { id: Number(session.userId) },
+      select: {
+        id: true,
+        full_name: true,
+        deport_code: true,
+        role: true,
+      },
     });
 
-    if(data == null) {
-      throw new Error()
+    if (data == null) {
+      throw new Error();
     }
 
     const user = data;

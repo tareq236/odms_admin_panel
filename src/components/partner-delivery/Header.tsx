@@ -1,5 +1,3 @@
-"use client";
-
 import Search from "@/components/ui/Search";
 import { Users } from "lucide-react";
 import React from "react";

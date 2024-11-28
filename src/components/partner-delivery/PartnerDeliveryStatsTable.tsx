@@ -1,9 +1,7 @@
 "use client";
 
-import CircularProgress from "@/components/Progress/CircularProgress/CircularProgress";
 import ProgressPercentage from "@/components/Progress/ProgressPercentage";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+
 import {
   Table,
   TableHead,
@@ -12,15 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatNumber } from "@/lib/formatters";
-import {
-  ArrowUpDown,
-  ChevronsUpDown,
-  MessageSquareOff,
-  ServerOff,
-} from "lucide-react";
+import { MessageSquareOff, ServerOff } from "lucide-react";
 import React from "react";
 import SortableTableHeader from "./SortableTableHead";
+
 
 export default function PartnerDeliveryStatsTable({
   data,
@@ -29,6 +22,7 @@ export default function PartnerDeliveryStatsTable({
   data: any[];
   connectionError: boolean;
 }) {
+
   return (
     <>
       <Table className="[tr:text-nowrap]">
@@ -36,10 +30,18 @@ export default function PartnerDeliveryStatsTable({
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Partner Name</TableHead>
-            <SortableTableHeader sortingValue="rec">Delivery Received (%)</SortableTableHeader>
-            <SortableTableHeader sortingValue="ret">Delivery Returned (%)</SortableTableHeader>
-            <SortableTableHeader sortingValue="full">Full Payment (%)</SortableTableHeader>
-            <SortableTableHeader sortingValue="due">Due (%)</SortableTableHeader>
+            <SortableTableHeader sortingValue="rec">
+              Delivery Received (%)
+            </SortableTableHeader>
+            <SortableTableHeader sortingValue="ret">
+              Delivery Returned (%)
+            </SortableTableHeader>
+            <SortableTableHeader sortingValue="full">
+              Full Payment (%)
+            </SortableTableHeader>
+            <SortableTableHeader sortingValue="due">
+              Due (%)
+            </SortableTableHeader>
             {/* <TableHead>Actions</TableHead> */}
           </TableRow>
         </TableHeader>

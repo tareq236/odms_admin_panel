@@ -16,7 +16,7 @@ import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import Sidebar from "../sidenav/Sidebar";
 
-export default function Nav() {
+export default function Nav({ user }: { user: any }) {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
@@ -62,6 +62,7 @@ export default function Nav() {
       <Sheet open={showSidebar} onOpenChange={setShowSidebar}>
         <SheetContent side={"left"}>
           <Sidebar
+            userRole={user.role}
             onClose={() => {
               setShowSidebar(false);
             }}

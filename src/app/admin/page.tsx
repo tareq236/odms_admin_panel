@@ -38,16 +38,9 @@ export default async function Home() {
     data = [];
   }
 
-  const user = await getUser()
-
-  if(user == null) {
-    redirect('/login')
-  }
-
-
   return (
     <div>
-      <Header user={user} />
+      <Header />
       <ChartSection data={data as CartData[]} count={count} />
     </div>
   );
