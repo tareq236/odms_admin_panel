@@ -9,14 +9,18 @@ import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { adminLogin } from '@/app/actions/auth';
 import Spinner from '../ui/Spinner';
+import { useRouter } from 'next-nprogress-bar';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, action] = useFormState(adminLogin, null);
+  const router = useRouter()
 
   useEffect(() => {
     if (data?.db != null) {
       toast.error(data.db);
+    } else if(data?.success) {
+      router.replace('/admin')
     }
   });
 

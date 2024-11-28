@@ -50,10 +50,9 @@ export const adminLogin = async (prevData: unknown, formData: FormData) => {
 
   await createSession({ ...authUser });
 
-  return redirect("/admin");
+  return { error: null, success: true, db: null };
 };
 
 export async function logout() {
   await deleteSession();
-  redirect("/login");
 }

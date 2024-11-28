@@ -19,14 +19,12 @@ import {
 } from "lucide-react";
 import NavLink from "./NavLink";
 import Accordion from "./Accordion";
-import { useEffect, useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useRouter } from "next-nprogress-bar";
-import { toast } from "sonner";
 import { logout } from "@/app/actions/auth";
-import { socket } from "@/lib/socketIo";
 import { ScrollArea } from "../ui/scroll-area";
-import { useAuthContext } from "@/contexts/AuthProvider";
 import { rdl_admin_user_list_role } from "@prisma/client";
+import Spinner from "../ui/Spinner";
 
 export default function Sidebar({
   onClose,
@@ -39,8 +37,8 @@ export default function Sidebar({
   const [isPending, startTransition] = useTransition();
 
   return (
-    <ScrollArea className="min-h-[90vh] max-h-screen md:p-5 flex flex-col justify-between">
-      <div className="top min-h-[20rem] flex flex-col gap-8">
+    <ScrollArea className="min-h-[90vh] max-h-screen md:px-5 flex flex-col justify-between">
+      <div className="top md:pt-5 min-h-[20rem] flex flex-col gap-8">
         {/* logo */}
         <div className="logo px-2 text-primary">
           <Map className="size-7" />
@@ -149,13 +147,12 @@ export default function Sidebar({
       <div className="bottom mt-3">
         <NavLink
           className="text-destructive hover:bg-red-100 hover:text-red-800"
-          icon={<LogOut className="size-4" />}
-          name="Logout"
+          icon={isPending ? <Spinner color="red-400" /> : <LogOut className="size-4" />}
+          name={isPending ? "Logging out...":"Logout"}
           onClick={() => {
             startTransition(async () => {
               await logout();
-              toast.success("You are logged out");
-              router.refresh();
+              router.replace('/login');
             });
           }}
         />

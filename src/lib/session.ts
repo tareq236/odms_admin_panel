@@ -38,6 +38,6 @@ export async function createSession(user: any) {
   });
 }
 
-export function deleteSession() {
-  cookies().delete('session')
+export async function deleteSession() {
+  await cookies().delete('session')
 }
