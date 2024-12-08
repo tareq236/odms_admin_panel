@@ -40,7 +40,7 @@ export default async function Home() {
 
   return (
     <div>
-      {/* <Header /> */}
+      <Header />
       <ChartSection data={data as CartData[]} count={count} />
     </div>
   );

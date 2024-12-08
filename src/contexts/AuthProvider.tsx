@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { rdl_admin_user_list } from "@prisma/client";
 import React, { SetStateAction } from "react";
@@ -20,4 +20,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useAuthContext = () => React.useContext(AuthContext) as AuthContextType;
+export const useAuthContext = () =>
+  React.useContext(AuthContext) as AuthContextType;
