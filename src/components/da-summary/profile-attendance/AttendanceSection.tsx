@@ -3,8 +3,8 @@ import { formatDateTime, formatNumber } from "@/lib/formatters";
 import React from "react";
 
 function AttendanceSection({ daAttendance }: { daAttendance: any[] }) {
-  const startDate = daAttendance[0].start_date_time as Date;
-  const endDate = daAttendance[0].end_date_time as Date;
+  const startDate = daAttendance !=undefined && daAttendance.length > 0 ? daAttendance[0].start_date_time as Date : new Date();
+  const endDate = daAttendance !=undefined && daAttendance.length > 0 ? daAttendance[0].end_date_time as Date : new Date();
   if (startDate) {
     startDate.setUTCHours(0);
   }

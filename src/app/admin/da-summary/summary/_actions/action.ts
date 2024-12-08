@@ -1,11 +1,12 @@
+import { getUser } from "@/lib/dal";
 import db from "../../../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
+import { redirect } from "next/navigation";
 
 export const getGatePassBill = async (searchParams: {
   q: string;
   start: string;
 }) => {
-  
   const startDate = searchParams.start
     ? `${searchParams.start}`
     : `${formateDateDB(new Date())}`;
@@ -17,10 +18,35 @@ export const getGatePassBill = async (searchParams: {
   let collectionDone: any = [{ total_collection_done: 0, total_net_val: 0 }];
   let returnQuantity: any = [{ total_return: 0, total_return_amount: 0 }];
 
+  const user = await getUser();
+
+  if (!user) redirect("/login");
+
+  const isDepotDA: any = await db.$queryRaw`
+    select count(*) over () as total
+    from
+        rdl_delivery_info_sap as a
+        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+    WHERE
+        a.billing_date = ${
+          searchParams.start
+            ? `${searchParams.start}`
+            : `${formateDateDB(new Date())}`
+        }
+        AND a.da_code = ${Number(searchParams.q) || 0}
+        AND a.route IN (
+            SELECT route_code
+            FROM rdl_route_wise_depot
+            WHERE
+                depot_code =${user.deport_code}
+        )
+  `;
+
   try {
-    [totalDelivery, deliveryDone, collectionDone, returnQuantity] =
-      await Promise.all([
-        db.$queryRaw`
+    if (isDepotDA && isDepotDA.length > 0) {
+      [totalDelivery, deliveryDone, collectionDone, returnQuantity] =
+        await Promise.all([
+          db.$queryRaw`
         SELECT sum(sum(c.net_val) + sum(c.vat)) over() as total_net_val,
         count(*) over() as total_delivery
         FROM rdl_delivery_info_sap as a
@@ -29,7 +55,7 @@ export const getGatePassBill = async (searchParams: {
         GROUP BY a.billing_doc_no
         limit 1
         `,
-        db.$queryRaw`
+          db.$queryRaw`
         SELECT sum(sum(c.net_val) + sum(c.vat)) over() as total_net_val,
         count(*) over() as total_delivery_done
         FROM rdl_delivery_info_sap as a
@@ -39,7 +65,7 @@ export const getGatePassBill = async (searchParams: {
         GROUP BY a.billing_doc_no
         limit 1
         `,
-        db.$queryRaw`
+          db.$queryRaw`
         SELECT sum(b.cash_collection) over() as total_net_val,
         count(*) over() as total_collection_done
         FROM rdl_delivery_info_sap as a
@@ -49,7 +75,7 @@ export const getGatePassBill = async (searchParams: {
         limit 1
         `,
 
-        db.$queryRaw`
+          db.$queryRaw`
           select count(DISTINCT rd.billing_doc_no) total_return, sum(rds.return_net_val) total_return_amount
             FROM rdl_delivery rd
             INNER JOIN rdl_delivery_list rds ON rds.delivery_id = rd.id
@@ -61,26 +87,29 @@ export const getGatePassBill = async (searchParams: {
             AND rd.da_code = ${daCode} 
             AND rds.return_quantity > 0
         `,
-      ]);
+        ]);
+    }
   } catch (error) {
     console.log(error);
   }
 
-  let gatePasses: (unknown | any)[];
+  let gatePasses: (unknown | any)[] = [];
   try {
-    gatePasses = await db.$queryRaw`
+    if (isDepotDA && isDepotDA.length > 0) {
+      gatePasses = await db.$queryRaw`
       SELECT c.gate_pass_no, (sum(c.net_val) + sum(c.vat)) as total_net_val,
       count(DISTINCT a.billing_doc_no) as total_delivery
       FROM rdl_delivery_info_sap as a
       INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
       LEFT JOIN rdl_delivery rd ON rd.billing_doc_no = a.billing_doc_no
       WHERE a.da_code =${daCode} AND a.billing_date=${
-      searchParams.start
-        ? `${searchParams.start}`
-        : `${formateDateDB(new Date())}`
-    }
+        searchParams.start
+          ? `${searchParams.start}`
+          : `${formateDateDB(new Date())}`
+      }
       GROUP BY c.gate_pass_no
     `;
+    }
   } catch (error) {
     console.log(error);
     gatePasses = [];
@@ -88,9 +117,10 @@ export const getGatePassBill = async (searchParams: {
 
   let gatePassData = [];
   try {
-    if (gatePasses.length > 0) {
-      for (let i = 0; i < gatePasses.length; i++) {
-        let data = await db.$queryRaw`
+    if (isDepotDA && isDepotDA.length > 0) {
+      if (gatePasses.length > 0) {
+        for (let i = 0; i < gatePasses.length; i++) {
+          let data = await db.$queryRaw`
           SELECT COUNT(b.gate_pass_no) over() total_invoice,
           count(rd.delivery_status) over() total_delivered, 
           COUNT(rd.cash_collection_status) over() total_collection, 
@@ -111,7 +141,8 @@ export const getGatePassBill = async (searchParams: {
           GROUP BY b.billing_doc_no
           LIMIT 1
         `;
-        gatePassData.push(data);
+          gatePassData.push(data);
+        }
       }
     }
   } catch (error) {
