@@ -1,5 +1,7 @@
 import { rdl_conveyance } from "@prisma/client";
 import db from "../../../../../../db/db";
+import { getUser } from "@/lib/dal";
+import { redirect } from "next/navigation";
 
 export const getConveyanceData = async ({
   searchParams,
@@ -12,7 +14,7 @@ export const getConveyanceData = async ({
   };
   limit?: number;
 }) => {
-  let data: (any[]| unknown);
+  let data: any[] | unknown = [];
   let count = 0;
   let connectionError = false;
 
@@ -25,11 +27,31 @@ export const getConveyanceData = async ({
   let endDate = new Date(
     startDate.getFullYear(),
     startDate.getMonth(),
-    startDate.getDate() + 1,
+    startDate.getDate() + 1
   );
 
+  const user = await getUser();
+
+  if (!user) redirect("/login");
+
+  const isDepotDA: any = await db.$queryRaw`
+    select count(*) over () as total
+    from
+        rdl_delivery_info_sap as a
+        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+    WHERE
+        a.billing_date = ${startDate}
+        AND a.da_code = ${Number(searchParams.q) || 0}
+        AND a.route IN (
+            SELECT route_code
+            FROM rdl_route_wise_depot
+            WHERE
+                depot_code =${user.deport_code}
+        )
+  `;
+
   try {
-    if (searchParams.q) {
+    if (isDepotDA && isDepotDA.length > 0 && searchParams.q) {
       [data, count] = await Promise.all([
         db.$queryRaw`
             SELECT rc.*, rul.full_name 
@@ -54,7 +76,8 @@ export const getConveyanceData = async ({
         }),
       ]);
     } else {
-      throw new Error("Enter DA code");
+      data = [];
+      connectionError = false;
     }
   } catch (error) {
     data = [] as rdl_conveyance[];

@@ -6,6 +6,9 @@ import { MapPin } from "lucide-react";
 import React, { Suspense } from "react";
 import db from "../../../../../db/db";
 import SearchDa from "@/components/constants/SearchDa";
+import { redirect } from "next/navigation";
+import { getUser } from "@/lib/dal";
+import { formateDateDB } from "@/lib/formatters";
 
 async function DaTrackingPage({
   searchParams,
@@ -21,6 +24,30 @@ async function DaTrackingPage({
     daInfo = null;
   }
 
+  const user = await getUser();
+
+  if (!user) redirect("/login");
+
+  const isDepotDA: any = await db.$queryRaw`
+    select count(*) over () as total
+    from
+        rdl_delivery_info_sap as a
+        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+    WHERE
+        a.billing_date = ${
+          searchParams.start
+            ? `${searchParams.start}`
+            : `${formateDateDB(new Date())}`
+        }
+        AND a.da_code = ${Number(searchParams.q) || 0}
+        AND a.route IN (
+            SELECT route_code
+            FROM rdl_route_wise_depot
+            WHERE
+                depot_code =${user.deport_code}
+        )
+  `;
+
   return (
     <>
       <PageHeader
@@ -30,11 +57,11 @@ async function DaTrackingPage({
 
       <FilterSection />
 
-      {searchParams.q ? (
+      {isDepotDA && isDepotDA.length > 0 && searchParams.q ? (
         <Suspense>
           <DaInfoSection searchParams={searchParams} />
         </Suspense>
-      ): (
+      ) : (
         <section className="py-10 border-t">
           <SearchDa />
         </section>
