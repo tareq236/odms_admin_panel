@@ -1,5 +1,7 @@
+import { getUser } from "@/lib/dal";
 import db from "../../../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
+import { redirect } from "next/navigation";
 
 export const getDeliveryCollection = async ({
   searchParams,
@@ -13,12 +15,37 @@ export const getDeliveryCollection = async ({
   let count: any = [{ total: 0 }];
   let data;
 
+  const user = await getUser();
+
+  if (!user) redirect("/login");
+
+  const isDepotDA: any = await db.$queryRaw`
+    select count(*) over () as total
+    from
+        rdl_delivery_info_sap as a
+        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+    WHERE
+        a.billing_date = ${
+          searchParams.start
+            ? `${searchParams.start}`
+            : `${formateDateDB(new Date())}`
+        }
+        AND a.da_code = ${Number(searchParams.q) || 0}
+        AND a.route IN (
+            SELECT route_code
+            FROM rdl_route_wise_depot
+            WHERE
+                depot_code =${user.deport_code}
+        )
+  `;
+
   try {
-    if (searchParams.q && searchParams.status) {
-      // delivery done
-      if (searchParams.status == "dd") {
-        [data, count] = await Promise.all([
-          db.$queryRaw`
+    if (isDepotDA && isDepotDA.length > 0) {
+      if (searchParams.q && searchParams.status) {
+        // delivery done
+        if (searchParams.status == "dd") {
+          [data, count] = await Promise.all([
+            db.$queryRaw`
             SELECT a.billing_date, a.billing_doc_no, 
             b.delivery_status, b.cash_collection_status,
             (b.return_amount) return_amount,
@@ -39,7 +66,7 @@ export const getDeliveryCollection = async ({
             GROUP BY a.billing_doc_no
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
-          db.$queryRaw`
+            db.$queryRaw`
             select count(*) over() as total from rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             WHERE a.billing_date = ${
@@ -52,12 +79,12 @@ export const getDeliveryCollection = async ({
             GROUP BY a.billing_doc_no
             limit 1
           `,
-        ]);
-      }
-      // delivery remaining
-      else if (searchParams.status == "dr") {
-        [data, count] = await Promise.all([
-          db.$queryRaw`
+          ]);
+        }
+        // delivery remaining
+        else if (searchParams.status == "dr") {
+          [data, count] = await Promise.all([
+            db.$queryRaw`
             SELECT a.billing_date, a.billing_doc_no, 
             b.delivery_status, b.cash_collection_status,
             (b.return_amount) return_amount,
@@ -78,7 +105,7 @@ export const getDeliveryCollection = async ({
             GROUP BY a.billing_doc_no
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
-          db.$queryRaw`
+            db.$queryRaw`
             select count(*) over() as total from rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             WHERE a.billing_date = ${
@@ -91,12 +118,12 @@ export const getDeliveryCollection = async ({
             GROUP BY a.billing_doc_no
             limit 1
           `,
-        ]);
-      }
-      // collection done
-      else if (searchParams.status == "cd") {
-        [data, count] = await Promise.all([
-          db.$queryRaw`
+          ]);
+        }
+        // collection done
+        else if (searchParams.status == "cd") {
+          [data, count] = await Promise.all([
+            db.$queryRaw`
             SELECT a.billing_date, a.billing_doc_no, 
             b.delivery_status, b.cash_collection_status,
             (b.return_amount) return_amount,
@@ -117,7 +144,7 @@ export const getDeliveryCollection = async ({
             GROUP BY a.billing_doc_no
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
-          db.$queryRaw`
+            db.$queryRaw`
             select count(*) over() as total from rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             WHERE a.billing_date = ${
@@ -130,12 +157,12 @@ export const getDeliveryCollection = async ({
             GROUP BY a.billing_doc_no
             limit 1
           `,
-        ]);
-      }
-      // collection remaining
-      else if (searchParams.status == "cr") {
-        [data, count] = await Promise.all([
-          db.$queryRaw`
+          ]);
+        }
+        // collection remaining
+        else if (searchParams.status == "cr") {
+          [data, count] = await Promise.all([
+            db.$queryRaw`
             SELECT a.billing_date, a.billing_doc_no, 
             b.delivery_status, b.cash_collection_status,
             (b.return_amount) return_amount,
@@ -157,7 +184,7 @@ export const getDeliveryCollection = async ({
             GROUP BY a.billing_doc_no
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
-          db.$queryRaw`
+            db.$queryRaw`
             select count(*) over() as total from rdl_delivery_info_sap as a
             LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
             WHERE a.billing_date = ${
@@ -171,10 +198,10 @@ export const getDeliveryCollection = async ({
             GROUP BY a.billing_doc_no
             limit 1
           `,
-        ]);
-      } else if (searchParams.status == "r") {
-        [data, count] = await Promise.all([
-          db.$queryRaw`
+          ]);
+        } else if (searchParams.status == "r") {
+          [data, count] = await Promise.all([
+            db.$queryRaw`
             select rd.id, rd.billing_date, rd.billing_doc_no, 
             rd.delivery_status, rd.cash_collection_status,
             rd.cash_collection, rd.due_amount, rd.net_val, 
@@ -197,7 +224,7 @@ export const getDeliveryCollection = async ({
             GROUP BY rd.billing_doc_no
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
-          db.$queryRaw`
+            db.$queryRaw`
             select count(*) over() as total FROM rdl_delivery rd
             INNER JOIN rdl_delivery_list rds ON rds.delivery_id = rd.id
             INNER JOIN rpl_customer rc ON rc.partner = rd.partner
@@ -211,8 +238,41 @@ export const getDeliveryCollection = async ({
             GROUP BY rd.billing_doc_no
             limit 1
           `,
-        ]);
-      } else {
+          ]);
+        } else {
+          [data, count] = await Promise.all([
+            db.$queryRaw`
+                SELECT a.billing_date, a.billing_doc_no, 
+                b.delivery_status, b.cash_collection_status,
+                (b.return_amount) return_amount,
+                (b.cash_collection) cash_collection, (b.due_amount) due_amount, sum(c.net_val) + sum(c.vat) as net_val,
+                c.partner, b.id,
+                d.name1
+                FROM rdl_delivery_info_sap as a
+                LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+                INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
+                INNER JOIN rpl_customer as d ON c.partner=d.partner
+                WHERE a.billing_date = ${
+                  searchParams.start
+                    ? `${searchParams.start}`
+                    : `${formateDateDB(new Date())}`
+                } 
+                AND a.da_code = ${Number(searchParams.q) || 0} 
+                GROUP BY a.billing_doc_no
+                LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+                  `,
+            db.$queryRaw`
+                select count(*) over() as total from rdl_delivery_info_sap
+                where billing_date = ${
+                  searchParams.start ? new Date(searchParams.start) : new Date()
+                } 
+                AND da_code = ${Number(searchParams.q) || 0}
+                GROUP BY a.billing_doc_no
+                limit 1
+              `,
+          ]);
+        }
+      } else if (searchParams.q) {
         [data, count] = await Promise.all([
           db.$queryRaw`
                 SELECT a.billing_date, a.billing_doc_no, 
@@ -236,39 +296,6 @@ export const getDeliveryCollection = async ({
                   `,
           db.$queryRaw`
                 select count(*) over() as total from rdl_delivery_info_sap
-                where billing_date = ${
-                  searchParams.start ? new Date(searchParams.start) : new Date()
-                } 
-                AND da_code = ${Number(searchParams.q) || 0}
-                GROUP BY a.billing_doc_no
-                limit 1
-              `,
-        ]);
-      }
-    } else if (searchParams.q) {
-      [data, count] = await Promise.all([
-        db.$queryRaw`
-                SELECT a.billing_date, a.billing_doc_no, 
-                b.delivery_status, b.cash_collection_status,
-                (b.return_amount) return_amount,
-                (b.cash_collection) cash_collection, (b.due_amount) due_amount, sum(c.net_val) + sum(c.vat) as net_val,
-                c.partner, b.id,
-                d.name1
-                FROM rdl_delivery_info_sap as a
-                LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
-                INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
-                INNER JOIN rpl_customer as d ON c.partner=d.partner
-                WHERE a.billing_date = ${
-                  searchParams.start
-                    ? `${searchParams.start}`
-                    : `${formateDateDB(new Date())}`
-                } 
-                AND a.da_code = ${Number(searchParams.q) || 0} 
-                GROUP BY a.billing_doc_no
-                LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
-                  `,
-        db.$queryRaw`
-                select count(*) over() as total from rdl_delivery_info_sap
                 WHERE billing_date = ${
                   searchParams.start
                     ? `${searchParams.start}`
@@ -278,7 +305,11 @@ export const getDeliveryCollection = async ({
                 GROUP BY billing_doc_no
                 limit 1
               `,
-      ]);
+        ]);
+      }
+    } else {
+      data = [] as any[];
+      connectionError = false;
     }
   } catch (error) {
     data = [] as any[];
@@ -286,8 +317,5 @@ export const getDeliveryCollection = async ({
     console.log(error);
   }
 
-
   return { data, count, connectionError };
 };
-
-

@@ -9,79 +9,102 @@ import {
 } from "lucide-react";
 import db from "../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
+import { getUser } from "@/lib/dal";
 
 export default async function CardSection({
   searchParams,
 }: {
   searchParams: { p: string; q: string; start: string };
 }) {
+  const user = await getUser();
+
   let totalDelivery: any = [{ total_delivery: 0, total_net_val: 0 }];
   let deliveryDone: any = [{ total_delivery_done: 0, total_net_val: 0 }];
   let collectionDone: any = [{ total_collection_done: 0, total_net_val: 0 }];
   let returnQuantity: any = [{ total_return: 0, total_return_amount: 0 }];
 
+  const isDepotDA: any = await db.$queryRaw`
+    select count(*) over () as total
+    from
+        rdl_delivery_info_sap as a
+        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+    WHERE
+        a.billing_date = ${
+          searchParams.start
+            ? `${searchParams.start}`
+            : `${formateDateDB(new Date())}`
+        }
+        AND a.da_code = ${Number(searchParams.q) || 0}
+        AND a.route IN (
+            SELECT route_code
+            FROM rdl_route_wise_depot
+            WHERE
+                depot_code = ${user?.deport_code}
+        )
+  `;
+
   try {
-    [totalDelivery, deliveryDone, collectionDone, returnQuantity] =
-      await Promise.all([
-        db.$queryRaw`
+    if (isDepotDA && isDepotDA.length > 0) {
+      [totalDelivery, deliveryDone, collectionDone, returnQuantity] =
+        await Promise.all([
+          db.$queryRaw`
         SELECT sum(sum(c.net_val) + sum(c.vat)) over() as total_net_val,
         count(*) over() as total_delivery
         FROM rdl_delivery_info_sap as a
         INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
         WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
-          searchParams.start
-            ? `${searchParams.start}`
-            : `${formateDateDB(new Date())}`
-        } 
+            searchParams.start
+              ? `${searchParams.start}`
+              : `${formateDateDB(new Date())}`
+          } 
         GROUP BY a.billing_doc_no
         limit 1
         `,
-        db.$queryRaw`
+          db.$queryRaw`
         SELECT sum(sum(c.net_val) + sum(c.vat)) over() as total_net_val,
         count(*) over() as total_delivery_done
         FROM rdl_delivery_info_sap as a
         LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
         INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
         WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
-          searchParams.start
-            ? `${searchParams.start}`
-            : `${formateDateDB(new Date())}`
-        }  AND b.delivery_status='Done'
+            searchParams.start
+              ? `${searchParams.start}`
+              : `${formateDateDB(new Date())}`
+          }  AND b.delivery_status='Done'
         GROUP BY a.billing_doc_no
         limit 1
         `,
-        db.$queryRaw`
+          db.$queryRaw`
         SELECT sum(b.cash_collection) over() as total_net_val,
         count(*) over() as total_collection_done
         FROM rdl_delivery_info_sap as a
         LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
         WHERE a.da_code = ${Number(searchParams.q) || 0} AND a.billing_date=${
-          searchParams.start
-            ? `${searchParams.start}`
-            : `${formateDateDB(new Date())}`
-        }  AND b.cash_collection_status='Done'
+            searchParams.start
+              ? `${searchParams.start}`
+              : `${formateDateDB(new Date())}`
+          }  AND b.cash_collection_status='Done'
         GROUP BY a.billing_doc_no
         limit 1
         `,
 
-        db.$queryRaw`
+          db.$queryRaw`
           select count(DISTINCT rd.billing_doc_no) total_return, sum(rds.return_net_val) total_return_amount
             FROM rdl_delivery rd
             INNER JOIN rdl_delivery_list rds ON rds.delivery_id = rd.id
             WHERE rd.billing_date =${
-            searchParams.start
-              ? `${searchParams.start}`
-              : `${formateDateDB(new Date())}`
-          }
+              searchParams.start
+                ? `${searchParams.start}`
+                : `${formateDateDB(new Date())}`
+            }
             AND rd.da_code = ${Number(searchParams.q) || 0} 
             AND rds.return_quantity > 0
         `,
-      ]);
+        ]);
+    }
   } catch (error) {
     console.log(error);
   }
-
-
 
   return (
     <section>
