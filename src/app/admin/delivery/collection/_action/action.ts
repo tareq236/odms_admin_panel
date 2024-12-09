@@ -40,7 +40,7 @@ export const getDeliveryCollection = async ({
   `;
 
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user.role === "admin" || (isDepotDA && isDepotDA.length > 0)) {
       if (searchParams.q && searchParams.status) {
         // delivery done
         if (searchParams.status == "dd") {

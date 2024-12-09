@@ -44,7 +44,7 @@ export default async function CardSection({
   `;
 
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user?.role === "admin" || (isDepotDA && isDepotDA.length > 0)) {
       [totalDelivery, deliveryDone, collectionDone, returnQuantity] =
         await Promise.all([
           db.$queryRaw`
