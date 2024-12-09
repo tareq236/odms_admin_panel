@@ -58,10 +58,12 @@ export function ChartSection({
 
   const total = React.useMemo(
     () => ({
-      attendance: chartList[chartList.length - 1].attendance,
-      absence: chartList[chartList.length - 1].absence,
+      attendance:
+        chartList.length != 0 ? chartList[chartList.length - 1].attendance : 0,
+      absence:
+        chartList.length != 0 ? chartList[chartList.length - 1].absence : 0,
     }),
-    [],
+    [chartList]
   );
 
   return (

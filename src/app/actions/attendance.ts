@@ -1,4 +1,5 @@
 import db from "../../../db/db";
+import {formateDateDB} from '@/lib/formatters'
 
 export const getAttendance = async ({
   searchParams,
@@ -26,7 +27,7 @@ export const getAttendance = async ({
       data = await db.$queryRaw`
       SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
       INNER JOIN rdl_user_list ru ON ru.sap_id = ra.sap_id
-      WHERE ra.start_date_time >= ${startDate} AND ra.start_date_time < ${endDate}
+      WHERE ra.start_date_time >= ${formateDateDB(startDate)} AND ra.start_date_time < ${formateDateDB(endDate)}
       AND ra.sap_id = ${searchParams.q}
       LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
     `;
@@ -34,7 +35,7 @@ export const getAttendance = async ({
       data = await db.$queryRaw`
       SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
       INNER JOIN rdl_user_list ru ON ru.sap_id = ra.sap_id
-      WHERE ra.start_date_time >= ${startDate} AND ra.start_date_time < ${endDate}
+      WHERE ra.start_date_time >= ${formateDateDB(startDate)} AND ra.start_date_time < ${formateDateDB(endDate)}
       LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
     `;
     }

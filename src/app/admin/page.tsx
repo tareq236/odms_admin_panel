@@ -4,8 +4,7 @@ import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import Header from "@/components/home/Header";
 import { ChartSection } from "@/components/home/ChartSections";
-import { getUser } from "@/lib/dal";
-import { redirect } from "next/navigation";
+
 
 export type CartData = {
   day: Date;
@@ -14,10 +13,10 @@ export type CartData = {
 
 export default async function Home() {
   const date = new Date();
-  const currentDate = format(new Date(), "yyyy-MM-dd");
+  const currentDate = format(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1), "yyyy-MM-dd");
   const prevMonth = format(
     new Date(date.getFullYear(), date.getMonth() - 1, date.getDate()),
-    "yyyy-MM-dd",
+    "yyyy-MM-dd"
   );
   let count = 0;
   let data: CartData[] | unknown;
@@ -26,11 +25,11 @@ export default async function Home() {
     [data, count] = await Promise.all([
       db.$queryRaw(
         Prisma.sql`
-    SELECT CAST(CONVERT_TZ(start_date_time, '+00:00', '+06:00') as DATE)  as day, COUNT(sap_id) as total_attendance
-    FROM rdl_attendance 
-    WHERE start_date_time > ${prevMonth} AND start_date_time < ${currentDate} 
-    GROUP BY CAST(CONVERT_TZ(start_date_time, '+00:00', '+06:00') as DATE) 
-    `,
+        SELECT CAST(start_date_time as DATE)  as day, COUNT(sap_id) as total_attendance
+        FROM rdl_attendance 
+        WHERE start_date_time > ${prevMonth} AND start_date_time < ${currentDate} 
+        GROUP BY CAST(start_date_time as DATE) 
+    `
       ),
       db.rdl_user_list.count(),
     ]);
