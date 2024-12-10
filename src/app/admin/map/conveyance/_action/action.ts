@@ -51,7 +51,7 @@ export const getConveyanceData = async ({
   `;
 
   try {
-    if (isDepotDA && isDepotDA.length > 0 && searchParams.q) {
+    if (user.role == 'admin' || (isDepotDA && isDepotDA.length > 0 && searchParams.q)) {
       [data, count] = await Promise.all([
         db.$queryRaw`
             SELECT rc.*, rul.full_name 

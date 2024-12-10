@@ -57,7 +57,8 @@ async function DaTrackingPage({
 
       <FilterSection />
 
-      {isDepotDA && isDepotDA.length > 0 && searchParams.q ? (
+      {(user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) &&
+      searchParams.q ? (
         <Suspense>
           <DaInfoSection searchParams={searchParams} />
         </Suspense>

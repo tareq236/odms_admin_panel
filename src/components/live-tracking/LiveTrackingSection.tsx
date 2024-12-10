@@ -1,36 +1,48 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  GoogleMap,
-  Marker,
-  LoadScript,
-  InfoWindow,
-} from "@react-google-maps/api";
 import { socket } from "@/lib/socketIo";
+import { usePathname, useSearchParams } from "next/navigation";
+import { APIProvider, InfoWindow, Map, Marker } from "@vis.gl/react-google-maps";
 
 const LiveTrackingSection = () => {
   const [userLocations, setUserLocations] = useState<any>();
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [infoWindowOpen, setInfoWindowOpen] = useState(false);
 
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   useEffect(() => {
     socket.on("coordinatesResultAndroid", (data) => {
       const { user_details, location } = data.result;
-      setUserLocations((prevUserLocations: any) => ({
-        ...prevUserLocations,
-        [user_details.sap_id]: {
-          ...location,
-          sap_id: user_details.sap_id,
-          user_details,
-        },
-      }));
+
+      if (searchParams.has("q")) {
+        if (user_details.sap_id == searchParams.get("q")) {
+          setUserLocations((prevUserLocations: any) => ({
+            [searchParams.get("q") as string]: {
+              ...location,
+              sap_id: searchParams.get("q"),
+              user_details,
+            },
+          }));
+        }
+      } else {
+        setUserLocations((prevUserLocations: any) => ({
+          ...prevUserLocations,
+          [user_details.sap_id]: {
+            ...location,
+            sap_id: user_details.sap_id,
+            user_details,
+          },
+        }));
+      }
     });
 
     return () => {
       socket.off("coordinatesResultAndroid");
     };
-  }, [socket]);
+  }, [socket, pathname, searchParams]);
 
   const handleMarkerMouseOver = (location: any) => {
     console.log("Mouse over marker:", location);
@@ -61,13 +73,14 @@ const LiveTrackingSection = () => {
 
   return (
     <section className="my-6 rounded-lg overflow-hidden">
-      <LoadScript
-        googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string}
-      >
-        <GoogleMap
-          mapContainerStyle={{ width: "100%", height: "600px" }}
-          zoom={10}
-          center={{ lat: 23.779831515814845, lng: 90.39441646685316 }} // Default center
+      <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string}>
+        <Map
+          style={{ width: "100%", height: "100vh" }}
+          defaultCenter={{ lat: 23.779831515814845, lng: 90.39441646685316 }}
+          defaultZoom={10}
+          gestureHandling={"greedy"}
+          disableDefaultUI={true}
+          fullscreenControl={false}
         >
           {userLocations != undefined &&
             Object.entries(userLocations).map(([sapId, location]: any) => (
@@ -103,8 +116,8 @@ const LiveTrackingSection = () => {
               </div>
             </InfoWindow>
           )}
-        </GoogleMap>
-      </LoadScript>
+        </Map>
+      </APIProvider>
     </section>
   );
 };
