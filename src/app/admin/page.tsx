@@ -5,17 +5,33 @@ import { format } from "date-fns";
 import Header from "@/components/home/Header";
 import { ChartSection } from "@/components/home/ChartSections";
 
-
 export type CartData = {
   day: Date;
   total_attendance: bigint;
 };
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { m: string };
+}) {
+  const { m } = await searchParams;
+
   const date = new Date();
-  const currentDate = format(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1), "yyyy-MM-dd");
+  const currentDate = format(
+    new Date(
+      date.getFullYear(),
+      Number(m || date.getMonth()),
+      date.getDate() + 1
+    ),
+    "yyyy-MM-dd"
+  );
   const prevMonth = format(
-    new Date(date.getFullYear(), date.getMonth() - 1, date.getDate()),
+    new Date(
+      date.getFullYear(),
+      Number(m || date.getMonth()) - 1,
+      date.getDate()
+    ),
     "yyyy-MM-dd"
   );
   let count = 0;
