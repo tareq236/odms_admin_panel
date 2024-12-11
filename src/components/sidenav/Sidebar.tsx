@@ -37,7 +37,7 @@ export default function Sidebar({
   const [isPending, startTransition] = useTransition();
 
   return (
-    <ScrollArea className="min-h-[90vh] max-h-screen md:px-5 flex flex-col justify-between">
+    <ScrollArea className="max-h-[calc(100dvh-1rem)] p-5 md:px-5 md:py-0 flex flex-col justify-between">
       <div className="top md:pt-5 min-h-[20rem] flex flex-col gap-8">
         {/* logo */}
         <div className="logo px-2 text-primary">
@@ -65,7 +65,7 @@ export default function Sidebar({
             name="Attendance"
             href={`/admin/user/attendance?start=${format(
               new Date(),
-              "yyyy-MM-dd",
+              "yyyy-MM-dd"
             )}`}
             onClick={onClose}
           />
@@ -147,12 +147,18 @@ export default function Sidebar({
       <div className="bottom mt-3">
         <NavLink
           className="text-destructive hover:bg-red-100 hover:text-red-800"
-          icon={isPending ? <Spinner color="red-400" /> : <LogOut className="size-4" />}
-          name={isPending ? "Logging out...":"Logout"}
+          icon={
+            isPending ? (
+              <Spinner color="red-400" />
+            ) : (
+              <LogOut className="size-4" />
+            )
+          }
+          name={isPending ? "Logging out..." : "Logout"}
           onClick={() => {
             startTransition(async () => {
               await logout();
-              router.replace('/login');
+              router.replace("/login");
             });
           }}
         />

@@ -1,5 +1,3 @@
-import { base64url } from "jose";
-
 export const CallApi = {
   fetchUserList,
   fetchClusterList,

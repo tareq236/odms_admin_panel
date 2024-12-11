@@ -60,7 +60,7 @@ export default function Nav({ user }: { user: any }) {
 
       {/* sidebar */}
       <Sheet open={showSidebar} onOpenChange={setShowSidebar}>
-        <SheetContent side={"left"}>
+        <SheetContent side={"left"} className="p-0">
           <Sidebar
             userRole={user.role}
             onClose={() => {

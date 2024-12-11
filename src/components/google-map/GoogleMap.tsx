@@ -1,6 +1,6 @@
 "use client";
 
-import middleware from "@/middleware";
+
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 
 function GoogleMap({
