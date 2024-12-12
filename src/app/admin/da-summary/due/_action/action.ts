@@ -40,7 +40,7 @@ export const getDueList = async (searchParams: {
   `;
 
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
       partners = await db.$queryRaw`
     select DISTINCT rd.partner 
     from rdl_delivery rd
@@ -55,7 +55,7 @@ export const getDueList = async (searchParams: {
   let partnerDues: any[] = [];
 
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
       for (let i = 0; i < partners.length; i++) {
         let data = await db.$queryRaw`
         select rd.billing_doc_no, 

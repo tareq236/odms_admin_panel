@@ -40,7 +40,7 @@ export const getReturnData = async (searchParams: {
   `;
 
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
       partners = await db.$queryRaw`
     SELECT DISTINCT rl.partner
     FROM rdl_return_list rl
@@ -53,7 +53,7 @@ export const getReturnData = async (searchParams: {
 
   let returnProducts: any[] = [];
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
       returnProducts = await db.$queryRaw`
       select  rl.matnr, rm.material_name, rl.batch, 
       SUM(rl.return_quantity) quantity, SUM(rl.return_net_val) net_val, 
@@ -73,7 +73,7 @@ export const getReturnData = async (searchParams: {
   // single billings
   let singleBills: any[] = [];
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
       for (let i = 0; i < partners.length; i++) {
         let data = await db.$queryRaw`
         select  rl.matnr, rm.material_name, rl.batch, 
