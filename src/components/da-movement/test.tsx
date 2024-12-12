@@ -464,20 +464,3 @@ const TrackingMapSection = () => {
 
 export default TrackingMapSection;
 
-// {
-//   "dateTime": "2024-12-11 09:25:15",
-//   "location": {
-//     "accuracy": 17.527999877929688,
-//     "altitude": -28.200000762939453,
-//     "bearing": 0,
-//     "latitude": 23.4127091,
-//     "longitude": 89.002969,
-//     "speed": 0
-//   },
-//   "user_details": {
-//     "full_name": "Md. Humayun Kabir",
-//     "mobile_number": "01871002354",
-//     "sap_id": 50012,
-//     "user_type": "Delivery Assistant"
-//   }
-// }
