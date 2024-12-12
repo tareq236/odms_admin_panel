@@ -79,7 +79,7 @@ function ExportSection() {
         }}
       >
         {isPending ? (
-          <Spinner color="white" className="mr-2 size-4" />
+          <Spinner borderBottomColor="borber-b-background" className="mr-2 size-4" />
         ) : (
           <Download className="size-4 mr-2" />
         )}
