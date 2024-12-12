@@ -1,5 +1,4 @@
-import FilterSection from "@/components/da-tracking/FilterSection";
-import TrackingMapSection from "@/components/da-tracking/TrackingMapSection";
+import FilterSection from "@/components/da-movement/FilterSection";
 import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
 import PageHeader from "@/components/ui/PageHeader";
 import { MapPin } from "lucide-react";
@@ -9,9 +8,9 @@ import SearchDa from "@/components/constants/SearchDa";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/dal";
 import { formateDateDB } from "@/lib/formatters";
-import Header from "@/components/da-tracking/Header";
+import DaMovementMap from "@/components/da-movement/DaMovementMap";
 
-async function DaTrackingPage({
+export default async function DaMovementAnalyticsPage({
   searchParams,
 }: {
   searchParams: { q: string; start: string; p: string };
@@ -51,9 +50,12 @@ async function DaTrackingPage({
 
   return (
     <>
-      {/* <FilterSection /> */}
+      <PageHeader
+        title="DA Tracking"
+        icon={<MapPin className="size-5 fill-primary/20" />}
+      />
 
-      <Header />
+      <FilterSection />
 
       {(user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) &&
       searchParams.q ? (
@@ -65,9 +67,7 @@ async function DaTrackingPage({
           <SearchDa />
         </section>
       )}
-      {daInfo && <TrackingMapSection />}
+      {daInfo && <DaMovementMap />}
     </>
   );
 }
-
-export default DaTrackingPage;

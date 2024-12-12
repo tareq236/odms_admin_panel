@@ -34,7 +34,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-const TrackingMapSection = () => {
+const DaMovementMap = () => {
   const [coordinates, setCoordinates] = useState<any[]>([]);
   const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
   const [selectedCoord, setSelectedCoord] = useState(null);
@@ -293,11 +293,6 @@ const TrackingMapSection = () => {
               })
             }
           />
-          {/*<Circle */}
-          {/*  key={`circle-${index}`}*/}
-          {/*  center={{ lat: avgLat, lng: avgLng }}*/}
-          {/*  options={circleOptions}*/}
-          {/*/>*/}
         </>
       );
     });
@@ -318,149 +313,150 @@ const TrackingMapSection = () => {
     );
 
   return isLoaded ? (
-    <GoogleMap
-      mapContainerStyle={{ width: "100%", height: "80vh" }}
-      center={mapCenter}
-      zoom={12}
-      onLoad={onLoad}
-      onUnmount={onUnmount}
-    >
-      {/* Child components, such as markers, info windows, etc. */}
-      {coordinates.length > 0 && (
-        <>
-          {/* Polyline to mark the street/path based on fetched data */}
-          {streetCoordinates.length > 0 && (
-            <Polyline
-              path={streetCoordinates}
-              options={{
-                strokeColor: "#0000FF", // Color of the street line
-                strokeOpacity: 0.8,
-                strokeWeight: 4, // Line thickness
-              }}
-            />
-          )}
+    <>
+      <GoogleMap
+        mapContainerStyle={{ width: "100%", height: "80vh" }}
+        center={mapCenter}
+        zoom={12}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+      >
+        {/* Child components, such as markers, info windows, etc. */}
+        {coordinates.length > 0 && (
+          <>
+            {/* Polyline to mark the street/path based on fetched data */}
+            {streetCoordinates.length > 0 && (
+              <Polyline
+                path={streetCoordinates}
+                options={{
+                  strokeColor: "#0000FF", // Color of the street line
+                  strokeOpacity: 0.8,
+                  strokeWeight: 4, // Line thickness
+                }}
+              />
+            )}
 
-          {displayStays(stays)}
-          {selectedStay && (
-            <InfoWindow
-              position={{ lat: selectedStay.lat, lng: selectedStay.lng }}
-              onCloseClick={() => setSelectedStay(null)}
-            >
-              <div>
-                <h3>Stay Duration</h3>
-                <p>Start: {moment(selectedStay.startTime).format("lll")}</p>
-                <p>Duration: {selectedStay.duration} minutes</p>
-              </div>
-            </InfoWindow>
-          )}
-
-          {coordinates.map((coord, index) => {
-            if (index === 0 || index === coordinates.length - 1) {
-              return (
-                <Marker
-                  key={index}
-                  position={{ lat: coord.lat, lng: coord.lng }}
-                  // label={index === 0 ? 'Start' : 'End'}
-                  icon={{
-                    url: `https://maps.google.com/mapfiles/ms/icons/${
-                      index === 0 ? "blue" : "red"
-                    }-dot.png`,
-                    scaledSize: new window.google.maps.Size(40, 40),
-                  }}
-                  onClick={() => {
-                    setSelectedCoord(coord);
-                  }}
-                />
-              );
-            }
-            return null;
-          })}
-
-          {deliveryData.map((data: any, index) => (
-            <Marker
-              key={`delivery-${index}`}
-              position={{ lat: data.lat, lng: data.lng }}
-              icon={{
-                url: "http://maps.google.com/mapfiles/ms/icons/blue.png", // Blue icon for delivery
-                scaledSize: new window.google.maps.Size(60, 60),
-                labelOrigin: new window.google.maps.Point(30, 20),
-              }}
-              label={{
-                text: `${index + 1}`,
-                color: "white",
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
-              onClick={() => setSelectedDelivery(data)}
-            />
-          ))}
-          {cashCollectionData.map((data: any, index) => (
-            <Marker
-              key={`cashCollection-${index}`}
-              position={{ lat: data.lat, lng: data.lng }}
-              icon={{
-                url: "http://maps.google.com/mapfiles/ms/icons/green.png", // Green icon for cash collection
-                scaledSize: new window.google.maps.Size(60, 60),
-                labelOrigin: new window.google.maps.Point(30, 20),
-              }}
-              label={{
-                text: `${index + 1}`,
-                color: "white",
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
-              onClick={() => setSelectedCashCollection(data)}
-            />
-          ))}
-
-          {selectedDelivery && (
-            <InfoWindow
-              position={{
-                lat: selectedDelivery.lat,
-                lng: selectedDelivery.lng,
-              }}
-              onCloseClick={() => setSelectedDelivery(null)} // Clear selection on close
-            >
-              <div>
-                <h5>Delivery Details</h5>
-                <p>
-                  Date Time: {moment(selectedDelivery.dateTime).format("lll")}
-                </p>
-                <div>Partner: {selectedDelivery.partner}</div>
-              </div>
-            </InfoWindow>
-          )}
-
-          {/* InfoWindow for selected Cash Collection Marker */}
-          {selectedCashCollection && (
-            <InfoWindow
-              position={{
-                lat: selectedCashCollection.lat,
-                lng: selectedCashCollection.lng,
-              }}
-              onCloseClick={() => setSelectedCashCollection(null)} // Clear selection on close
-            >
-              <div>
-                <h5>Cash Collection Details</h5>
-                <p>
-                  Date Time:{" "}
-                  {moment(selectedCashCollection.dateTime).format("lll")}
-                </p>
-                <div>Partner: {selectedCashCollection.partner}</div>
+            {displayStays(stays)}
+            {selectedStay && (
+              <InfoWindow
+                position={{ lat: selectedStay.lat, lng: selectedStay.lng }}
+                onCloseClick={() => setSelectedStay(null)}
+              >
                 <div>
-                  Cash Collection: {selectedCashCollection.cash_collection}
+                  <h3>Stay Duration</h3>
+                  <p>Start: {moment(selectedStay.startTime).format("lll")}</p>
+                  <p>Duration: {selectedStay.duration} minutes</p>
                 </div>
-                <div>Due Amount: {selectedCashCollection.due_amount}</div>
-              </div>
-            </InfoWindow>
-          )}
-        </>
-      )}
-    </GoogleMap>
+              </InfoWindow>
+            )}
+
+            {coordinates.map((coord, index) => {
+              if (index === 0 || index === coordinates.length - 1) {
+                return (
+                  <Marker
+                    key={index}
+                    position={{ lat: coord.lat, lng: coord.lng }}
+                    // label={index === 0 ? 'Start' : 'End'}
+                    icon={{
+                      url: `https://maps.google.com/mapfiles/ms/icons/${
+                        index === 0 ? "blue" : "red"
+                      }-dot.png`,
+                      scaledSize: new window.google.maps.Size(40, 40),
+                    }}
+                    onClick={() => {
+                      setSelectedCoord(coord);
+                    }}
+                  />
+                );
+              }
+              return null;
+            })}
+
+            {deliveryData.map((data: any, index) => (
+              <Marker
+                key={`delivery-${index}`}
+                position={{ lat: data.lat, lng: data.lng }}
+                icon={{
+                  url: "http://maps.google.com/mapfiles/ms/icons/blue.png", // Blue icon for delivery
+                  scaledSize: new window.google.maps.Size(60, 60),
+                  labelOrigin: new window.google.maps.Point(30, 20),
+                }}
+                label={{
+                  text: `${index + 1}`,
+                  color: "white",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+                onClick={() => setSelectedDelivery(data)}
+              />
+            ))}
+            {cashCollectionData.map((data: any, index) => (
+              <Marker
+                key={`cashCollection-${index}`}
+                position={{ lat: data.lat, lng: data.lng }}
+                icon={{
+                  url: "http://maps.google.com/mapfiles/ms/icons/green.png", // Green icon for cash collection
+                  scaledSize: new window.google.maps.Size(60, 60),
+                  labelOrigin: new window.google.maps.Point(30, 20),
+                }}
+                label={{
+                  text: `${index + 1}`,
+                  color: "white",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+                onClick={() => setSelectedCashCollection(data)}
+              />
+            ))}
+
+            {selectedDelivery && (
+              <InfoWindow
+                position={{
+                  lat: selectedDelivery.lat,
+                  lng: selectedDelivery.lng,
+                }}
+                onCloseClick={() => setSelectedDelivery(null)} // Clear selection on close
+              >
+                <div>
+                  <h5>Delivery Details</h5>
+                  <p>
+                    Date Time: {moment(selectedDelivery.dateTime).format("lll")}
+                  </p>
+                  <div>Partner: {selectedDelivery.partner}</div>
+                </div>
+              </InfoWindow>
+            )}
+
+            {/* InfoWindow for selected Cash Collection Marker */}
+            {selectedCashCollection && (
+              <InfoWindow
+                position={{
+                  lat: selectedCashCollection.lat,
+                  lng: selectedCashCollection.lng,
+                }}
+                onCloseClick={() => setSelectedCashCollection(null)} // Clear selection on close
+              >
+                <div>
+                  <h5>Cash Collection Details</h5>
+                  <p>
+                    Date Time:{" "}
+                    {moment(selectedCashCollection.dateTime).format("lll")}
+                  </p>
+                  <div>Partner: {selectedCashCollection.partner}</div>
+                  <div>
+                    Cash Collection: {selectedCashCollection.cash_collection}
+                  </div>
+                  <div>Due Amount: {selectedCashCollection.due_amount}</div>
+                </div>
+              </InfoWindow>
+            )}
+          </>
+        )}
+      </GoogleMap>
+    </>
   ) : (
     <></>
   );
 };
 
-export default TrackingMapSection;
-
+export default DaMovementMap;

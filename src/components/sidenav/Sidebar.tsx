@@ -9,6 +9,7 @@ import {
   LogOut,
   Map,
   MapPin,
+  MapPinned,
   PackageCheck,
   Route,
   ScrollText,
@@ -138,18 +139,25 @@ export default function Sidebar({
                   href="/admin/analytics/partner-delivery"
                   onClick={onClose}
                 />
+
+                <NavLink
+                  icon={<MapPinned className="size-4" />}
+                  name="DA Movement"
+                  href="/admin/analytics/da-movement"
+                  onClick={onClose}
+                />
               </div>
             </div>
           )}
         </div>
       </div>
 
-      <div className="bottom mt-3">
+      <div className="bottom mt-6">
         <NavLink
           className="text-destructive hover:bg-red-100 hover:text-red-800"
           icon={
             isPending ? (
-              <Spinner color="red-400" />
+              <Spinner borderBottomColor="red-400" />
             ) : (
               <LogOut className="size-4" />
             )
