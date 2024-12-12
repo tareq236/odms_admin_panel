@@ -8,6 +8,12 @@ import { ListTodo } from "lucide-react";
 import React, { Suspense } from "react";
 import { getAttendance } from "@/app/actions/attendance";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "User Attendance - ODMS Admin Panel",
+};
+
 export default async function UserAttendancePage({
   searchParams,
 }: {

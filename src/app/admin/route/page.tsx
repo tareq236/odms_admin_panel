@@ -8,6 +8,12 @@ import React, { Suspense } from "react";
 import db from "../../../../db/db";
 import { Prisma, rdl_route_sap } from "@prisma/client";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Route - ODMS Admin Panel",
+};
+
 export default async function RoutePage({
   searchParams,
 }: {

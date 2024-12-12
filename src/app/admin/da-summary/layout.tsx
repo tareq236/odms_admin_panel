@@ -3,6 +3,11 @@ import TabSection from "@/components/da-summary/TabSection";
 import PageHeader from "@/components/ui/PageHeader";
 import { IdCard } from "lucide-react";
 import React, { Suspense } from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "DA Summary - ODMS Admin Panel",
+};
 
 function DaSummaryLayout({ children }: { children: React.ReactNode }) {
   return (

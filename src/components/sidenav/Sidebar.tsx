@@ -38,121 +38,126 @@ export default function Sidebar({
   const [isPending, startTransition] = useTransition();
 
   return (
-    <ScrollArea className="max-h-[calc(100dvh-1rem)] p-5 md:px-5 md:py-0 flex flex-col justify-between">
-      <div className="top md:pt-5 min-h-[20rem] flex flex-col gap-8">
+    <div className="max-h-[calc(100dvh-1rem)] flex flex-col justify-between min-h-svh">
+      <div className="top md:pt-5 min-h-[20rem] flex flex-col md:gap-5">
         {/* logo */}
-        <div className="logo px-2 text-primary">
+        <div className="logo text-primary p-5 md:px-5 md:py-0">
           <Map className="size-7" />
         </div>
-        {/* links */}
-        <div className="flex flex-col gap-2">
-          <NavLink
-            icon={<Home className="size-4" />}
-            name="Dashboard"
-            href="/admin"
-            onClick={onClose}
-          />
-          {userRole != "depot" && (
+        <ScrollArea className="h-[calc(100dvh-2rem)] md:h-[calc(100dvh-2rem)] px-5 md:px-5 md:py-0">
+          {/* links */}
+          <div className="flex flex-col gap-2">
             <NavLink
-              icon={<UserRoundPen className="size-4" />}
-              name="User Management"
-              href="/admin/user/management"
+              icon={<Home className="size-4" />}
+              name="Dashboard"
+              href="/admin"
               onClick={onClose}
             />
-          )}
+            {userRole != "depot" && (
+              <NavLink
+                icon={<UserRoundPen className="size-4" />}
+                name="User Management"
+                href="/admin/user/management"
+                onClick={onClose}
+              />
+            )}
 
-          <NavLink
-            icon={<ListTodo className="size-4" />}
-            name="Attendance"
-            href={`/admin/user/attendance?start=${format(
-              new Date(),
-              "yyyy-MM-dd"
-            )}`}
-            onClick={onClose}
-          />
-          <NavLink
-            icon={<Route className="size-4" />}
-            name="Route"
-            href="/admin/route"
-            onClick={onClose}
-          />
-
-          <Accordion name="Delivery" icon={<Truck className="size-4" />}>
             <NavLink
-              name="Invoice"
-              icon={<ScrollText className="size-4" />}
-              href="/admin/delivery/invoice"
+              icon={<ListTodo className="size-4" />}
+              name="Attendance"
+              href={`/admin/user/attendance?start=${format(
+                new Date(),
+                "yyyy-MM-dd"
+              )}`}
               onClick={onClose}
             />
             <NavLink
-              name="Collection"
-              icon={<PackageCheck className="size-4" />}
-              href="/admin/delivery/collection"
+              icon={<Route className="size-4" />}
+              name="Route"
+              href="/admin/route"
               onClick={onClose}
             />
-          </Accordion>
 
-          <NavLink
-            icon={<IdCard className="size-4" />}
-            name="DA Summary"
-            href="/admin/da-summary"
-            onClick={onClose}
-          />
-
-          {/* maps */}
-          <div className="mt-3">
-            <h4 className="text-muted-foreground text-xs mb-3">Map</h4>
-
-            <div className="flex flex-col gap-2">
+            <Accordion name="Delivery" icon={<Truck className="size-4" />}>
               <NavLink
-                icon={<Waypoints className="size-4" />}
-                name="Conveyance"
-                href="/admin/map/conveyance"
+                name="Invoice"
+                icon={<ScrollText className="size-4" />}
+                href="/admin/delivery/invoice"
                 onClick={onClose}
               />
-
               <NavLink
-                icon={<MapPin className="size-4" />}
-                name="DA Tracking"
-                href="/admin/map/da-tracking"
+                name="Collection"
+                icon={<PackageCheck className="size-4" />}
+                href="/admin/delivery/collection"
                 onClick={onClose}
               />
+            </Accordion>
 
-              <NavLink
-                icon={<Footprints className="size-4" />}
-                name="Live Tracking"
-                href="/admin/map/live-tracking"
-                onClick={onClose}
-              />
-            </div>
-          </div>
+            <NavLink
+              icon={<IdCard className="size-4" />}
+              name="DA Summary"
+              href="/admin/da-summary"
+              onClick={onClose}
+            />
 
-          {/* statistics */}
-          {userRole != "depot" && (
+            {/* maps */}
             <div className="mt-3">
-              <h4 className="text-muted-foreground text-xs mb-3">Analytics</h4>
+              <h4 className="text-muted-foreground text-xs mb-3">Map</h4>
 
               <div className="flex flex-col gap-2">
                 <NavLink
-                  icon={<Users className="size-4" />}
-                  name="Partner Delivery"
-                  href="/admin/analytics/partner-delivery"
+                  icon={<Waypoints className="size-4" />}
+                  name="Conveyance"
+                  href="/admin/map/conveyance"
                   onClick={onClose}
                 />
 
                 <NavLink
-                  icon={<MapPinned className="size-4" />}
-                  name="DA Movement"
-                  href="/admin/analytics/da-movement"
+                  icon={<MapPin className="size-4" />}
+                  name="DA Tracking"
+                  href="/admin/map/da-tracking"
+                  onClick={onClose}
+                />
+
+                <NavLink
+                  icon={<Footprints className="size-4" />}
+                  name="Live Tracking"
+                  href="/admin/map/live-tracking"
                   onClick={onClose}
                 />
               </div>
             </div>
-          )}
-        </div>
+
+            {/* statistics */}
+            {userRole != "depot" && (
+              <div className="mt-3">
+                <h4 className="text-muted-foreground text-xs mb-3">
+                  Analytics
+                </h4>
+
+                <div className="flex flex-col gap-2">
+                  <NavLink
+                    icon={<Users className="size-4" />}
+                    name="Partner Delivery"
+                    href="/admin/analytics/partner-delivery"
+                    onClick={onClose}
+                  />
+
+                  <NavLink
+                    icon={<MapPinned className="size-4" />}
+                    name="DA Movement"
+                    href="/admin/analytics/da-movement"
+                    onClick={onClose}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+        </ScrollArea>
       </div>
 
-      <div className="bottom mt-6">
+      <div className="bottom my-3 md:my-6 px-5 md:px-5 md:py-0">
         <NavLink
           className="text-destructive hover:bg-red-100 hover:text-red-800"
           icon={
@@ -171,6 +176,6 @@ export default function Sidebar({
           }}
         />
       </div>
-    </ScrollArea>
+    </div>
   );
 }

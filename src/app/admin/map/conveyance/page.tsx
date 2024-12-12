@@ -6,6 +6,11 @@ import TableSkeleton from "@/components/ui/TableSkeletion";
 import { Waypoints } from "lucide-react";
 import React, { Suspense } from "react";
 import { getConveyanceData } from "./_action/action";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Conveyance - ODMS Admin Panel",
+};
 
 
 export default async function ConveyancePage({

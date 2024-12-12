@@ -9,6 +9,11 @@ import React, { Suspense } from "react";
 import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
 import CollectionDetailsView from "@/components/delivery/collection/CollectionDetailsView";
 import { getDeliveryCollection } from "./_action/action";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Delivery Collection - ODMS Admin Panel",
+};
 
 export default function DeliveryCollectionPage({
   searchParams,

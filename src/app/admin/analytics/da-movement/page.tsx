@@ -9,6 +9,11 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/dal";
 import { formateDateDB } from "@/lib/formatters";
 import DaMovementMap from "@/components/da-movement/DaMovementMap";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "DA Movement - ODMS Admin Panel",
+};
 
 export default async function DaMovementAnalyticsPage({
   searchParams,

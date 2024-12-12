@@ -1,8 +1,5 @@
-import FilterSection from "@/components/da-tracking/FilterSection";
 import TrackingMapSection from "@/components/da-tracking/TrackingMapSection";
 import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
-import PageHeader from "@/components/ui/PageHeader";
-import { MapPin } from "lucide-react";
 import React, { Suspense } from "react";
 import db from "../../../../../db/db";
 import SearchDa from "@/components/constants/SearchDa";
@@ -10,6 +7,11 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/dal";
 import { formateDateDB } from "@/lib/formatters";
 import Header from "@/components/da-tracking/Header";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "DA Tracking - ODMS Admin Panel",
+};
 
 async function DaTrackingPage({
   searchParams,

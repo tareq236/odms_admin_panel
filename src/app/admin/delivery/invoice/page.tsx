@@ -10,6 +10,12 @@ import { format } from "date-fns";
 import { getUser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Delivery Invoice - ODMS Admin Panel",
+};
+
 export default async function DevlierInvoicePage({
   searchParams,
 }: {

@@ -7,6 +7,12 @@ import db from "../../../../../db/db";
 import PagePagination from "@/components/ui/PagePagination";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import { Prisma, rdl_user_list } from "@prisma/client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "User Management - ODMS Admin Panel",
+};
+
 
 export default async function UserManagementPage({
   searchParams,
