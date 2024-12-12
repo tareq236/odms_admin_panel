@@ -86,13 +86,14 @@ export function ChartSection({
                 <button
                   key={chart}
                   data-active={activeChart === chart}
-                  className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
+                  className="relative z-30 flex flex-1 flex-col justify-center gap-2 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
                   onClick={() => setActiveChart(chart)}
                 >
-                  <span className="text-xs text-muted-foreground text-nowrap">
-                    {chartConfig[chart].label} (Today)
+                  <span className="text-xs text-muted-foreground text-nowrap text-right">
+                    {chartConfig[chart].label} <br /> (
+                    {formatDate(chartList?.[chartList.length - 1]?.date)})
                   </span>
-                  <span className="text-lg font-bold leading-none sm:text-3xl">
+                  <span className="text-lg text-right font-bold leading-none sm:text-3xl">
                     {total[key as keyof typeof total].toLocaleString()}
                   </span>
                 </button>
