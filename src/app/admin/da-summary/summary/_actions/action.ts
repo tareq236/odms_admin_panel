@@ -43,7 +43,7 @@ export const getGatePassBill = async (searchParams: {
   `;
 
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
       [totalDelivery, deliveryDone, collectionDone, returnQuantity] =
         await Promise.all([
           db.$queryRaw`
@@ -95,7 +95,7 @@ export const getGatePassBill = async (searchParams: {
 
   let gatePasses: (unknown | any)[] = [];
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
       gatePasses = await db.$queryRaw`
       SELECT c.gate_pass_no, (sum(c.net_val) + sum(c.vat)) as total_net_val,
       count(DISTINCT a.billing_doc_no) as total_delivery
@@ -117,7 +117,7 @@ export const getGatePassBill = async (searchParams: {
 
   let gatePassData = [];
   try {
-    if (isDepotDA && isDepotDA.length > 0) {
+    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
       if (gatePasses.length > 0) {
         for (let i = 0; i < gatePasses.length; i++) {
           let data = await db.$queryRaw`
