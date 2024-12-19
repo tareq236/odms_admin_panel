@@ -71,28 +71,26 @@ export const DataTable = async ({
 }) => {
   const limit = 20;
 
-  const {data, count, connectionError} = await getDeliveryCollection({
+  const { data, count, connectionError } = await getDeliveryCollection({
     searchParams: searchParams,
     limit: limit,
     connectionError: false,
   });
 
   return (
-    <>
-      <div className="data-table-section my-6">
-        <DeliveryCollectionTable
-          data={data as any[]}
-          connectionError={connectionError}
-        >
-          {searchParams.dId && (
-            <Suspense fallback={<p>Loading...</p>}>
-              {/* anc */}
-              <CollectionDetailsView searchParams={searchParams} />
-            </Suspense>
-          )}
-        </DeliveryCollectionTable>
-        <PagePagination limit={limit} count={Number(count[0]?.total || 0)} />
-      </div>
-    </>
+    <div className="data-table-section my-6">
+      <DeliveryCollectionTable
+        data={data as any[]}
+        connectionError={connectionError}
+      >
+        {searchParams.dId && (
+          <Suspense fallback={<p>Loading...</p>}>
+            {/* anc */}
+            <CollectionDetailsView searchParams={searchParams} />
+          </Suspense>
+        )}
+      </DeliveryCollectionTable>
+      <PagePagination limit={limit} count={Number(count[0]?.total || 0)} />
+    </div>
   );
 };

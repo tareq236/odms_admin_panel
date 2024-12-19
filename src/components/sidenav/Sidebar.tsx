@@ -26,6 +26,7 @@ import { logout } from "@/app/actions/auth";
 import { ScrollArea } from "../ui/scroll-area";
 import { rdl_admin_user_list_role } from "@prisma/client";
 import Spinner from "../ui/Spinner";
+import { FileUser } from "../constants/icons/icons";
 
 export default function Sidebar({
   onClose,
@@ -125,6 +126,13 @@ export default function Sidebar({
                   href="/admin/map/live-tracking"
                   onClick={onClose}
                 />
+
+                <NavLink
+                  icon={<MapPinned className="size-4" />}
+                  name="DA Movement"
+                  href="/admin/map/da-movement"
+                  onClick={onClose}
+                />
               </div>
             </div>
 
@@ -144,16 +152,15 @@ export default function Sidebar({
                   />
 
                   <NavLink
-                    icon={<MapPinned className="size-4" />}
-                    name="DA Movement"
-                    href="/admin/analytics/da-movement"
+                    icon={<FileUser className="size-4" />}
+                    name="DA Movement Info"
+                    href="/admin/analytics/da-movement-info"
                     onClick={onClose}
                   />
                 </div>
               </div>
             )}
           </div>
-
         </ScrollArea>
       </div>
 
