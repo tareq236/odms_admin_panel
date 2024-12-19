@@ -40,7 +40,7 @@ function ExportSection() {
     str += `\r\n`;
     str += `\r\n`;
     str += `\r\n`;
-    str += `,,,,,,,,,,Total Amount,${array[0]["total_delivery_amount"]},Total Return,${array[0]["total_return"]},Total Collection,${array[0]["total_collection"]},Total Due,${array[0]["total_due"]},Total Product=${array[0]["overall_product"]},Total Quantity=${array[0]["overall_quantity"]},,`;
+    str += `,,,,,,,,,,Total Delivery Amount,${array[0]["total_delivery_amount"]},Total Return,${array[0]["total_return"]},Total Collection,${array[0]["total_collection"]},Total Due,${array[0]["total_due"]},Total Product=${array[0]["overall_product"]},Total Quantity=${array[0]["overall_quantity"]},,`;
 
     return str;
   };

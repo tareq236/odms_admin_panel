@@ -11,7 +11,7 @@ import {
 } from "../ui/Select";
 import ExportSection from "./ExportSection";
 
-export default function FilterSection() {
+export default function FilterSection({ data }: { data: any[] }) {
   return (
     <section className="my-6 flex justify-between items-center gap-5 flex-wrap">
       <div className="flex items-center gap-3 flex-wrap">
@@ -31,7 +31,7 @@ export default function FilterSection() {
         <Search placeholder="Search by da code" />
       </div>
 
-      <ExportSection />
+      <ExportSection data={data} />
     </section>
   );
 }

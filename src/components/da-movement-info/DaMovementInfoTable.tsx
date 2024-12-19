@@ -7,10 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { Edit, Eye, MessageSquareOff, ServerOff, Trash } from "lucide-react";
+import { MessageSquareOff, ServerOff } from "lucide-react";
 import { formatDate } from "@/lib/formatters";
-import Tooltips from "../ui/Tooltips";
-import { Button } from "../ui/button";
 
 export default function DaMovementInfoTable({
   data,
@@ -48,7 +46,7 @@ export default function DaMovementInfoTable({
             data.map((item) => (
               <TableRow key={item.da_code}>
                 <TableCell>{item.da_code}</TableCell>
-                <TableCell>{item.da_code}</TableCell>
+                <TableCell>{item.full_name}</TableCell>
                 <TableCell>{item.mv_distance_km}</TableCell>
                 <TableCell>{item.mv_time_minutes}</TableCell>
                 <TableCell>{formatDate(item.created_at)}</TableCell>

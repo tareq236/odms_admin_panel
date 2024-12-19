@@ -7,6 +7,7 @@ import TableSkeleton from "@/components/ui/TableSkeletion";
 import type { Metadata } from "next";
 import React, { Suspense } from "react";
 import db from "../../../../../db/db";
+import { getDaMovementInfoData } from "./_actions/action";
 
 export const metadata: Metadata = {
   title: "DA Movement Info - ODMS Admin Panel",
@@ -20,6 +21,12 @@ export default async function DaMovementInfoPage({
     q: string;
   };
 }) {
+  const limit = 20;
+  const { data, count, connectionError } = await getDaMovementInfoData(
+    searchParams,
+    limit
+  );
+
   return (
     <>
       <PageHeader
@@ -28,44 +35,40 @@ export default async function DaMovementInfoPage({
       />
 
       <Suspense>
-        <FilterSection />
+        <FilterSection data={data as any[]} />
       </Suspense>
 
       <Suspense fallback={<TableSkeleton />}>
-        <DataTable searchParams={searchParams} />
+        <DataTable
+          limit={limit}
+          data={data as any[]}
+          count={count}
+          connectionError={connectionError}
+        />
       </Suspense>
     </>
   );
 }
 
 const DataTable = async ({
-  searchParams,
+  data,
+  connectionError,
+  count,
+  limit,
 }: {
-  searchParams: {
-    p: string;
-    q: string;
-  };
+  data: any[];
+  count: number;
+  connectionError: boolean;
+  limit: number;
 }) => {
-  const limit = 20;
-  let count = 0;
-  let data: any[] = [];
-  let connectionError = false;
-
-  try {
-    [data] = await Promise.all([
-        db.rdl_da_movement.findMany()
-    ])
-  } catch (error) {
-    data = [] as any[];
-    connectionError = true;
-    console.log(error);
-  }
-
   return (
     <div className="data-table-section my-6">
-      <DaMovementInfoTable data={data} connectionError={connectionError} />
+      <DaMovementInfoTable
+        data={data as any[]}
+        connectionError={connectionError}
+      />
 
-      <PagePagination limit={limit} count={count} />
+      <PagePagination limit={20} count={count} />
     </div>
   );
 };
