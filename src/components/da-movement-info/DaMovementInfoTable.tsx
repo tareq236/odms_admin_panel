@@ -26,7 +26,7 @@ export default function DaMovementInfoTable({
             <TableHead>DA Name</TableHead>
             <TableHead>Movement Distance (km)</TableHead>
             <TableHead>Movement Time (minutes)</TableHead>
-            <TableHead>Created At</TableHead>
+            <TableHead>Movement Date</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -49,7 +49,7 @@ export default function DaMovementInfoTable({
                 <TableCell>{item.full_name}</TableCell>
                 <TableCell>{item.mv_distance_km}</TableCell>
                 <TableCell>{item.mv_time_minutes}</TableCell>
-                <TableCell>{formatDate(item.created_at)}</TableCell>
+                <TableCell>{formatDate(item.mv_date)}</TableCell>
               </TableRow>
             ))
           ) : (
