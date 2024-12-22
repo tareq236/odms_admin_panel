@@ -6,6 +6,7 @@ import { formateDateDB } from "@/lib/formatters";
 import { Download } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useTransition } from "react";
+import { toast } from "sonner";
 
 function ExportSection() {
   const searchParams = useSearchParams();
@@ -51,8 +52,14 @@ function ExportSection() {
       : formateDateDB(new Date());
 
     const res = await fetch(
-      `/api/collection?q=${searchParams.get("q")}&start=${startDate}`,
+      `/api/collection?q=${searchParams.get("q")}&start=${startDate}`
     );
+
+    if (!res.ok) {
+      const data = await res.json();
+      toast.error(data.error);
+      return;
+    }
     const data = await res.json();
     const csvData = new Blob([convertToCSV(data)], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;",
@@ -66,7 +73,7 @@ function ExportSection() {
     document.body.removeChild(link);
   };
 
-  if(!searchParams.has('q')) return null
+  if (!searchParams.has("q")) return null;
 
   return (
     <>
@@ -79,7 +86,10 @@ function ExportSection() {
         }}
       >
         {isPending ? (
-          <Spinner borderBottomColor="borber-b-background" className="mr-2 size-4" />
+          <Spinner
+            borderBottomColor="borber-b-background"
+            className="mr-2 size-4"
+          />
         ) : (
           <Download className="size-4 mr-2" />
         )}

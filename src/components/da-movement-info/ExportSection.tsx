@@ -5,6 +5,7 @@ import Spinner from "@/components/ui/Spinner";
 import { Download } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useTransition } from "react";
+import { toast } from "sonner";
 
 function ExportSection() {
   const [isPending, startTransition] = useTransition();
@@ -37,6 +38,11 @@ function ExportSection() {
         searchParams.has("filter") ? searchParams.get("filter") : "d"
       }${searchParams.has("q") ? "&q=" + searchParams.get("q") : ""}`
     );
+    if (!res.ok) {
+      const data = await res.json();
+      toast.error(data.error);
+      return;
+    }
     const data = await res.json();
     const csvData = new Blob([convertToCSV(data)], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;",
