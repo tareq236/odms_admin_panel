@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -13,23 +13,30 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next-nprogress-bar";
 
 export default function DateFilter() {
+  const [filter, setFilter] = useState<string | undefined>(undefined);
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
   const params = new URLSearchParams(searchParams);
 
+  useEffect(() => {
+   if(searchParams.has("filter") === false) {
+    setFilter('')
+   } 
+  }, [searchParams]);
+
   return (
     <Select
-      value={
-        searchParams.has("filter") ? `${searchParams.get("filter")}` : undefined
-      }
+      value={filter}
       onValueChange={(value) => {
         if (value) {
           params.set("filter", value);
           params.delete("p");
           params.delete("start");
           params.delete("end");
+          setFilter(value);
         } else {
           params.delete("filter");
           params.delete("p");
