@@ -3,10 +3,12 @@
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
 import { Download } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import React, { useTransition } from "react";
 
-function ExportSection({ data }: { data: any[] }) {
+function ExportSection() {
   const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
 
   // export csv
   const convertToCSV = (objArray: object[]) => {
@@ -30,6 +32,12 @@ function ExportSection({ data }: { data: any[] }) {
   };
 
   const downloadCSV = async () => {
+    const res = await fetch(
+      `/api/movement-info?filter=${
+        searchParams.has("filter") ? searchParams.get("filter") : "d"
+      }${searchParams.has("q") ? "&q=" + searchParams.get("q") : ""}`
+    );
+    const data = await res.json();
     const csvData = new Blob([convertToCSV(data)], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;",
     });

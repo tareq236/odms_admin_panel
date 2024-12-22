@@ -13,7 +13,7 @@ export default function FilterSection({ data }: { data: any[] }) {
         <Search placeholder="Search by da code" />
       </div>
 
-      <ExportSection data={data} />
+      <ExportSection />
     </section>
   );
 }

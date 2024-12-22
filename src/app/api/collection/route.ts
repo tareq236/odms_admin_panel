@@ -37,7 +37,10 @@ export async function GET(req: NextRequest) {
       `;
 
     return Response.json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
+    return {
+      error: error.message,
+    };
   }
 }
