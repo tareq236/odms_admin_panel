@@ -39,8 +39,8 @@ export async function GET(req: NextRequest) {
     return Response.json(data);
   } catch (error: any) {
     console.log(error);
-    return {
+    return Response.json({
       error: error.message,
-    };
+    });
   }
 }

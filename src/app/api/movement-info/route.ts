@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
             ORDER BY rdm.mv_date DESC, rdm.da_code ASC
       `;
     } else {
-        data = await db.$queryRaw`
+      data = await db.$queryRaw`
         SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
             INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
             WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
@@ -63,8 +63,8 @@ export async function GET(req: NextRequest) {
     return Response.json(data as any[]);
   } catch (error: any) {
     console.log(error);
-    return {
+    return Response.json({
       error: error.message,
-    };
+    });
   }
 }
