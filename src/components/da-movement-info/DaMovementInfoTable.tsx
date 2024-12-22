@@ -47,8 +47,8 @@ export default function DaMovementInfoTable({
               <TableRow key={item.da_code}>
                 <TableCell>{item.da_code}</TableCell>
                 <TableCell>{item.full_name}</TableCell>
-                <TableCell>{item.mv_distance_km}</TableCell>
-                <TableCell>{item.mv_time_minutes}</TableCell>
+                <TableCell>{Number(item.mv_distance_km)}</TableCell>
+                <TableCell>{Number(item.mv_time_minutes)}</TableCell>
                 <TableCell>{formatDate(item.mv_date)}</TableCell>
               </TableRow>
             ))

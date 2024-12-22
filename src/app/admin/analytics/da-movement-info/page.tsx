@@ -19,6 +19,7 @@ export default async function DaMovementInfoPage({
   searchParams: {
     p: string;
     q: string;
+    filter: string;
   };
 }) {
   const limit = 20;
@@ -54,7 +55,6 @@ const DataTable = async ({
   data,
   connectionError,
   count,
-  limit,
 }: {
   data: any[];
   count: number;
