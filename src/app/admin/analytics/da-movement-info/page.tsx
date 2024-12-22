@@ -20,6 +20,8 @@ export default async function DaMovementInfoPage({
     p: string;
     q: string;
     filter: string;
+    start: string;
+    end: string;
   };
 }) {
   const limit = 20;
@@ -36,7 +38,7 @@ export default async function DaMovementInfoPage({
       />
 
       <Suspense>
-        <FilterSection data={data as any[]} />
+        <FilterSection />
       </Suspense>
 
       <Suspense fallback={<TableSkeleton />}>

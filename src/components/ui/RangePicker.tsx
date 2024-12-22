@@ -1,57 +1,63 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { DateRange } from "react-day-picker"
+import * as React from "react";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { usePathname, useSearchParams } from "next/navigation"
-import { useRouter } from "next-nprogress-bar"
+} from "@/components/ui/popover";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 export default function RangePicker({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: searchParams.has('start') ? new Date(searchParams.get('start') as string) : undefined,
-    to: searchParams.has('end') ? new Date(searchParams.get('end') as string) : undefined,
-  })
+    from: searchParams.has("start")
+      ? new Date(searchParams.get("start") as string)
+      : undefined,
+    to: searchParams.has("end")
+      ? new Date(searchParams.get("end") as string)
+      : undefined,
+  });
 
-  const pathname = usePathname()
-  const router = useRouter()
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const params = new URLSearchParams(searchParams)
+  const params = new URLSearchParams(searchParams);
 
   React.useEffect(() => {
-    if(date != undefined) {
-        if(date.from) {
-            params.set('start', format(date.from, 'yyyy-MM-dd'))
-            params.delete("p");
-            params.delete("q");
-        }
-        if(date.to != undefined) {
-            params.set('end', format(date.to, 'yyyy-MM-dd'))
-            params.delete("p");
-            params.delete("q");
-        }
-        router.push(`${pathname}?${params.toString()}`)
+    if (date != undefined) {
+      if (date.from) {
+        params.set("start", format(date.from, "yyyy-MM-dd"));
+        params.delete("p");
+        params.delete("q");
+        params.delete("filter");
+      }
+      if (date.to != undefined) {
+        params.set("end", format(date.to, "yyyy-MM-dd"));
+        params.delete("p");
+        params.delete("q");
+        params.delete("filter");
+      }
+      router.push(`${pathname}?${params.toString()}`);
     } else {
-        params.delete('start')
-        params.delete('end')
-        params.delete('p')
-        params.delete('q')
-        router.push(`${pathname}?${params.toString()}`,)
+      params.delete("start");
+      params.delete("end");
+      params.delete("p");
+      params.delete("q");
+      params.delete("filter");
+      router.push(`${pathname}?${params.toString()}`);
     }
-  }, [date])
-  
+  }, [date]);
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -66,7 +72,7 @@ export default function RangePicker({
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
+            {searchParams.has('start') && date?.from ? (
               date.to ? (
                 <>
                   {format(date.from, "LLL dd, y")} -{" "}
@@ -92,5 +98,5 @@ export default function RangePicker({
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

@@ -6,6 +6,8 @@ export const getDaMovementInfoData = async (
     p: string;
     q: string;
     filter: string;
+    start: string,
+    end: string
   },
   limit: number = 20
 ) => {
@@ -33,9 +35,9 @@ export const getDaMovementInfoData = async (
           currentDate.getMonth(),
           currentDate.getDate() - 1
         );
-  const dateStart = formateDateDB(queryDate);
+  const dateStart = searchParams.start || formateDateDB(queryDate);
 
-  const dateEnd = formateDateDB(
+  const dateEnd = searchParams.end || formateDateDB(
     new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),

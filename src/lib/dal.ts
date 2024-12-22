@@ -25,10 +25,9 @@ export const verifySession = async () => {
 };
 
 export const getUser = async () => {
-  const session = await verifySession();
-  if (!session) return null;
-
   try {
+    const session = await verifySession();
+    if (!session) return null;
     const data = await db.rdl_admin_user_list.findUnique({
       where: { id: Number(session.userId) },
       select: {

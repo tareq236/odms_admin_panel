@@ -21,13 +21,20 @@ export default function DateFilter() {
 
   return (
     <Select
+      value={
+        searchParams.has("filter") ? `${searchParams.get("filter")}` : undefined
+      }
       onValueChange={(value) => {
         if (value) {
           params.set("filter", value);
           params.delete("p");
+          params.delete("start");
+          params.delete("end");
         } else {
           params.delete("filter");
           params.delete("p");
+          params.delete("start");
+          params.delete("end");
         }
 
         router.push(pathname + "?" + params.toString());
