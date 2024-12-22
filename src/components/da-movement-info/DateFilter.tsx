@@ -22,9 +22,9 @@ export default function DateFilter() {
   const params = new URLSearchParams(searchParams);
 
   useEffect(() => {
-   if(searchParams.has("filter") === false) {
-    setFilter('')
-   } 
+    if (searchParams.has("filter") === false) {
+      setFilter("");
+    }
   }, [searchParams]);
 
   return (
