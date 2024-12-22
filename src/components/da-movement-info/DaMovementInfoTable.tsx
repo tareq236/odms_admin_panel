@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { MessageSquareOff, ServerOff } from "lucide-react";
-import { formatDate } from "@/lib/formatters";
+import { formatDate, formatNumber } from "@/lib/formatters";
 
 export default function DaMovementInfoTable({
   data,
@@ -26,6 +26,7 @@ export default function DaMovementInfoTable({
             <TableHead>DA Name</TableHead>
             <TableHead>Movement Distance (km)</TableHead>
             <TableHead>Movement Time (minutes)</TableHead>
+            <TableHead>Movement Time (hours)</TableHead>
             <TableHead>Movement Date</TableHead>
           </TableRow>
         </TableHeader>
@@ -49,6 +50,7 @@ export default function DaMovementInfoTable({
                 <TableCell>{item.full_name}</TableCell>
                 <TableCell>{Number(item.mv_distance_km)}</TableCell>
                 <TableCell>{Number(item.mv_time_minutes)}</TableCell>
+                <TableCell>{formatNumber(Number(item.mv_time_hours))}</TableCell>
                 <TableCell>{formatDate(item.mv_date)}</TableCell>
               </TableRow>
             ))

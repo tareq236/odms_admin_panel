@@ -43,16 +43,15 @@ export const getDaMovementInfoData = async (
     )
   );
 
-
   try {
     if (searchParams.q) {
       [data, resCount] = await Promise.all([
         db.$queryRaw`
-            SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, rdm.mv_date FROM rdl_da_movement rdm 
+            SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
             INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
             WHERE rdm.da_code = ${searchParams.q || ""} AND
             rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-            ORDER BY rdm.mv_date DESC
+            ORDER BY rdm.mv_date DESC, rdm.da_code ASC
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
         db.$queryRaw`
@@ -64,10 +63,10 @@ export const getDaMovementInfoData = async (
     } else {
       [data, resCount] = await Promise.all([
         db.$queryRaw`
-            SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, rdm.mv_date FROM rdl_da_movement rdm 
+            SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
             INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
             WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-            ORDER BY rdm.mv_date DESC
+            ORDER BY rdm.mv_date DESC, rdm.da_code ASC
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
         db.$queryRaw`
@@ -77,12 +76,12 @@ export const getDaMovementInfoData = async (
       ]);
     }
 
-    count = Number(resCount[0]?.total)
+    count = Number(resCount[0]?.total);
   } catch (error) {
     data = [] as any[];
     connectionError = true;
     console.log(error);
-    count = 0
+    count = 0;
   }
   return { data, count, connectionError };
 };

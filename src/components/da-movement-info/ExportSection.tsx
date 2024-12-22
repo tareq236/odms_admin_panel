@@ -15,7 +15,7 @@ function ExportSection({ data }: { data: any[] }) {
     let str = ``;
     str += `\r\n`;
     str +=
-      "da code, da name, movement distance (km), movement time (minutes),  created date \r\n";
+      "da code, da name, movement distance (km), movement time (minutes), movement time (hours),  date \r\n";
 
     for (let i = 0; i < array.length; i++) {
       let line = ``;
