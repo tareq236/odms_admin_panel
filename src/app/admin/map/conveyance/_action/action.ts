@@ -1,4 +1,4 @@
-import { rdl_conveyance } from "@prisma/client";
+import { rdl_conveyance } from "@/prisma/generated/client1";
 import db from "../../../../../../db/db";
 import { getUser } from "@/lib/dal";
 import { redirect } from "next/navigation";

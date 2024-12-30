@@ -4,7 +4,7 @@ import { createUser, updateUser } from "@/app/actions/user";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { rdl_user_list } from "@prisma/client";
+import { rdl_user_list } from "@/prisma/generated/client1";
 import React, { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";

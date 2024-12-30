@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import Tooltips from "@/components/ui/Tooltips";
 import { formatDate } from "@/lib/formatters";
-import { rdl_user_list } from "@prisma/client";
+import { rdl_user_list } from "@/prisma/generated/client1";
 import { Edit, MessageSquareOff, ServerOff, Trash, UserPen } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import UserForm from "./UserForm";

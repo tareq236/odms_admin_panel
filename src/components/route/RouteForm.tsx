@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { useFormState, useFormStatus } from "react-dom";
 import { createRoute, updateRoute } from "@/app/actions/routes";
 import { toast } from "sonner";
-import { rdl_route_sap } from "@prisma/client";
+import { rdl_route_sap } from "@/prisma/generated/client1";
 import Spinner from "../ui/Spinner";
 
 type RouteFormProps = {

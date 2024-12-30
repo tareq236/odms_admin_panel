@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/prisma/generated/client1";
 import db from "../../../../../../db/db";
 
 export const getPartnerDeliveryStats = async ({

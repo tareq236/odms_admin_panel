@@ -24,7 +24,7 @@ import { useTransition } from "react";
 import { useRouter } from "next-nprogress-bar";
 import { logout } from "@/app/actions/auth";
 import { ScrollArea } from "../ui/scroll-area";
-import { rdl_admin_user_list_role } from "@prisma/client";
+import { rdl_admin_user_list_role } from "@/prisma/generated/client1";
 import Spinner from "../ui/Spinner";
 import { FileUser } from "../constants/icons/icons";
 

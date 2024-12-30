@@ -1,6 +1,6 @@
 "use client";
 
-import { rdl_admin_user_list } from "@prisma/client";
+import { rdl_admin_user_list } from "@/prisma/generated/client1";
 import React, { SetStateAction } from "react";
 
 export interface AuthContextType {

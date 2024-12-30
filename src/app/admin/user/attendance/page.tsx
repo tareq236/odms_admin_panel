@@ -3,7 +3,7 @@ import PagePagination from "@/components/ui/PagePagination";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import AttendanceTable from "@/components/user/attendence/AttendanceTable";
 import FilterSection from "@/components/user/attendence/FilterSection";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/prisma/generated/client1";
 import { ListTodo } from "lucide-react";
 import React, { Suspense } from "react";
 import { getAttendance } from "@/app/actions/attendance";

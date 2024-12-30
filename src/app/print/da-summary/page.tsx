@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/lib/formatters";
 import React, { Suspense } from "react";
 import db from "../../../../db/db";
-import { rdl_attendance, rdl_user_list } from "@prisma/client";
+import { rdl_attendance, rdl_user_list } from "@/prisma/generated/client1";
 import DeliverySection from "@/components/print/da-summary/DeliverySection";
 import DeliveryListSection from "@/components/print/da-summary/DeliveryListSection";
 

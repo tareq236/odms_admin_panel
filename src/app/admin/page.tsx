@@ -1,6 +1,6 @@
 import React from "react";
 import db from "../../../db/db";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/prisma/generated/client1";
 import { format } from "date-fns";
 import Header from "@/components/home/Header";
 import { ChartSection } from "@/components/home/ChartSections";

@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime, formatNumber } from "@/lib/formatters";
-import { rdl_attendance } from "@prisma/client";
+import { rdl_attendance } from "@/prisma/generated/client1";
 import React from "react";
 
 function AttendanceSection({

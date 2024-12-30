@@ -2,7 +2,7 @@ import Nav from "@/components/Nav/Nav";
 import Sidebar from "@/components/sidenav/Sidebar";
 import SocketProvider from "@/contexts/SocketProvider";
 import { getUser } from "@/lib/dal";
-import { rdl_admin_user_list_role } from "@prisma/client";
+import { rdl_admin_user_list_role } from "@/prisma/generated/client1";
 import { redirect } from "next/navigation";
 import React from "react";
 

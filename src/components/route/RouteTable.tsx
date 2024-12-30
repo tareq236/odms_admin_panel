@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { toast } from "sonner";
-import { rdl_route_sap } from "@prisma/client";
+import { rdl_route_sap } from "@/prisma/generated/client1";
 import RouteForm from "./RouteForm";
 import { deleteRoute } from "@/app/actions/routes";
 

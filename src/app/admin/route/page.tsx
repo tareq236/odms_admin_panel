@@ -6,7 +6,7 @@ import TableSkeleton from "@/components/ui/TableSkeletion";
 import { Route } from "lucide-react";
 import React, { Suspense } from "react";
 import db from "../../../../db/db";
-import { Prisma, rdl_route_sap } from "@prisma/client";
+import { Prisma, rdl_route_sap } from "@/prisma/generated/client1";
 
 import type { Metadata } from "next";
 

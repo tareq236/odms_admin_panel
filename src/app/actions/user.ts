@@ -3,7 +3,7 @@
 import { z } from "zod";
 import db from "../../../db/db";
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/prisma/generated/client1";
 import { notFound, redirect } from "next/navigation";
 import { verifySession } from "@/lib/dal";
 import { deleteSession } from "@/lib/session";

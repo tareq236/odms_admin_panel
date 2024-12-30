@@ -1,6 +1,6 @@
 import NoData from "@/components/constants/NoData";
 import UserStatusTag from "@/components/user/UserStatusTag";
-import { rdl_user_list } from "@prisma/client";
+import { rdl_user_list } from "@/prisma/generated/client1";
 import React from "react";
 
 function ProfileSection({daInfo}: {daInfo: rdl_user_list}) {
