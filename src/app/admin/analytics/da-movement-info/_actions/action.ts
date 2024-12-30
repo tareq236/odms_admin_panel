@@ -6,8 +6,8 @@ export const getDaMovementInfoData = async (
     p: string;
     q: string;
     filter: string;
-    start: string,
-    end: string
+    start: string;
+    end: string;
   },
   limit: number = 20
 ) => {
@@ -15,6 +15,8 @@ export const getDaMovementInfoData = async (
   let count = 0;
   let data: any[] | unknown = [];
   let connectionError = false;
+
+  resCount = [{ total: 0 }];
 
   const currentDate = new Date();
   const queryDate =
@@ -37,16 +39,34 @@ export const getDaMovementInfoData = async (
         );
   const dateStart = searchParams.start || formateDateDB(queryDate);
 
-  const dateEnd = searchParams.end || formateDateDB(
-    new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate()
-    )
-  );
+  const dateEnd =
+    searchParams.end ||
+    formateDateDB(
+      new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate()
+      )
+    );
 
   try {
     if (searchParams.q) {
+      if (searchParams.start === formateDateDB(currentDate)) {
+        const res = await fetch(
+          process.env.DA_MOVEMENT_API + "/api/v1/da_movement/analytics/v1",
+          {
+            method: "GET",
+            body: JSON.stringify({
+              da_code: searchParams.q,
+              mv_date: searchParams.start,
+            }),
+          }
+        );
+
+        if (!res.ok) throw new Error((await res.json()).message);
+
+        return (data = await res.json());
+      }
       [data, resCount] = await Promise.all([
         db.$queryRaw`
             SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 

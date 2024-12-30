@@ -135,6 +135,7 @@ const DaMovementMap = () => {
   const getActivityList = async (sap_id: string, formattedDate: string) => {
     CallApi.fetchActivityForMap(sap_id, formattedDate).then(
       (result: any) => {
+        console.log(result)
         if (result.success) {
           if (result) {
             const dl = result.result.filter(
@@ -230,7 +231,7 @@ const DaMovementMap = () => {
 
         setLoading(false);
       } else {
-        toast.warning("No user data found");
+        toast.warning("User was Absent that day");
         setLoading(false);
         setNoData(true);
       }
@@ -244,7 +245,7 @@ const DaMovementMap = () => {
     if (searchParams.has("q")) {
       fetchData(searchParams.get("q") || "");
     }
-  }, [searchParams]);
+  }, [searchParams, loading]);
 
   const displayStays = (stays: any[]) => {
     return stays.map((stay, index) => {
