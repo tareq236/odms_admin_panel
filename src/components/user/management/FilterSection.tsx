@@ -30,7 +30,7 @@ export default function FilterSection() {
             }}
           >
             <Upload className="size-4 mr-2" />
-            <span>Bulk upload</span>
+            <span>Import</span>
           </Button>
 
           <Button

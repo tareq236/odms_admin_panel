@@ -56,6 +56,7 @@ function UserTable({
             <TableHead>Name</TableHead>
             <TableHead>Mobile</TableHead>
             <TableHead>User Type</TableHead>
+            <TableHead>Depot</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -80,7 +81,8 @@ function UserTable({
                 <TableCell>{item.sap_id}</TableCell>
                 <TableCell>{item.full_name}</TableCell>
                 <TableCell>{item.mobile_number}</TableCell>
-                <TableCell>{item.user_type}</TableCell>
+                <TableCell>{item.user_type || `-`}</TableCell>
+                <TableCell>{item.user_depot || `-`}</TableCell>
                 <TableCell className="min-w-[120px]"><UserStatusTag status={item.status.toString()} /></TableCell>
                 <TableCell>{formatDate(item.created_at)}</TableCell>
                 <TableCell className="flex justify-end gap-2">

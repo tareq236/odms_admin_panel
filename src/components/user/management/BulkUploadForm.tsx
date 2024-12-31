@@ -26,8 +26,21 @@ export default function BulkUploadForm({ onClose }: FormProps) {
   return (
     <form action={action} className="flex flex-col gap-5">
       <p>
-        <Label htmlFor="upload">Upload</Label>
-        <Input name="upload" id="upload" className="mt-2" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        <Label htmlFor="upload">
+          Upload{" "}
+          <span className="text-muted-foreground text-xs font-normal">
+            (Excel file only)
+          </span>
+        </Label>
+        <Input
+          name="upload"
+          id="upload"
+          className="mt-2"
+          type="file"
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        />
+
+        {data?.error && <div className="error-msg">{data.error.upload}</div>}
       </p>
 
       <SubmitButton />
