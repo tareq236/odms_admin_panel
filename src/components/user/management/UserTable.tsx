@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import Tooltips from "@/components/ui/Tooltips";
 import { formatDate } from "@/lib/formatters";
-import { rdl_user_list } from "@/prisma/generated/client1";
+import { rdl_users_list } from "@/prisma/generated/client1";
 import { Edit, MessageSquareOff, ServerOff, Trash, UserPen } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import UserForm from "./UserForm";
@@ -39,7 +39,7 @@ function UserTable({
   data,
   connectionError,
 }: {
-  data: rdl_user_list[];
+  data: rdl_users_list[];
   connectionError: boolean;
 }) {
   const [editUser, setEditUser] = useState<any>(false);
@@ -159,6 +159,7 @@ function UserTable({
                     await deleteUser(delUser);
                     toast.success("User is deleted");
                   } catch (error) {
+                    console.log(error)
                     toast.warning("Something went wrong!");
                   }
                  

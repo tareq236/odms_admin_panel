@@ -8,26 +8,40 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Search from "@/components/ui/Search";
-import { Plus, UserPen } from "lucide-react";
+import { Plus, Upload, UserPen } from "lucide-react";
 import React, { useState } from "react";
 import UserForm from "./UserForm";
+import BulkUploadForm from "./BulkUploadForm";
 
 export default function FilterSection() {
   const [add, setAdd] = useState(false);
+  const [upload, setUpload] = useState(false);
 
   return (
     <>
       <section className="filter-section">
         <Search placeholder="Search by ID, name, mobile" />
 
-        <Button
-          onClick={() => {
-            setAdd(true);
-          }}
-        >
-          <Plus className="size-4 mr-2" />
-          <span>Add</span>
-        </Button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Button
+            variant={"secondary"}
+            onClick={() => {
+              setUpload(true);
+            }}
+          >
+            <Upload className="size-4 mr-2" />
+            <span>Bulk upload</span>
+          </Button>
+
+          <Button
+            onClick={() => {
+              setAdd(true);
+            }}
+          >
+            <Plus className="size-4 mr-2" />
+            <span>Add</span>
+          </Button>
+        </div>
       </section>
 
       {/* add user dialog */}
@@ -42,6 +56,21 @@ export default function FilterSection() {
 
           {/* form */}
           <UserForm onClose={() => setAdd(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* bulk upload dialog */}
+      <Dialog open={upload} onOpenChange={setUpload}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Upload className="size-4 text-primary" /> Bulk Upload
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="my-3">
+            <BulkUploadForm onClose={() => setUpload(false)} />
+          </div>
         </DialogContent>
       </Dialog>
     </>

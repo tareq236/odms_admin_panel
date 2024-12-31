@@ -4,7 +4,7 @@ import { z } from "zod";
 import db from "../../../db/db";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@/prisma/generated/client1";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { verifySession } from "@/lib/dal";
 import { deleteSession } from "@/lib/session";
 
@@ -49,7 +49,7 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
   }
 
   try {
-    await db.rdl_user_list.create({
+    await db.rdl_users_list.create({
       data: {
         sap_id: Number(data.sap_id),
         full_name: data.full_name,
@@ -77,7 +77,7 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
 export const updateUser = async (
   id: number,
   prevState: unknown,
-  formData: FormData,
+  formData: FormData
 ) => {
   const auth = await verifySession();
   if (!auth.isAuth) {
@@ -97,7 +97,7 @@ export const updateUser = async (
 
   const data = result.data;
 
-  const user = await db.rdl_user_list.findUnique({
+  const user = await db.rdl_users_list.findUnique({
     where: { sap_id: Number(data.sap_id) },
   });
 
@@ -110,7 +110,7 @@ export const updateUser = async (
   }
 
   try {
-    await db.rdl_user_list.update({
+    await db.rdl_users_list.update({
       where: { sap_id: id },
       data: {
         sap_id: Number(data.sap_id),
@@ -151,11 +151,11 @@ export const deleteUser = async (id: number) => {
     redirect("/login");
   }
 
-  const user = await db.rdl_user_list.findUnique({ where: { sap_id: id } });
+  const user = await db.rdl_users_list.findUnique({ where: { sap_id: id } });
 
-  if (user == null) return notFound();
+  if (user == null) throw new Error("User is not found");
 
-  await db.rdl_user_list.delete({ where: { sap_id: id } });
+  await db.rdl_users_list.delete({ where: { sap_id: id } });
 
   revalidatePath("/admin");
   revalidatePath("/admin/user/management");
