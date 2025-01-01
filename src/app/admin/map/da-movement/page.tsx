@@ -10,6 +10,7 @@ import { getUser } from "@/lib/dal";
 import { formateDateDB } from "@/lib/formatters";
 import DaMovementMap from "@/components/da-movement/DaMovementMap";
 import type { Metadata } from "next";
+import MapSection from "@/components/da-movement/MapSection";
 
 export const metadata: Metadata = {
   title: "DA Movement - ODMS Admin Panel",
@@ -72,7 +73,8 @@ export default async function DaMovementAnalyticsPage({
           <SearchDa />
         </section>
       )}
-      {daInfo && <DaMovementMap />}
+      {daInfo && <MapSection searchParams={searchParams} />}
+      {/* {daInfo && <DaMovementMap />} */}
     </>
   );
 }
