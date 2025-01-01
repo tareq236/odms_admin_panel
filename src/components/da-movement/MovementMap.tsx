@@ -91,6 +91,7 @@ export default function MovementMap({ data }: { data: user_movement[] }) {
                   fontWeight: "bold",
                 }}
                 clusterer={clusterer} // Attach to the clusterer
+                onClick={() => setSelectedData(marker)}
               />
             ))
           }
