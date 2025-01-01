@@ -3,6 +3,7 @@ import db2 from "../../../db/db2";
 import { user_movement } from "@/prisma/generated/client2";
 import { UserRoundX } from "lucide-react";
 import MovementMap from "./MovementMap";
+import { formateDateDB } from "@/lib/formatters";
 
 export default async function MapSection({
   searchParams,
@@ -11,6 +12,10 @@ export default async function MapSection({
 }) {
   let data: user_movement[] = [];
   let count = 0;
+  const date = `${
+    searchParams.start ? searchParams.start : formateDateDB(new Date())
+  }`;
+
   try {
     data = await db2.$queryRaw`
         WITH stay_points AS (
@@ -21,7 +26,7 @@ export default async function MapSection({
         mv_time,
         LEAD(mv_time) OVER (PARTITION BY user_id ORDER BY mv_time) AS next_time
     FROM user_movement
-    WHERE user_id = '50023' AND mv_date = '2024-12-31'
+    WHERE user_id = ${searchParams.q} AND mv_date = '2024-12-31'
 ),
 clusters AS (
     SELECT
@@ -59,7 +64,7 @@ FROM filtered_stays;
     console.log(error);
   }
 
-  if (data.length ===0)
+  if (data.length === 0)
     return (
       <div className="flex items-center justify-center flex-col  text-muted-foreground/50 my-20">
         <UserRoundX className="size-16" />
@@ -69,8 +74,8 @@ FROM filtered_stays;
 
   return (
     <section>
-        {/* {JSON.stringify(data, null, 2)} */}
-      <MovementMap data={data} />
+      {/* {JSON.stringify(data, null, 2)} */}
+      <MovementMap locations={data} />
     </section>
   );
 }

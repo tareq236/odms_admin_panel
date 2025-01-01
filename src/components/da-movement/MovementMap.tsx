@@ -10,22 +10,55 @@ import {
   InfoWindow,
   MarkerClusterer,
 } from "@react-google-maps/api";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Spinner from "../ui/Spinner";
 import { formatDate } from "@/lib/formatters";
+import { useSearchParams } from "next/navigation";
 
-export default function MovementMap({ data }: { data: user_movement[] }) {
+export default function MovementMap({
+  locations,
+}: {
+  locations: user_movement[];
+}) {
+  const [data, setData] = useState<user_movement[]>([]);
   const [center, setCenter] = useState({
-    lat: Number(data[0].latitude),
-    lng: Number(data[0].longitude),
+    lat: Number(locations[0].latitude),
+    lng: Number(locations[0].longitude),
   });
 
   const [selectedData, setSelectedData] = useState<user_movement | null>(null);
+  const [map, setMap] = React.useState<any>(null);
+
+  const searchParams = useSearchParams();
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string,
   });
+
+  const onLoad = React.useCallback(function callback(map: any) {
+    // This is just an example of getting and using the map instance!!! don't just blindly copy!
+    const bounds = new window.google.maps.LatLngBounds(center);
+    map.fitBounds(bounds);
+
+    setMap(map);
+  }, []);
+
+  const onUnmount = React.useCallback(function callback(map: any) {
+    setMap(null);
+  }, []);
+
+  useEffect(() => {
+    if (locations.length > 0) {
+      setData(locations);
+      setCenter({
+        lat: Number(locations[0].latitude),
+        lng: Number(locations[0].longitude),
+      });
+    } else {
+      setData(locations);
+    }
+  }, [searchParams]);
 
   // Function to create markers for clustering
   const createMarkers = (): any => {
@@ -53,7 +86,7 @@ export default function MovementMap({ data }: { data: user_movement[] }) {
           aspectRatio: 16 / 8,
         }}
         center={center}
-        zoom={12}
+        zoom={18}
       >
         {/* Add other map elements here */}
         {data.length > 0 && (
@@ -96,8 +129,6 @@ export default function MovementMap({ data }: { data: user_movement[] }) {
             ))
           }
         </MarkerClusterer>
-
-        
 
         {selectedData && (
           <InfoWindow

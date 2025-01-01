@@ -11,6 +11,7 @@ import { formateDateDB } from "@/lib/formatters";
 import DaMovementMap from "@/components/da-movement/DaMovementMap";
 import type { Metadata } from "next";
 import MapSection from "@/components/da-movement/MapSection";
+import Spinner from "@/components/ui/Spinner";
 
 export const metadata: Metadata = {
   title: "DA Movement - ODMS Admin Panel",
@@ -73,7 +74,11 @@ export default async function DaMovementAnalyticsPage({
           <SearchDa />
         </section>
       )}
-      {daInfo && <MapSection searchParams={searchParams} />}
+      {daInfo && (
+        <Suspense fallback={<Spinner />}>
+          <MapSection searchParams={searchParams} />
+        </Suspense>
+      )}
       {/* {daInfo && <DaMovementMap />} */}
     </>
   );
