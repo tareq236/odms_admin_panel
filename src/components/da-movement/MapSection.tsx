@@ -26,7 +26,9 @@ export default async function MapSection({
         mv_time,
         LEAD(mv_time) OVER (PARTITION BY user_id ORDER BY mv_time) AS next_time
     FROM user_movement
-    WHERE user_id = ${searchParams.q} AND mv_date = '2024-12-31'
+    WHERE user_id = ${searchParams.q} AND mv_date = ${
+      searchParams?.start ?? formateDateDB(new Date())
+    }::DATE
 ),
 clusters AS (
     SELECT
