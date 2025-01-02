@@ -3,7 +3,6 @@
 import { user_movement } from "@/prisma/generated/client2";
 import {
   GoogleMap,
-  LoadScript,
   Polyline,
   useJsApiLoader,
   Marker,
@@ -12,8 +11,9 @@ import {
 } from "@react-google-maps/api";
 import React, { useEffect, useState } from "react";
 import Spinner from "../ui/Spinner";
-import { formatDate } from "@/lib/formatters";
+import { formatDate, formatNumber } from "@/lib/formatters";
 import { useSearchParams } from "next/navigation";
+import { format, toZonedTime } from "date-fns-tz";
 
 export default function MovementMap({
   locations,
@@ -26,7 +26,7 @@ export default function MovementMap({
     lng: Number(locations[0].longitude),
   });
 
-  const [selectedData, setSelectedData] = useState<user_movement | null>(null);
+  const [selectedData, setSelectedData] = useState<any | null>(null);
   const [map, setMap] = React.useState<any>(null);
 
   const searchParams = useSearchParams();
@@ -68,6 +68,7 @@ export default function MovementMap({
         lng: Number(location.longitude),
       },
       title: location.id,
+      ...location,
     }));
   };
 
@@ -139,14 +140,39 @@ export default function MovementMap({
             onCloseClick={() => setSelectedData(null)} // Clear selection on close
           >
             <div>
-              <h5>Cash Collection Details</h5>
-              <p>
-                Date Time:{" "}
-                {selectedData && selectedData.mv_date
-                  ? formatDate(selectedData.mv_date)
-                  : null}
-              </p>
-              <div>Speed: {Number(selectedData?.speed)}</div>
+              <h5 className="text-md font-semibold mb-3">Stay Point Info</h5>
+              <div className="flex flex-col gap-1 font-normal">
+                <p>
+                  Date:{" "}
+                  {selectedData && selectedData.mv_date
+                    ? formatDate(selectedData.mv_date)
+                    : null}
+                </p>
+                {selectedData &&
+                  selectedData.start_time &&
+                  selectedData.end_time && (
+                    <div>
+                      Time:{" "}
+                      {format(
+                        toZonedTime(selectedData?.start_time, "UTC"),
+                        "h:mm aaa"
+                      )}{" "}
+                      -{" "}
+                      {format(
+                        toZonedTime(selectedData?.end_time, "UTC"),
+                        "h:mm aaa"
+                      )}
+                    </div>
+                  )}
+
+                {selectedData && selectedData?.time_in_minutes && (
+                  <div className="">
+                    Duration:{" "}
+                    {formatNumber(Number(selectedData?.time_in_minutes ?? 0))}{" "}
+                    mins
+                  </div>
+                )}
+              </div>
             </div>
           </InfoWindow>
         )}

@@ -18,49 +18,53 @@ export default async function MapSection({
 
   try {
     data = await db2.$queryRaw`
-        WITH stay_points AS (
+    WITH stay_points AS (
+        SELECT
+            user_id, -- ID of the user
+            mv_date, -- Date of movement
+            ST_SetSRID(ST_MakePoint(longitude, latitude), 4326) AS geo_point, -- Create a geographic point from longitude and latitude
+            mv_time, -- Movement time for the current record
+            LEAD(mv_time) OVER (PARTITION BY user_id ORDER BY mv_time) AS next_time -- Time of the next movement for the same user
+        FROM user_movement
+        WHERE user_id = ${searchParams.q} AND mv_date = ${
+          searchParams?.start ?? formateDateDB(new Date())
+        }::DATE
+    ),
+    clusters AS (
+        SELECT
+            sp.user_id, -- User ID
+            sp.mv_date, -- Movement date
+            sp.geo_point, -- Geographic point of the current record
+            sp.mv_time, -- Movement time of the current record
+            sp.next_time, -- Movement time of the next record
+            ST_DWithin(sp.geo_point, LEAD(sp.geo_point) OVER (PARTITION BY sp.user_id ORDER BY sp.mv_time), 10) AS within_radius, -- Check if the next point is within 10 meters
+            EXTRACT(EPOCH FROM (sp.next_time - sp.mv_time)) AS time_diff_seconds -- Calculate time difference in seconds
+        FROM stay_points sp
+    ),
+    filtered_stays AS (
+        SELECT
+            user_id, -- User ID
+            geo_point, -- Geographic point representing the cluster
+            mv_date, -- Movement date
+            MIN(mv_time) AS start_time, -- Start time of the stay
+            MAX(next_time) AS end_time, -- End time of the stay
+            SUM(time_diff_seconds) AS total_time_seconds, -- Total time spent at this location in seconds
+            SUM(time_diff_seconds) / 60 AS total_time_minutes -- Total time spent at this location in minutes
+        FROM clusters
+        WHERE within_radius -- Filter for points that are within the specified radius
+        GROUP BY user_id, geo_point, mv_date -- Group by user, geographic point, and date
+        HAVING SUM(time_diff_seconds) >= 300 -- Retain clusters where total time spent is 5 minutes or more
+    )
     SELECT
-        user_id,
-        mv_date,
-        ST_SetSRID(ST_MakePoint(longitude, latitude), 4326) AS geo_point,
-        mv_time,
-        LEAD(mv_time) OVER (PARTITION BY user_id ORDER BY mv_time) AS next_time
-    FROM user_movement
-    WHERE user_id = ${searchParams.q} AND mv_date = ${
-      searchParams?.start ?? formateDateDB(new Date())
-    }::DATE
-),
-clusters AS (
-    SELECT
-        sp.user_id,
-        sp.mv_date,
-        sp.geo_point,
-        sp.mv_time,
-        sp.next_time,
-        ST_DWithin(sp.geo_point, LEAD(sp.geo_point) OVER (PARTITION BY sp.user_id ORDER BY sp.mv_time), 10) AS within_radius,
-        EXTRACT(EPOCH FROM (sp.next_time - sp.mv_time)) AS time_diff_seconds
-    FROM stay_points sp
-),
-filtered_stays AS (
-    SELECT
-        user_id,
-        geo_point,
-        mv_date,
-        SUM(time_diff_seconds) AS total_time_seconds,
-        SUM(time_diff_seconds) / 60 AS total_time_minutes -- Convert seconds to minutes
-    FROM clusters
-    WHERE within_radius
-    GROUP BY user_id, geo_point, mv_date
-    HAVING SUM(time_diff_seconds) >= 300 -- 5 minutes
-)
-SELECT
-    user_id,
-    mv_date,
-    ST_X(geo_point) AS longitude,
-    ST_Y(geo_point) AS latitude,
-    total_time_seconds AS time_in_seconds,
-    total_time_minutes AS time_in_minutes
-FROM filtered_stays;
+        user_id, -- User ID
+        mv_date, -- Movement date
+        ST_X(geo_point) AS longitude, -- Extract longitude from the geographic point
+        ST_Y(geo_point) AS latitude, -- Extract latitude from the geographic point
+        total_time_seconds AS time_in_seconds, -- Total time spent at the location in seconds
+        total_time_minutes AS time_in_minutes, -- Total time spent at the location in minutes
+        start_time, -- Start time of the stay
+        end_time -- End time of the stay
+    FROM filtered_stays;
     `;
   } catch (error) {
     console.log(error);
