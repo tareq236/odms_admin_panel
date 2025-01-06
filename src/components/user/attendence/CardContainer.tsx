@@ -1,7 +1,9 @@
 import React from "react";
 import Card from "./Card";
 import db from "../../../../db/db";
-import {formateDateDB} from '@/lib/formatters'
+import { formateDateDB } from "@/lib/formatters";
+import { getUser } from "@/lib/dal";
+import { redirect } from "next/navigation";
 
 type CardContainerProps = {
   searchParams: {
@@ -26,17 +28,45 @@ export default async function CardContainer({
 
   let dailyAttendance: unknown | any;
   let userCount;
+
+  const authUser = await getUser();
+
+  if (!authUser) return redirect("/login");
+
   try {
-    [dailyAttendance, userCount] = await Promise.all([
-      db.$queryRaw`
-      SELECT COUNT(sap_id) as total_attendance
-      FROM rdl_attendance 
-      WHERE start_date_time > ${formateDateDB(startDate)} AND start_date_time < ${endDate}
-      GROUP BY CAST(start_date_time as DATE) 
-      `,
-      db.rdl_user_list.count(),
-    ]);
+    if (authUser.role === "admin") {
+      [dailyAttendance, userCount] = await Promise.all([
+        db.$queryRaw`
+        SELECT COUNT(sap_id) as total_attendance
+        FROM rdl_attendance 
+        WHERE start_date_time > ${formateDateDB(
+          startDate
+        )} AND start_date_time < ${endDate}
+        GROUP BY CAST(start_date_time as DATE) 
+        `,
+        db.rdl_users_list.count(),
+      ]);
+    } else {
+      [dailyAttendance, userCount] = await Promise.all([
+        db.$queryRaw`
+        SELECT COUNT(id) as total_attendance
+        FROM rdl_attendance ra
+        LEFT JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
+        WHERE ra.start_date_time > ${formateDateDB(
+          startDate
+        )} AND ra.start_date_time < ${endDate} 
+        AND ru.depot_code = ${authUser.deport_code}
+        GROUP BY CAST(start_date_time as DATE) 
+        `,
+        db.rdl_users_list.count({
+          where: {
+            depot_code: authUser.deport_code,
+          },
+        }),
+      ]);
+    }
   } catch (error) {
+    console.error(error)
     dailyAttendance = [{ total_attendance: 0 }];
     userCount = 0;
   }

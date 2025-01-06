@@ -1,5 +1,7 @@
+import { getUser } from "@/lib/dal";
 import db from "../../../db/db";
-import {formateDateDB} from '@/lib/formatters'
+import { formateDateDB } from "@/lib/formatters";
+import { redirect } from "next/navigation";
 
 export const getAttendance = async ({
   searchParams,
@@ -19,25 +21,60 @@ export const getAttendance = async ({
   let endDate = new Date(
     startDate.getFullYear(),
     startDate.getMonth(),
-    startDate.getDate() + 1,
+    startDate.getDate() + 1
   );
 
+  // get auth user info
+  const authUser = await getUser();
+
+  if (!authUser) return redirect("/login");
+
   try {
-    if (searchParams.q) {
-      data = await db.$queryRaw`
-      SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
-      INNER JOIN rdl_user_list ru ON ru.sap_id = ra.sap_id
-      WHERE ra.start_date_time >= ${formateDateDB(startDate)} AND ra.start_date_time < ${formateDateDB(endDate)}
-      AND ra.sap_id = ${searchParams.q}
-      LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
-    `;
+    if (authUser.role === "admin") {
+      if (searchParams.q) {
+        data = await db.$queryRaw`
+        SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
+        INNER JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
+        WHERE ra.start_date_time >= ${formateDateDB(
+          startDate
+        )} AND ra.start_date_time < ${formateDateDB(endDate)}
+        AND ra.sap_id = ${searchParams.q}
+        LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+      `;
+      } else {
+        data = await db.$queryRaw`
+        SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
+        INNER JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
+        WHERE ra.start_date_time >= ${formateDateDB(
+          startDate
+        )} AND ra.start_date_time < ${formateDateDB(endDate)}
+        LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+      `;
+      }
     } else {
-      data = await db.$queryRaw`
-      SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
-      INNER JOIN rdl_user_list ru ON ru.sap_id = ra.sap_id
-      WHERE ra.start_date_time >= ${formateDateDB(startDate)} AND ra.start_date_time < ${formateDateDB(endDate)}
-      LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
-    `;
+      if (searchParams.q) {
+        data = await db.$queryRaw`
+        SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
+        INNER JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
+        WHERE ra.start_date_time >= ${formateDateDB(
+          startDate
+        )} AND ra.start_date_time < ${formateDateDB(endDate)}
+        AND ra.sap_id = ${searchParams.q} AND ru.depot_code = ${
+          authUser.deport_code
+        }
+        LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+      `;
+      } else {
+        data = await db.$queryRaw`
+        SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
+        INNER JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
+        WHERE ra.start_date_time >= ${formateDateDB(
+          startDate
+        )} AND ra.start_date_time < ${formateDateDB(endDate)}
+        AND ru.depot_code = ${authUser.deport_code}
+        LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+      `;
+      }
     }
   } catch (error) {}
 
