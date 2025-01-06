@@ -10,12 +10,15 @@ import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
 import CollectionDetailsView from "@/components/delivery/collection/CollectionDetailsView";
 import { getDeliveryCollection } from "./_action/action";
 import type { Metadata } from "next";
+import { getUser } from "@/lib/dal";
+import { redirect } from "next/navigation";
+import db from "../../../../../db/db";
 
 export const metadata: Metadata = {
   title: "Delivery Collection - ODMS Admin Panel",
 };
 
-export default function DeliveryCollectionPage({
+export default async function DeliveryCollectionPage({
   searchParams,
 }: {
   searchParams: {
@@ -26,6 +29,16 @@ export default function DeliveryCollectionPage({
     status: string;
   };
 }) {
+  const user = await getUser();
+
+  if (!user) redirect("/login");
+
+  const daInfo = await db.rdl_users_list.findFirst({
+    where: {
+      sap_id: Number(searchParams.q) || undefined,
+    },
+  });
+
   return (
     <>
       <PageHeader
@@ -37,18 +50,19 @@ export default function DeliveryCollectionPage({
         <FilterSection />
       </Suspense>
 
-      {searchParams.q != null && (
-        <>
-          <Suspense>
-            <DaInfoSection searchParams={searchParams} />
-          </Suspense>
+      {(user.role === "admin" || daInfo?.depot_code == user.deport_code) &&
+        searchParams.q != null && (
+          <>
+            <Suspense>
+              <DaInfoSection searchParams={searchParams} />
+            </Suspense>
 
-          {/* stats cards */}
-          <Suspense>
-            <CardSection searchParams={searchParams} />
-          </Suspense>
-        </>
-      )}
+            {/* stats cards */}
+            <Suspense>
+              <CardSection searchParams={searchParams} />
+            </Suspense>
+          </>
+        )}
 
       {/* table section */}
       <Suspense fallback={<TableSkeleton />}>

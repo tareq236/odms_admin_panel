@@ -11,6 +11,7 @@ import { getUser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 
 import type { Metadata } from "next";
+import { AuthUserProps } from "../../route/page";
 
 export const metadata: Metadata = {
   title: "Delivery Invoice - ODMS Admin Panel",
@@ -21,6 +22,10 @@ export default async function DevlierInvoicePage({
 }: {
   searchParams: { p: string; q: string; start: string };
 }) {
+  const user = await getUser();
+
+  if (!user) redirect("/login");
+
   return (
     <>
       <PageHeader
@@ -33,7 +38,7 @@ export default async function DevlierInvoicePage({
       </Suspense>
 
       <Suspense fallback={<TableSkeleton />}>
-        <DataTable searchParams={searchParams} />
+        <DataTable user={user} searchParams={searchParams} />
       </Suspense>
     </>
   );
@@ -41,18 +46,15 @@ export default async function DevlierInvoicePage({
 
 const DataTable = async ({
   searchParams,
+  user,
 }: {
   searchParams: { p: string; q: string; start: string };
+  user: AuthUserProps;
 }) => {
   let count: any = [{ total: 0 }];
   const limit = 20;
   let connectionError = false;
   let data;
-
-  const user = await getUser();
-
-  if (!user) redirect("/login");
-
 
   try {
     if (searchParams.q) {
