@@ -11,7 +11,6 @@ import Search from "@/components/ui/Search";
 import { Plus, Route } from "lucide-react";
 import React, { useState } from "react";
 import RouteForm from "./RouteForm";
-import { $Enums } from "@/prisma/generated/client1";
 import { AuthUserProps } from "@/app/admin/route/page";
 
 export default function FilterSection({

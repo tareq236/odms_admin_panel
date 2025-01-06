@@ -54,20 +54,35 @@ export const bulkUploadUser = async (prevData: unknown, formData: FormData) => {
       return {
         ...item,
         mobile_number: `${item.mobile_number}`,
-        password: item?.password ?? "123456",
+        password: `${item?.password ?? 123456}`,
         status: item?.status ?? 1,
         created_at: item.created_at ?? new Date(),
-        updated_at: item.created_at ?? new Date()
+        updated_at: item.created_at ?? new Date(),
       };
     });
     console.log(importData);
 
-    await db.rdl_users_list.createMany({
-      data: importData as rdl_users_list[],
-    });
+    if (importData.length > 0) {
+      for (let user of importData) {
+        await db.rdl_users_list.upsert({
+          where: {
+            sap_id: user?.sap_id,
+          },
+          create: {
+            ...user as rdl_users_list,
+          },
+          update: {
+            ...user as rdl_users_list,
+          },
+        });
+      }
+    }
 
+    // await db.rdl_users_list.createMany({
+    //   data: importData as rdl_users_list[],
+    // });
 
-    revalidatePath('/admin/user/management')
+    revalidatePath("/admin/user/management");
 
     return {
       error: null,
