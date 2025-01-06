@@ -53,7 +53,6 @@ async function DaTrackingPage({
 
   return (
     <>
-      {/* <FilterSection /> */}
 
       <Header />
 
@@ -67,7 +66,7 @@ async function DaTrackingPage({
           <SearchDa />
         </section>
       )}
-      {daInfo && <TrackingMapSection />}
+      {(user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) && daInfo && <TrackingMapSection />}
     </>
   );
 }
