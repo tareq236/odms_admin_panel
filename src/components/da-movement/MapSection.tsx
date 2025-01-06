@@ -5,21 +5,23 @@ import { UserRoundX } from "lucide-react";
 import MovementMap from "./MovementMap";
 import { formateDateDB } from "@/lib/formatters";
 import { rdl_delivery } from "@/prisma/generated/client1";
+import db from "../../../db/db";
 
 export default async function MapSection({
   searchParams,
 }: {
   searchParams: { q: string; start: string; p: string };
 }) {
-  let data: user_movement[] = [];
+  let data: user_movement[] | unknown = [];
   let count = 0;
   const date = `${
     searchParams.start ? searchParams.start : formateDateDB(new Date())
   }`;
-  let deliveryData: rdl_delivery[] = [];
+  let deliveryData: rdl_delivery[] | unknown = [];
 
   try {
-    data = await db2.$queryRaw`
+    [data, deliveryData] = await Promise.all([
+      db2.$queryRaw`
     WITH stay_points AS (
         SELECT
             user_id, -- ID of the user
@@ -29,8 +31,8 @@ export default async function MapSection({
             LEAD(mv_time) OVER (PARTITION BY user_id ORDER BY mv_time) AS next_time -- Time of the next movement for the same user
         FROM user_movement
         WHERE user_id = ${searchParams.q} AND mv_date = ${
-      searchParams?.start ?? formateDateDB(new Date())
-    }::DATE
+        searchParams?.start ?? formateDateDB(new Date())
+      }::DATE
     ),
     clusters AS (
         SELECT
@@ -67,12 +69,16 @@ export default async function MapSection({
         start_time, -- Start time of the stay
         end_time -- End time of the stay
     FROM filtered_stays;
-    `;
+    `,
+      db.$queryRaw`
+        SELECT * FROM rdl_delivery rd WHERE rd.da_code=${searchParams.q} AND rd.billing_date=${date};
+      `
+    ])
   } catch (error) {
     console.log(error);
   }
 
-  if (data.length === 0)
+  if ((data as user_movement[]).length === 0)
     return (
       <div className="flex items-center justify-center flex-col  text-muted-foreground/50 my-20">
         <UserRoundX className="size-16" />
@@ -82,8 +88,10 @@ export default async function MapSection({
 
   return (
     <section>
-      {/* {JSON.stringify(data, null, 2)} */}
-      <MovementMap locations={data} deliveryList={[]} />
+      <MovementMap
+        locations={data as user_movement[]}
+        deliveryList={deliveryData as rdl_delivery[]}
+      />
     </section>
   );
 }

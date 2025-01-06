@@ -30,7 +30,6 @@ export default function MovementMap({
   });
 
   const [selectedData, setSelectedData] = useState<any | null>(null);
-  const [map, setMap] = React.useState<any>(null);
 
   const searchParams = useSearchParams();
 
@@ -38,18 +37,6 @@ export default function MovementMap({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string,
   });
-
-  const onLoad = React.useCallback(function callback(map: any) {
-    // This is just an example of getting and using the map instance!!! don't just blindly copy!
-    const bounds = new window.google.maps.LatLngBounds(center);
-    map.fitBounds(bounds);
-
-    setMap(map);
-  }, []);
-
-  const onUnmount = React.useCallback(function callback(map: any) {
-    setMap(null);
-  }, []);
 
   useEffect(() => {
     if (locations.length > 0) {
@@ -162,6 +149,10 @@ export default function MovementMap({
                   color: "black",
                   fontSize: "14px",
                   fontWeight: "bold",
+                }}
+                icon={{
+                  url: `https://maps.google.com/mapfiles/ms/icons/blue-dot.png`,
+                  scaledSize: new window.google.maps.Size(40, 40),
                 }}
                 clusterer={clusterer} // Attach to the clusterer
                 onClick={() => setSelectedData(marker)}

@@ -60,7 +60,6 @@ export const bulkUploadUser = async (prevData: unknown, formData: FormData) => {
         updated_at: item.created_at ?? new Date(),
       };
     });
-    console.log(importData);
 
     if (importData.length > 0) {
       for (let user of importData) {
@@ -77,10 +76,6 @@ export const bulkUploadUser = async (prevData: unknown, formData: FormData) => {
         });
       }
     }
-
-    // await db.rdl_users_list.createMany({
-    //   data: importData as rdl_users_list[],
-    // });
 
     revalidatePath("/admin/user/management");
 
