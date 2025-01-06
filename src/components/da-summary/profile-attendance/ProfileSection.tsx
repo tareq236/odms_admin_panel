@@ -1,9 +1,9 @@
 import NoData from "@/components/constants/NoData";
 import UserStatusTag from "@/components/user/UserStatusTag";
-import { rdl_user_list } from "@/prisma/generated/client1";
+import { rdl_users_list } from "@/prisma/generated/client1";
 import React from "react";
 
-function ProfileSection({daInfo}: {daInfo: rdl_user_list}) {
+function ProfileSection({daInfo}: {daInfo: rdl_users_list}) {
   return (
     <div className="border rounded p-4">
       <h2 className="text-foreground font-semibold mb-5 text-lg">
