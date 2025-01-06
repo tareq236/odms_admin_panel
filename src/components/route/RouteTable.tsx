@@ -36,17 +36,17 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { toast } from "sonner";
-import { rdl_route_sap } from "@/prisma/generated/client1";
 import RouteForm from "./RouteForm";
 import { deleteRoute } from "@/app/actions/routes";
 import { AuthUserProps } from "@/app/admin/route/page";
+import { rdl_route_wise_depot } from "@/prisma/generated/client1";
 
 export default function RouteTable({
   data,
   connectionError,
   user,
 }: {
-  data: any[];
+  data: rdl_route_wise_depot[];
   connectionError: boolean;
   user: AuthUserProps;
 }) {
@@ -61,7 +61,8 @@ export default function RouteTable({
           <TableRow>
             <TableHead>Route</TableHead>
             <TableHead>Description</TableHead>
-            <TableHead>Created At</TableHead>
+            <TableHead>Depot code</TableHead>
+            <TableHead>Depot name</TableHead>
             {user.role === "admin" && (
               <TableHead className="text-right">Actions</TableHead>
             )}
@@ -82,10 +83,11 @@ export default function RouteTable({
             </TableRow>
           ) : data.length > 0 ? (
             data.map((item) => (
-              <TableRow key={item.route || item.route_code}>
-                <TableCell>{item.route || item.route_code}</TableCell>
-                <TableCell>{item.description || item.route_name}</TableCell>
-                <TableCell>{formatDate(item.created_at)}</TableCell>
+              <TableRow key={item.route_code}>
+                <TableCell>{item.route_code}</TableCell>
+                <TableCell>{item.route_name}</TableCell>
+                <TableCell>{item.depot_code}</TableCell>
+                <TableCell>{item.depot_name}</TableCell>
 
                 {user.role === "admin" && (
                   <TableCell className="flex justify-end gap-2">
@@ -104,7 +106,7 @@ export default function RouteTable({
                         size={"icon"}
                         variant={"destructive"}
                         className="rounded-full size-8"
-                        onClick={() => setDelRoute(item.route)}
+                        onClick={() => setDelRoute(item.id)}
                       >
                         <Trash className="size-4" />
                       </Button>

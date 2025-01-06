@@ -6,7 +6,7 @@ import TableSkeleton from "@/components/ui/TableSkeletion";
 import { Route } from "lucide-react";
 import React, { Suspense } from "react";
 import db from "../../../../db/db";
-import { $Enums, Prisma, rdl_route_sap } from "@/prisma/generated/client1";
+import { $Enums, Prisma, rdl_route_wise_depot } from "@/prisma/generated/client1";
 
 import type { Metadata } from "next";
 import { getUser } from "@/lib/dal";
@@ -66,35 +66,34 @@ const DataTable = async ({
     if (user.role === "admin") {
       if (searchParams.q) {
         [data, count] = await Promise.all([
-          db.rdl_route_sap.findMany({
+          db.rdl_route_wise_depot.findMany({
             where: {
               OR: [
                 {
-                  description: {
+                  route_name: {
                     startsWith: searchParams.q,
                   },
                 },
                 {
-                  route: {
+                  route_code: {
                     startsWith: searchParams.q,
                   },
                 },
               ],
             },
-            orderBy: { created_at: "desc" },
             take: limit,
             skip: limit * (Number(searchParams.p || 1) - 1),
           }),
-          db.rdl_route_sap.count({
+          db.rdl_route_wise_depot.count({
             where: {
               OR: [
                 {
-                  description: {
+                  route_name: {
                     startsWith: searchParams.q,
                   },
                 },
                 {
-                  route: {
+                  route_code: {
                     startsWith: searchParams.q,
                   },
                 },
@@ -104,8 +103,7 @@ const DataTable = async ({
         ]);
       } else {
         [data, count] = await Promise.all([
-          db.rdl_route_sap.findMany({
-            orderBy: { created_at: "desc" },
+          db.rdl_route_wise_depot.findMany({
             take: limit,
             skip: limit * (Number(searchParams.p || 1) - 1),
           }),
@@ -176,7 +174,7 @@ const DataTable = async ({
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if ((error.code = "P1001")) {
-        data = [] as rdl_route_sap[];
+        data = [] as rdl_route_wise_depot[];
         connectionError = true;
       }
     }
@@ -185,7 +183,7 @@ const DataTable = async ({
   return (
     <section className="data-table-section">
       <RouteTable
-        data={data as rdl_route_sap[]}
+        data={data as rdl_route_wise_depot[]}
         connectionError={connectionError}
         user={user}
       />
