@@ -729,6 +729,7 @@ model rdl_users_list {
   user_type         String?   @db.VarChar(20)
   user_designation  String?   @db.VarChar(55)
   user_depot        String?   @db.VarChar(155)
+  depot_code        String?   @db.VarChar(55)
   user_job_location String?   @db.VarChar(155)
   password          String    @db.VarChar(55)
   status            Int       @db.UnsignedSmallInt

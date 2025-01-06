@@ -4,6 +4,7 @@ import { user_movement } from "@/prisma/generated/client2";
 import { UserRoundX } from "lucide-react";
 import MovementMap from "./MovementMap";
 import { formateDateDB } from "@/lib/formatters";
+import { rdl_delivery } from "@/prisma/generated/client1";
 
 export default async function MapSection({
   searchParams,
@@ -15,6 +16,7 @@ export default async function MapSection({
   const date = `${
     searchParams.start ? searchParams.start : formateDateDB(new Date())
   }`;
+  let deliveryData: rdl_delivery[] = [];
 
   try {
     data = await db2.$queryRaw`
@@ -27,8 +29,8 @@ export default async function MapSection({
             LEAD(mv_time) OVER (PARTITION BY user_id ORDER BY mv_time) AS next_time -- Time of the next movement for the same user
         FROM user_movement
         WHERE user_id = ${searchParams.q} AND mv_date = ${
-          searchParams?.start ?? formateDateDB(new Date())
-        }::DATE
+      searchParams?.start ?? formateDateDB(new Date())
+    }::DATE
     ),
     clusters AS (
         SELECT
@@ -74,14 +76,14 @@ export default async function MapSection({
     return (
       <div className="flex items-center justify-center flex-col  text-muted-foreground/50 my-20">
         <UserRoundX className="size-16" />
-        <p className="text-xs">User was absent</p>
+        <p className="text-xs">No user data found</p>
       </div>
     );
 
   return (
     <section>
       {/* {JSON.stringify(data, null, 2)} */}
-      <MovementMap locations={data} />
+      <MovementMap locations={data} deliveryList={[]} />
     </section>
   );
 }

@@ -6,9 +6,18 @@ import TableSkeleton from "@/components/ui/TableSkeletion";
 import { Route } from "lucide-react";
 import React, { Suspense } from "react";
 import db from "../../../../db/db";
-import { Prisma, rdl_route_sap } from "@/prisma/generated/client1";
+import { $Enums, Prisma, rdl_route_sap } from "@/prisma/generated/client1";
 
 import type { Metadata } from "next";
+import { getUser } from "@/lib/dal";
+import { redirect } from "next/navigation";
+
+export type AuthUserProps = {
+  id: number;
+  role: $Enums.rdl_admin_user_list_role | null;
+  full_name: string;
+  deport_code: string | null;
+};
 
 export const metadata: Metadata = {
   title: "Route - ODMS Admin Panel",
@@ -19,6 +28,10 @@ export default async function RoutePage({
 }: {
   searchParams: { q: string; p: string };
 }) {
+  const user = await getUser();
+
+  if (!user) redirect("/login");
+
   return (
     <>
       <PageHeader
@@ -27,11 +40,11 @@ export default async function RoutePage({
       />
 
       <Suspense>
-        <FilterSection />
+        <FilterSection user={user} />
       </Suspense>
 
       <Suspense fallback={<TableSkeleton />}>
-        <DataTable searchParams={searchParams} />
+        <DataTable user={user} searchParams={searchParams} />
       </Suspense>
     </>
   );
@@ -39,8 +52,10 @@ export default async function RoutePage({
 
 const DataTable = async ({
   searchParams,
+  user,
 }: {
   searchParams: { q: string; p: string };
+  user: AuthUserProps;
 }) => {
   let count = 0;
   let data;
@@ -60,10 +75,10 @@ const DataTable = async ({
               },
               {
                 route: {
-                  startsWith: searchParams.q
-                }
-              }
-            ]
+                  startsWith: searchParams.q,
+                },
+              },
+            ],
           },
           orderBy: { created_at: "desc" },
           take: limit,
@@ -79,10 +94,10 @@ const DataTable = async ({
               },
               {
                 route: {
-                  startsWith: searchParams.q
-                }
-              }
-            ]
+                  startsWith: searchParams.q,
+                },
+              },
+            ],
           },
         }),
       ]);
@@ -107,7 +122,11 @@ const DataTable = async ({
 
   return (
     <section className="data-table-section">
-      <RouteTable data={data as rdl_route_sap[]} connectionError={connectionError} />
+      <RouteTable
+        data={data as rdl_route_sap[]}
+        connectionError={connectionError}
+        user={user}
+      />
       <PagePagination limit={limit} count={count} />
     </section>
   );

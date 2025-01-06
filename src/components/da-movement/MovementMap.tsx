@@ -14,11 +14,14 @@ import Spinner from "../ui/Spinner";
 import { formatDate, formatNumber } from "@/lib/formatters";
 import { useSearchParams } from "next/navigation";
 import { format, toZonedTime } from "date-fns-tz";
+import { rdl_delivery } from "@/prisma/generated/client1";
 
 export default function MovementMap({
   locations,
+  deliveryList,
 }: {
   locations: user_movement[];
+  deliveryList: rdl_delivery[];
 }) {
   const [data, setData] = useState<user_movement[]>([]);
   const [center, setCenter] = useState({
@@ -72,6 +75,17 @@ export default function MovementMap({
     }));
   };
 
+  // Function to create markers for clustering
+  const createDeliveryMarkers = (): any => {
+    return deliveryList.map((location) => ({
+      position: {
+        lat: Number(location.delivery_latitude),
+        lng: Number(location.delivery_longitude),
+      },
+      title: location.id,
+      ...location,
+    }));
+  };
   if (!isLoaded)
     return (
       <div className="flex justify-center items-center min-h-40">
@@ -121,6 +135,31 @@ export default function MovementMap({
                 label={{
                   text: `${index + 1}`,
                   color: "white",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+                clusterer={clusterer} // Attach to the clusterer
+                onClick={() => setSelectedData(marker)}
+              />
+            ))
+          }
+        </MarkerClusterer>
+
+        {/* Marker Clusterer component of delivery */}
+        <MarkerClusterer
+          options={{
+            imagePath:
+              "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+          }}
+        >
+          {(clusterer) =>
+            createDeliveryMarkers().map((marker: any, index: number) => (
+              <Marker
+                key={index}
+                position={marker.position}
+                label={{
+                  text: `${index + 1}`,
+                  color: "black",
                   fontSize: "14px",
                   fontWeight: "bold",
                 }}

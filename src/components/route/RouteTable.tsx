@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,13 @@ import {
 } from "@/components/ui/table";
 import Tooltips from "@/components/ui/Tooltips";
 import { formatDate } from "@/lib/formatters";
-import { Edit, MessageSquareOff, ServerOff, Trash, UserPen } from "lucide-react";
+import {
+  Edit,
+  MessageSquareOff,
+  ServerOff,
+  Trash,
+  UserPen,
+} from "lucide-react";
 import React, { useState, useTransition } from "react";
 import {
   AlertDialog,
@@ -33,19 +39,20 @@ import { toast } from "sonner";
 import { rdl_route_sap } from "@/prisma/generated/client1";
 import RouteForm from "./RouteForm";
 import { deleteRoute } from "@/app/actions/routes";
+import { AuthUserProps } from "@/app/admin/route/page";
 
 export default function RouteTable({
-    data,
-    connectionError,
-  }: {
-    data: rdl_route_sap[];
-    connectionError: boolean;
-  }) {
-
-    const [editRoute, setEditRoute] = useState<any>()
-    const [delRoute, setDelRoute] = useState<any>()
-    const [isPending, startTransition] = useTransition()
-    
+  data,
+  connectionError,
+  user,
+}: {
+  data: rdl_route_sap[];
+  connectionError: boolean;
+  user: AuthUserProps;
+}) {
+  const [editRoute, setEditRoute] = useState<any>();
+  const [delRoute, setDelRoute] = useState<any>();
+  const [isPending, startTransition] = useTransition();
 
   return (
     <>
@@ -55,7 +62,9 @@ export default function RouteTable({
             <TableHead>Route</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            {user.role === "admin" && (
+              <TableHead className="text-right">Actions</TableHead>
+            )}
           </TableRow>
         </TableHeader>
 
@@ -77,28 +86,31 @@ export default function RouteTable({
                 <TableCell>{item.route}</TableCell>
                 <TableCell>{item.description}</TableCell>
                 <TableCell>{formatDate(item.created_at)}</TableCell>
-                <TableCell className="flex justify-end gap-2">
-                  <Tooltips title="Edit">
-                    <Button
-                      size={"icon"}
-                      variant={"outline"}
-                      className="rounded-full size-8"
-                      onClick={() => setEditRoute(item)}
-                    >
-                      <Edit className="size-4" />
-                    </Button>
-                  </Tooltips>
-                  <Tooltips title="Delete">
-                    <Button
-                      size={"icon"}
-                      variant={"destructive"}
-                      className="rounded-full size-8"
-                      onClick={() => setDelRoute(item.route)}
-                    >
-                      <Trash className="size-4" />
-                    </Button>
-                  </Tooltips>
-                </TableCell>
+
+                {user.role === "admin" && (
+                  <TableCell className="flex justify-end gap-2">
+                    <Tooltips title="Edit">
+                      <Button
+                        size={"icon"}
+                        variant={"outline"}
+                        className="rounded-full size-8"
+                        onClick={() => setEditRoute(item)}
+                      >
+                        <Edit className="size-4" />
+                      </Button>
+                    </Tooltips>
+                    <Tooltips title="Delete">
+                      <Button
+                        size={"icon"}
+                        variant={"destructive"}
+                        className="rounded-full size-8"
+                        onClick={() => setDelRoute(item.route)}
+                      >
+                        <Trash className="size-4" />
+                      </Button>
+                    </Tooltips>
+                  </TableCell>
+                )}
               </TableRow>
             ))
           ) : (
