@@ -63,53 +63,115 @@ const DataTable = async ({
   let connectionError = false;
 
   try {
-    if (searchParams.q) {
-      [data, count] = await Promise.all([
-        db.rdl_route_sap.findMany({
-          where: {
-            OR: [
-              {
-                description: {
-                  startsWith: searchParams.q,
+    if (user.role === "admin") {
+      if (searchParams.q) {
+        [data, count] = await Promise.all([
+          db.rdl_route_sap.findMany({
+            where: {
+              OR: [
+                {
+                  description: {
+                    startsWith: searchParams.q,
+                  },
                 },
-              },
-              {
-                route: {
-                  startsWith: searchParams.q,
+                {
+                  route: {
+                    startsWith: searchParams.q,
+                  },
                 },
-              },
-            ],
-          },
-          orderBy: { created_at: "desc" },
-          take: limit,
-          skip: limit * (Number(searchParams.p || 1) - 1),
-        }),
-        db.rdl_route_sap.count({
-          where: {
-            OR: [
-              {
-                description: {
-                  startsWith: searchParams.q,
+              ],
+            },
+            orderBy: { created_at: "desc" },
+            take: limit,
+            skip: limit * (Number(searchParams.p || 1) - 1),
+          }),
+          db.rdl_route_sap.count({
+            where: {
+              OR: [
+                {
+                  description: {
+                    startsWith: searchParams.q,
+                  },
                 },
-              },
-              {
-                route: {
-                  startsWith: searchParams.q,
+                {
+                  route: {
+                    startsWith: searchParams.q,
+                  },
                 },
-              },
-            ],
-          },
-        }),
-      ]);
+              ],
+            },
+          }),
+        ]);
+      } else {
+        [data, count] = await Promise.all([
+          db.rdl_route_sap.findMany({
+            orderBy: { created_at: "desc" },
+            take: limit,
+            skip: limit * (Number(searchParams.p || 1) - 1),
+          }),
+          db.rdl_route_sap.count(),
+        ]);
+      }
     } else {
-      [data, count] = await Promise.all([
-        db.rdl_route_sap.findMany({
-          orderBy: { created_at: "desc" },
-          take: limit,
-          skip: limit * (Number(searchParams.p || 1) - 1),
-        }),
-        db.rdl_route_sap.count(),
-      ]);
+      if (searchParams.q) {
+        [data, count] = await Promise.all([
+          db.rdl_route_wise_depot.findMany({
+            where: {
+              OR: [
+                {
+                  route_name: {
+                    startsWith: searchParams.q,
+                  },
+                },
+                {
+                  route_code: {
+                    startsWith: searchParams.q,
+                  },
+                },
+                {
+                  depot_code: user.deport_code,
+                },
+              ],
+            },
+            take: limit,
+            skip: limit * (Number(searchParams.p || 1) - 1),
+          }),
+          db.rdl_route_wise_depot.count({
+            where: {
+              OR: [
+                {
+                  route_name: {
+                    startsWith: searchParams.q,
+                  },
+                },
+                {
+                  route_code: {
+                    startsWith: searchParams.q,
+                  },
+                },
+                {
+                  depot_code: user.deport_code,
+                },
+              ],
+            },
+          }),
+        ]);
+      } else {
+        [data, count] = await Promise.all([
+          db.rdl_route_wise_depot.findMany({
+            where: {
+              depot_code: user.deport_code,
+            },
+            take: limit,
+            skip: limit * (Number(searchParams.p || 1) - 1),
+          }),
+          db.rdl_route_wise_depot.count({
+            where: {
+              depot_code: user.deport_code,
+            },
+          }),
+        ]);
+      }
     }
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {

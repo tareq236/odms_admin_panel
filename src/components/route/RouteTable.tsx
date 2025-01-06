@@ -46,7 +46,7 @@ export default function RouteTable({
   connectionError,
   user,
 }: {
-  data: rdl_route_sap[];
+  data: any[];
   connectionError: boolean;
   user: AuthUserProps;
 }) {
@@ -82,9 +82,9 @@ export default function RouteTable({
             </TableRow>
           ) : data.length > 0 ? (
             data.map((item) => (
-              <TableRow key={item.route}>
-                <TableCell>{item.route}</TableCell>
-                <TableCell>{item.description}</TableCell>
+              <TableRow key={item.route || item.route_code}>
+                <TableCell>{item.route || item.route_code}</TableCell>
+                <TableCell>{item.description || item.route_name}</TableCell>
                 <TableCell>{formatDate(item.created_at)}</TableCell>
 
                 {user.role === "admin" && (
