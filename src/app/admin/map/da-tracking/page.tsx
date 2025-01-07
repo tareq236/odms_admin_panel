@@ -8,6 +8,7 @@ import { getUser } from "@/lib/dal";
 import { formateDateDB } from "@/lib/formatters";
 import Header from "@/components/da-tracking/Header";
 import type { Metadata } from "next";
+import NoData from "@/components/constants/NoData";
 
 export const metadata: Metadata = {
   title: "DA Tracking - ODMS Admin Panel",
@@ -53,20 +54,22 @@ async function DaTrackingPage({
 
   return (
     <>
-
       <Header />
 
-      {(user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) &&
-      searchParams.q ? (
-        <Suspense>
-          <DaInfoSection searchParams={searchParams} />
-        </Suspense>
+      {searchParams.q ? (
+        user.role == "admin" || (isDepotDA && isDepotDA.length > 0) ? (
+          <Suspense>
+            <DaInfoSection searchParams={searchParams} />
+            {daInfo && <TrackingMapSection />}
+          </Suspense>
+        ) : (
+          <NoData />
+        )
       ) : (
         <section className="py-10 border-t">
           <SearchDa />
         </section>
       )}
-      {(user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) && daInfo && <TrackingMapSection />}
     </>
   );
 }

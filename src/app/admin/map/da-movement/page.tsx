@@ -8,10 +8,10 @@ import SearchDa from "@/components/constants/SearchDa";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/dal";
 import { formateDateDB } from "@/lib/formatters";
-import DaMovementMap from "@/components/da-movement/DaMovementMap";
 import type { Metadata } from "next";
 import MapSection from "@/components/da-movement/MapSection";
 import Spinner from "@/components/ui/Spinner";
+import NoData from "@/components/constants/NoData";
 
 export const metadata: Metadata = {
   title: "DA Movement - ODMS Admin Panel",
@@ -64,22 +64,24 @@ export default async function DaMovementAnalyticsPage({
 
       <FilterSection />
 
-      {(user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) &&
-      searchParams.q ? (
-        <Suspense>
-          <DaInfoSection searchParams={searchParams} />
-        </Suspense>
+      {searchParams.q ? (
+        user.role == "admin" || (isDepotDA && isDepotDA.length > 0) ? (
+          <Suspense>
+            <DaInfoSection searchParams={searchParams} />
+            {daInfo && (
+              <Suspense fallback={<Spinner />}>
+                <MapSection searchParams={searchParams} />
+              </Suspense>
+            )}
+          </Suspense>
+        ) : (
+          <NoData />
+        )
       ) : (
         <section className="py-10 border-t">
           <SearchDa />
         </section>
       )}
-      {daInfo && (
-        <Suspense fallback={<Spinner />}>
-          <MapSection searchParams={searchParams} />
-        </Suspense>
-      )}
-      {/* {daInfo && <DaMovementMap />} */}
     </>
   );
 }

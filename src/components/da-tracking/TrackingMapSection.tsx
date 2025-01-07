@@ -29,27 +29,6 @@ export default function TrackingMapSection() {
   const [projects, setProjects] = useState<any>();
   const searchParams = useSearchParams();
 
-  // const fetchData = async (sap_id: string) => {
-  //   setLoading(true);
-  //   try {
-  //     const snapshot = await get(
-  //       ref(database, `current_coordinates/${sap_id}`)
-  //     );
-  //     const data = snapshot.val();
-
-  //     console.log(data);
-
-  //     if (data) {
-  //       setDaData(data);
-  //     } else {
-  //       setDaData(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching data from Firebase:", error);
-  //   }
-  //   setLoading(false);
-  // };
-
   useEffect(() => {
     try {
       setLoading(true);
