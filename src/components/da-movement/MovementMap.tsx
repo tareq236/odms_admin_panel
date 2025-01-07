@@ -11,17 +11,16 @@ import {
 } from "@react-google-maps/api";
 import React, { useEffect, useState } from "react";
 import Spinner from "../ui/Spinner";
-import { formatDate, formatNumber } from "@/lib/formatters";
+import { formatDate, formatDateTime, formatNumber } from "@/lib/formatters";
 import { useSearchParams } from "next/navigation";
 import { format, toZonedTime } from "date-fns-tz";
-import { rdl_delivery } from "@/prisma/generated/client1";
 
 export default function MovementMap({
   locations,
   deliveryList,
 }: {
   locations: user_movement[];
-  deliveryList: rdl_delivery[];
+  deliveryList: any[];
 }) {
   const [data, setData] = useState<user_movement[]>([]);
   const [center, setCenter] = useState({
@@ -128,6 +127,10 @@ export default function MovementMap({
                   fontSize: "14px",
                   fontWeight: "bold",
                 }}
+                icon={{
+                  url: `https://maps.google.com/mapfiles/ms/icons/${index === 0 ? 'purple': 'red'}-dot.png`,
+                  scaledSize: new window.google.maps.Size(40, 40),
+                }}
                 clusterer={clusterer} // Attach to the clusterer
                 onClick={() => setSelectedData(marker)}
               />
@@ -135,6 +138,7 @@ export default function MovementMap({
           }
         </MarkerClusterer>
 
+        {/* delivery */}
         {deliveryList &&
           deliveryList.length > 0 &&
           deliveryList.map((item, index) => (
@@ -157,6 +161,32 @@ export default function MovementMap({
               onClick={() => setSelectedDeliveryData(item)}
             />
           ))}
+
+        {/* cash collection */}
+        {deliveryList &&
+          deliveryList.length > 0 &&
+          deliveryList
+            .filter((delivery) => delivery.total_cash_collection > 0)
+            .map((item, index) => (
+              <Marker
+                key={index}
+                position={{
+                  lat: Number(item.delivery_latitude),
+                  lng: Number(item.delivery_longitude),
+                }}
+                label={{
+                  text: `${index + 1}`,
+                  color: "white",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+                icon={{
+                  url: `https://maps.google.com/mapfiles/ms/icons/pink-dot.png`,
+                  scaledSize: new window.google.maps.Size(40, 40),
+                }}
+                onClick={() => setSelectedDeliveryData(item)}
+              />
+            ))}
 
         {selectedData && (
           <InfoWindow
@@ -216,17 +246,36 @@ export default function MovementMap({
               <h2 className="font-semibold text-sm">Delivery Info</h2>
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1 text-xs font-normal">
-                  <span>Total Bill:</span>
+                  <span>Total Invoice:</span>
                   <span>{Number(selectedDeliveryData.total_bill)}</span>
                 </div>
+
                 <div className="flex items-center gap-1 text-xs font-normal">
-                  <span>Total Amount:</span>
-                  <span>{formatNumber(Number(selectedDeliveryData.total_net_val))}</span>
+                  <span>Partner:</span>
+                  <span>{selectedDeliveryData.partner}</span>
                 </div>
                 <div className="flex items-center gap-1 text-xs font-normal">
                   <span>Partner:</span>
-                  <span>{(selectedDeliveryData.partner)}</span>
+                  <span>
+                    {formatDateTime(selectedDeliveryData.delivery_date_time)}
+                  </span>
                 </div>
+                <div className="flex items-center gap-1 text-xs font-normal">
+                  <span>Total Amount:</span>
+                  <span>
+                    {formatNumber(Number(selectedDeliveryData.total_net_val))}
+                  </span>
+                </div>
+                {selectedDeliveryData.total_cash_collection > 0 && (
+                  <div className="flex items-center gap-1 text-xs font-normal">
+                    <span>Total Collection:</span>
+                    <span>
+                      {formatNumber(
+                        Number(selectedDeliveryData.total_cash_collection)
+                      )}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </InfoWindow>

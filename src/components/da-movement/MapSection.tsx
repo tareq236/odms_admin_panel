@@ -72,7 +72,7 @@ export default async function MapSection({
       db.$queryRaw`
       SELECT rd.billing_date, SUM(rd.net_val) total_net_val,  count(rd.id) total_bill,
       rd.delivery_latitude, rd.delivery_longitude, rd.cash_collection_latitude, rd.cash_collection_longitude,
-      SUM(rd.cash_collection) total_cash_collection, rd.partner
+      SUM(rd.cash_collection) total_cash_collection, rd.partner, rd.delivery_date_time
       FROM rdl_delivery rd
       WHERE rd.da_code=${searchParams.q} AND rd.billing_date=${date}
       GROUP BY rd.partner
