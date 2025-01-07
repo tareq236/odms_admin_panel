@@ -18,7 +18,7 @@ import { format, toZonedTime } from "date-fns-tz";
 export default function MovementMap({
   locations,
   deliveryList,
-  routeData
+  routeData,
 }: {
   locations: user_movement[];
   routeData: user_movement[];
@@ -34,6 +34,9 @@ export default function MovementMap({
   const [selectedDeliveryData, setSelectedDeliveryData] = useState<any | null>(
     null
   );
+  const [selectedCollectionData, setSelectedCollectionData] = useState<
+    any | null
+  >(null);
   const [zoom, setZoom] = useState(15);
   const mapRef = useRef<google.maps.Map | null>(null);
 
@@ -99,8 +102,6 @@ export default function MovementMap({
 
   return (
     <div>
-      {JSON.stringify(routeData.length)} <br />
-      {JSON.stringify(data.length)}
       <GoogleMap
         mapContainerStyle={{
           width: "100%",
@@ -112,7 +113,7 @@ export default function MovementMap({
         onLoad={onLoad}
       >
         {/* Add other map elements here */}
-        {routeData  && routeData.length > 0 && (
+        {routeData && routeData.length > 0 && (
           <Polyline
             path={data.map((item) => {
               return {
@@ -221,8 +222,8 @@ export default function MovementMap({
               <Marker
                 key={index}
                 position={{
-                  lat: Number(item.delivery_latitude),
-                  lng: Number(item.delivery_longitude),
+                  lat: Number(item.cash_collection_latitude),
+                  lng: Number(item.cash_collection_longitude),
                 }}
                 label={{
                   text: `${index + 1}`,
@@ -234,7 +235,7 @@ export default function MovementMap({
                   url: `https://maps.google.com/mapfiles/ms/icons/green-dot.png`,
                   scaledSize: new window.google.maps.Size(40, 40),
                 }}
-                onClick={() => setSelectedDeliveryData(item)}
+                onClick={() => setSelectedCollectionData(item)}
               />
             ))}
 
@@ -293,11 +294,7 @@ export default function MovementMap({
             onCloseClick={() => setSelectedDeliveryData(null)}
           >
             <div className="flex flex-col gap-3">
-              <h2 className="font-semibold text-sm">
-                {selectedDeliveryData.total_cash_collection > 0
-                  ? "Cash Collection Info"
-                  : "Delivery Info"}
-              </h2>
+              <h2 className="font-semibold text-sm">Delivery Info</h2>
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1 text-xs font-normal">
                   <span>Total Invoice:</span>
@@ -327,6 +324,52 @@ export default function MovementMap({
                   <span>Time:</span>
                   <span>
                     {formatDateTime(selectedDeliveryData.delivery_date_time)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </InfoWindow>
+        )}
+
+        {selectedCollectionData && (
+          <InfoWindow
+            position={{
+              lat: Number(selectedCollectionData.cash_collection_latitude),
+              lng: Number(selectedCollectionData.cash_collection_longitude),
+            }}
+            onCloseClick={() => selectedCollectionData(null)}
+          >
+            <div className="flex flex-col gap-3">
+              <h2 className="font-semibold text-sm">Cash Collection Info</h2>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-xs font-normal">
+                  <span>Total Invoice:</span>
+                  <span>{Number(selectedCollectionData.total_bill)}</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-normal">
+                  <span>Total Amount:</span>
+                  <span>
+                    {formatNumber(Number(selectedCollectionData.total_net_val))}
+                  </span>
+                </div>
+                {selectedCollectionData.total_cash_collection > 0 && (
+                  <div className="flex items-center gap-1 text-xs font-normal">
+                    <span>Total Collection:</span>
+                    <span>
+                      {formatNumber(
+                        Number(selectedCollectionData.total_cash_collection)
+                      )}
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center gap-1 text-xs font-normal">
+                  <span>Partner:</span>
+                  <span>{selectedCollectionData.partner}</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-normal">
+                  <span>Time:</span>
+                  <span>
+                    {formatDateTime(selectedCollectionData.delivery_date_time)}
                   </span>
                 </div>
               </div>

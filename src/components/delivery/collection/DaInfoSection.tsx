@@ -10,7 +10,7 @@ export default async function DaInfoSection({
 }) {
   let daInfo;
   try {
-    daInfo = await db.rdl_user_list.findUnique({
+    daInfo = await db.rdl_users_list.findUnique({
       where: { sap_id: Number(searchParams.q || 0) },
     });
   } catch (error) {
@@ -28,8 +28,8 @@ export default async function DaInfoSection({
             <span className="font-medium text-sm">{daInfo.full_name}</span>
           </p>
           <p className="flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">Mobile</span>
-            <span className="font-medium text-sm">{daInfo.mobile_number}</span>
+            <span className="text-xs text-muted-foreground">Depot Name</span>
+            <span className="font-medium text-sm">{daInfo.user_depot}</span>
           </p>
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Type</span>

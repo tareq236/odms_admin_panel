@@ -75,7 +75,7 @@ export default async function DaMovementAnalyticsPage({
             )}
           </Suspense>
         ) : (
-          <NoData />
+          <NoData message="No DA found" />
         )
       ) : (
         <section className="py-10 border-t">

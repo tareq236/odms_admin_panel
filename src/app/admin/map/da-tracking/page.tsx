@@ -63,7 +63,7 @@ async function DaTrackingPage({
             {daInfo && <TrackingMapSection />}
           </Suspense>
         ) : (
-          <NoData />
+          <NoData message="No DA found" />
         )
       ) : (
         <section className="py-10 border-t">
