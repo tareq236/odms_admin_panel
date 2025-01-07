@@ -4,7 +4,7 @@ import Search from "../ui/Search";
 
 export default function Header() {
   return (
-    <section className="header flex gap-2 justify-between items-center mb-6">
+    <section className="header flex gap-6 justify-between items-center mb-6 flex-wrap">
       <div className="flex items-center gap-2">
         <div className="icon rounded-full text-primary">
           <MapPin className="size-5 fill-primary/20" />

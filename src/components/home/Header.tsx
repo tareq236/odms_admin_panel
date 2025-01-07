@@ -36,14 +36,6 @@ export default async function Header() {
               {titleCase(user.role || "")}
             </h4>
           </div>
-
-
-          {user.depot_code && (
-            <div className="text-center">
-              <h5 className="text-xs text-gray-500">Depot</h5>
-              <h4 className="text-xs text-foreground">{depotName?.depot_name}</h4>
-            </div>
-          )}
         </div>
       </div>
       <section className="my-5">

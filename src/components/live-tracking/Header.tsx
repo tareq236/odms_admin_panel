@@ -6,7 +6,7 @@ import Search from "../ui/Search";
 
 export default function Header() {
   return (
-    <section className="header flex gap-5 items-center justify-between">
+    <section className="header flex gap-6 flex-wrap items-center justify-between">
       <div className="flex items-center gap-2">
         <div className="icon rounded-full text-primary">
           <Footprints className="size-5 fill-primary/20" />

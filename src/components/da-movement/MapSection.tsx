@@ -13,13 +13,14 @@ export default async function MapSection({
   searchParams: { q: string; start: string; p: string };
 }) {
   let data: user_movement[] | unknown = [];
+  let routeData: user_movement[] | unknown = [];
   const date = `${
     searchParams.start ? searchParams.start : formateDateDB(new Date())
   }`;
   let deliveryData: rdl_delivery[] | unknown = [];
 
   try {
-    [data, deliveryData] = await Promise.all([
+    [data, deliveryData, routeData] = await Promise.all([
       db2.$queryRaw`
     WITH stay_points AS (
         SELECT
@@ -67,7 +68,7 @@ export default async function MapSection({
         total_time_minutes AS time_in_minutes, -- Total time spent at the location in minutes
         start_time, -- Start time of the stay
         end_time -- End time of the stay
-    FROM filtered_stays;
+    FROM filtered_stays ORDER BY start_time ASC;
     `,
       db.$queryRaw`
       SELECT rd.billing_date, SUM(rd.net_val) total_net_val,  count(rd.id) total_bill,
@@ -76,6 +77,13 @@ export default async function MapSection({
       FROM rdl_delivery rd
       WHERE rd.da_code=${searchParams.q} AND rd.billing_date=${date}
       GROUP BY rd.partner
+      `,
+      db2.$queryRaw`
+        SELECT user_id, latitude, longitude, speed, mv_date, mv_time
+        FROM user_movement
+        WHERE user_id = ${searchParams.q} AND mv_date = ${
+        searchParams?.start ?? formateDateDB(new Date())
+      }::DATE ORDER BY mv_time ASC
       `,
     ]);
   } catch (error) {
@@ -93,6 +101,7 @@ export default async function MapSection({
   return (
     <section>
       <MovementMap
+        routeData={routeData as user_movement[]}
         locations={data as user_movement[]}
         deliveryList={deliveryData as rdl_delivery[]}
       />
