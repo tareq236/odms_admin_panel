@@ -54,7 +54,7 @@ export default async function DaSummaryPage({
                 sap_id: Number(searchParams.q || 0),
               },
               {
-                depot_code: user.deport_code
+                depot_code: user.depot_code
               }
             ],
           },

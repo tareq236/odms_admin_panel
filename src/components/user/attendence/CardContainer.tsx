@@ -55,12 +55,12 @@ export default async function CardContainer({
         WHERE ra.start_date_time > ${formateDateDB(
           startDate
         )} AND ra.start_date_time < ${endDate} 
-        AND ru.depot_code = ${authUser.deport_code}
+        AND ru.depot_code = ${authUser.depot_code}
         GROUP BY CAST(start_date_time as DATE) 
         `,
         db.rdl_users_list.count({
           where: {
-            depot_code: authUser.deport_code,
+            depot_code: authUser.depot_code,
           },
         }),
       ]);

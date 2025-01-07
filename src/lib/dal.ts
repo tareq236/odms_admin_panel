@@ -33,7 +33,7 @@ export const getUser = async () => {
       select: {
         id: true,
         full_name: true,
-        deport_code: true,
+        depot_code: true,
         role: true,
       },
     });

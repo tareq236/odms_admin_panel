@@ -114,7 +114,7 @@ const DataTable = async ({
             SELECT route_code
             FROM rdl_route_wise_depot
             WHERE
-              depot_code = ${user.deport_code}
+              depot_code = ${user.depot_code}
             )
             GROUP BY b.billing_doc_no
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
@@ -132,7 +132,7 @@ const DataTable = async ({
             SELECT route_code
             FROM rdl_route_wise_depot
             WHERE
-                depot_code = ${user.deport_code}
+                depot_code = ${user.depot_code}
             )
           `,
         ]);

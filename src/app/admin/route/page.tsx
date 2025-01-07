@@ -16,7 +16,7 @@ export type AuthUserProps = {
   id: number;
   role: $Enums.rdl_admin_user_list_role | null;
   full_name: string;
-  deport_code: string | null;
+  depot_code: string | null;
 };
 
 export const metadata: Metadata = {
@@ -127,7 +127,7 @@ const DataTable = async ({
                   },
                 },
                 {
-                  depot_code: user.deport_code,
+                  depot_code: user.depot_code,
                 },
               ],
             },
@@ -148,7 +148,7 @@ const DataTable = async ({
                   },
                 },
                 {
-                  depot_code: user.deport_code,
+                  depot_code: user.depot_code,
                 },
               ],
             },
@@ -158,14 +158,14 @@ const DataTable = async ({
         [data, count] = await Promise.all([
           db.rdl_route_wise_depot.findMany({
             where: {
-              depot_code: user.deport_code,
+              depot_code: user.depot_code,
             },
             take: limit,
             skip: limit * (Number(searchParams.p || 1) - 1),
           }),
           db.rdl_route_wise_depot.count({
             where: {
-              depot_code: user.deport_code,
+              depot_code: user.depot_code,
             },
           }),
         ]);

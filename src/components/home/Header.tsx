@@ -13,7 +13,7 @@ export default async function Header() {
 
   const depotName = await db.rdl_route_wise_depot.findFirst({
     where: {
-      depot_code: user?.deport_code ?? undefined,
+      depot_code: user?.depot_code ?? undefined,
     },
     select: {
       depot_name: true,
@@ -30,7 +30,7 @@ export default async function Header() {
           <h5 className="text-xs text-gray-500">Let&apos;s explore</h5>
         </div>
         <div className="flex items-center gap-10">
-          <div className={user.deport_code ? "text-center" : "text-right"}>
+          <div className={user.depot_code ? "text-center" : "text-right"}>
             <h5 className="text-xs text-gray-500">Role</h5>
             <h4 className="text-xs text-foreground">
               {titleCase(user.role || "")}
@@ -38,7 +38,7 @@ export default async function Header() {
           </div>
 
 
-          {user.deport_code && (
+          {user.depot_code && (
             <div className="text-center">
               <h5 className="text-xs text-gray-500">Depot</h5>
               <h4 className="text-xs text-foreground">{depotName?.depot_name}</h4>

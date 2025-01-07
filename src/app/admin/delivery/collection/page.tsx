@@ -50,7 +50,7 @@ export default async function DeliveryCollectionPage({
         <FilterSection />
       </Suspense>
 
-      {(user.role === "admin" || daInfo?.depot_code == user.deport_code) &&
+      {(user.role === "admin" || daInfo?.depot_code == user.depot_code) &&
         searchParams.q != null && (
           <>
             <Suspense>

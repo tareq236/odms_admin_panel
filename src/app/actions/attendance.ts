@@ -60,7 +60,7 @@ export const getAttendance = async ({
           startDate
         )} AND ra.start_date_time < ${formateDateDB(endDate)}
         AND ra.sap_id = ${searchParams.q} AND ru.depot_code = ${
-          authUser.deport_code
+          authUser.depot_code
         }
         LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
       `;
@@ -71,7 +71,7 @@ export const getAttendance = async ({
         WHERE ra.start_date_time >= ${formateDateDB(
           startDate
         )} AND ra.start_date_time < ${formateDateDB(endDate)}
-        AND ru.depot_code = ${authUser.deport_code}
+        AND ru.depot_code = ${authUser.depot_code}
         LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
       `;
       }

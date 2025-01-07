@@ -47,7 +47,7 @@ async function DaTrackingPage({
             SELECT route_code
             FROM rdl_route_wise_depot
             WHERE
-                depot_code =${user.deport_code}
+                depot_code =${user.depot_code}
         )
   `;
 

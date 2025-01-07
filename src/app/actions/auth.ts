@@ -1,7 +1,6 @@
 "use server";
 
-import { createSession, deleteSession, encrypt } from "@/lib/session";
-import { redirect } from "next/navigation";
+import { createSession, deleteSession } from "@/lib/session";
 import db from "../../../db/db";
 import { z } from "zod";
 
@@ -45,7 +44,7 @@ export const adminLogin = async (prevData: unknown, formData: FormData) => {
     userId: user.id,
     name: user.full_name,
     role: user.role,
-    depot: user.deport_code || "",
+    depot: user.depot_code || "",
   };
 
   await createSession({ ...authUser });
