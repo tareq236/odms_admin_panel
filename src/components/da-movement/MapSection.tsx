@@ -13,7 +13,6 @@ export default async function MapSection({
   searchParams: { q: string; start: string; p: string };
 }) {
   let data: user_movement[] | unknown = [];
-  let count = 0;
   const date = `${
     searchParams.start ? searchParams.start : formateDateDB(new Date())
   }`;
@@ -71,9 +70,14 @@ export default async function MapSection({
     FROM filtered_stays;
     `,
       db.$queryRaw`
-        SELECT * FROM rdl_delivery rd WHERE rd.da_code=${searchParams.q} AND rd.billing_date=${date};
-      `
-    ])
+      SELECT rd.billing_date, SUM(rd.net_val) total_net_val,  count(rd.id) total_bill,
+      rd.delivery_latitude, rd.delivery_longitude, rd.cash_collection_latitude, rd.cash_collection_longitude,
+      SUM(rd.cash_collection) total_cash_collection, rd.partner
+      FROM rdl_delivery rd
+      WHERE rd.da_code=${searchParams.q} AND rd.billing_date=${date}
+      GROUP BY rd.partner
+      `,
+    ]);
   } catch (error) {
     console.log(error);
   }

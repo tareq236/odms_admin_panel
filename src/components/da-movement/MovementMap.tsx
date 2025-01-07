@@ -30,6 +30,9 @@ export default function MovementMap({
   });
 
   const [selectedData, setSelectedData] = useState<any | null>(null);
+  const [selectedDeliveryData, setSelectedDeliveryData] = useState<any | null>(
+    null
+  );
 
   const searchParams = useSearchParams();
 
@@ -132,34 +135,28 @@ export default function MovementMap({
           }
         </MarkerClusterer>
 
-        {/* Marker Clusterer component of delivery */}
-        <MarkerClusterer
-          options={{
-            imagePath:
-              "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
-          }}
-        >
-          {(clusterer) =>
-            createDeliveryMarkers().map((marker: any, index: number) => (
-              <Marker
-                key={index}
-                position={marker.position}
-                label={{
-                  text: `${index + 1}`,
-                  color: "black",
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                }}
-                icon={{
-                  url: `https://maps.google.com/mapfiles/ms/icons/blue-dot.png`,
-                  scaledSize: new window.google.maps.Size(40, 40),
-                }}
-                clusterer={clusterer} // Attach to the clusterer
-                onClick={() => setSelectedData(marker)}
-              />
-            ))
-          }
-        </MarkerClusterer>
+        {deliveryList &&
+          deliveryList.length > 0 &&
+          deliveryList.map((item, index) => (
+            <Marker
+              key={index}
+              position={{
+                lat: Number(item.delivery_latitude),
+                lng: Number(item.delivery_longitude),
+              }}
+              label={{
+                text: `${index + 1}`,
+                color: "white",
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+              icon={{
+                url: `https://maps.google.com/mapfiles/ms/icons/blue-dot.png`,
+                scaledSize: new window.google.maps.Size(40, 40),
+              }}
+              onClick={() => setSelectedDeliveryData(item)}
+            />
+          ))}
 
         {selectedData && (
           <InfoWindow
@@ -202,6 +199,34 @@ export default function MovementMap({
                     mins
                   </div>
                 )}
+              </div>
+            </div>
+          </InfoWindow>
+        )}
+
+        {selectedDeliveryData && (
+          <InfoWindow
+            position={{
+              lat: Number(selectedDeliveryData.delivery_latitude),
+              lng: Number(selectedDeliveryData.delivery_longitude),
+            }}
+            onCloseClick={() => setSelectedDeliveryData(null)}
+          >
+            <div className="flex flex-col gap-3">
+              <h2 className="font-semibold text-sm">Delivery Info</h2>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-xs font-normal">
+                  <span>Total Bill:</span>
+                  <span>{Number(selectedDeliveryData.total_bill)}</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-normal">
+                  <span>Total Amount:</span>
+                  <span>{formatNumber(Number(selectedDeliveryData.total_net_val))}</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-normal">
+                  <span>Partner:</span>
+                  <span>{(selectedDeliveryData.partner)}</span>
+                </div>
               </div>
             </div>
           </InfoWindow>
