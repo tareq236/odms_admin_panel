@@ -102,7 +102,6 @@ export default function MovementMap({
 
   return (
     <div>
-      {JSON.stringify(data.length)}
       <GoogleMap
         mapContainerStyle={{
           width: "100%",

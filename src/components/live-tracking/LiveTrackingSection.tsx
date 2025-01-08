@@ -3,9 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { socket } from "@/lib/socketIo";
 import { usePathname, useSearchParams } from "next/navigation";
-import { APIProvider, InfoWindow, Map, Marker } from "@vis.gl/react-google-maps";
+import {
+  APIProvider,
+  InfoWindow,
+  Map,
+  Marker,
+} from "@vis.gl/react-google-maps";
+import { AuthUserProps } from "@/app/admin/route/page";
 
-const LiveTrackingSection = () => {
+const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
   const [userLocations, setUserLocations] = useState<any>();
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [infoWindowOpen, setInfoWindowOpen] = useState(false);
@@ -13,35 +19,75 @@ const LiveTrackingSection = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    socket.on("coordinatesResultAndroid", (data) => {
+  const findDepotUser = async (daCode: string) => {
+    const isDepotUser = await fetch(
+      `/api/live-tracking?q=${daCode}&depot=${authUser?.depot_code}`
+    );
+
+    if (isDepotUser.ok) return true;
+    return false;
+  };
+
+  const handleSocket = () => {
+    socket.on("coordinatesResultAndroid", async (data) => {
       const { user_details, location } = data.result;
 
-      if (searchParams.has("q")) {
-        if (user_details.sap_id == searchParams.get("q")) {
+      if (authUser.role === "admin") {
+        if (searchParams.has("q")) {
+          if (user_details.sap_id == searchParams.get("q")) {
+            setUserLocations((prevUserLocations: any) => ({
+              [searchParams.get("q") as string]: {
+                ...location,
+                sap_id: searchParams.get("q"),
+                user_details,
+              },
+            }));
+          }
+        } else {
           setUserLocations((prevUserLocations: any) => ({
-            [searchParams.get("q") as string]: {
+            ...prevUserLocations,
+            [user_details.sap_id]: {
               ...location,
-              sap_id: searchParams.get("q"),
+              sap_id: user_details.sap_id,
               user_details,
             },
           }));
         }
       } else {
-        setUserLocations((prevUserLocations: any) => ({
-          ...prevUserLocations,
-          [user_details.sap_id]: {
-            ...location,
-            sap_id: user_details.sap_id,
-            user_details,
-          },
-        }));
+        const isDepotUser = await findDepotUser(user_details.sap_id);
+        console.log(isDepotUser)
+        if (isDepotUser) {
+          if (searchParams.has("q")) {
+            if (user_details.sap_id == searchParams.get("q")) {
+              setUserLocations((prevUserLocations: any) => ({
+                [searchParams.get("q") as string]: {
+                  ...location,
+                  sap_id: searchParams.get("q"),
+                  user_details,
+                },
+              }));
+            }
+          } else {
+            setUserLocations((prevUserLocations: any) => ({
+              ...prevUserLocations,
+              [user_details.sap_id]: {
+                ...location,
+                sap_id: user_details.sap_id,
+                user_details,
+              },
+            }));
+          }
+        }
       }
     });
 
     return () => {
       socket.off("coordinatesResultAndroid");
     };
+  };
+
+  useEffect(() => {
+    handleSocket()
   }, [socket, pathname, searchParams]);
 
   const handleMarkerMouseOver = (location: any) => {
