@@ -1,5 +1,7 @@
 import { formateDateDB } from "@/lib/formatters";
 import db from "../../../../../../db/db";
+import { getUser } from "@/lib/dal";
+import { redirect } from "next/navigation";
 
 export const getDaMovementInfoData = async (
   searchParams: {
@@ -49,53 +51,113 @@ export const getDaMovementInfoData = async (
       )
     );
 
+  const authUser = await getUser();
+
+  if (!authUser) return redirect("/login");
+
   try {
-    if (searchParams.q) {
-      if (searchParams.start === formateDateDB(currentDate)) {
-        const res = await fetch(
-          process.env.DA_MOVEMENT_API + "/api/v1/da_movement/analytics/v1",
-          {
-            method: "GET",
-            body: JSON.stringify({
-              da_code: searchParams.q,
-              mv_date: searchParams.start,
-            }),
-          }
-        );
+    if (authUser.role === "admin") {
+      if (searchParams.q) {
+        if (searchParams.start === formateDateDB(currentDate)) {
+          const res = await fetch(
+            process.env.DA_MOVEMENT_API + "/api/v1/da_movement/analytics/v1",
+            {
+              method: "GET",
+              body: JSON.stringify({
+                da_code: searchParams.q,
+                mv_date: searchParams.start,
+              }),
+            }
+          );
 
-        if (!res.ok) throw new Error((await res.json()).message);
+          if (!res.ok) throw new Error((await res.json()).message);
 
-        return (data = await res.json());
-      }
-      [data, resCount] = await Promise.all([
-        db.$queryRaw`
-            SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
-            INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
-            WHERE rdm.da_code = ${searchParams.q || ""} AND
-            rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-            ORDER BY rdm.mv_date DESC, rdm.da_code ASC
-            LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
-            `,
-        db.$queryRaw`
-         SELECT COUNT(rdm.da_code) as total FROM rdl_da_movement rdm 
-         WHERE rdm.da_code = ${searchParams.q || ""} AND
-            rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-       `,
-      ]);
-    } else {
-      [data, resCount] = await Promise.all([
-        db.$queryRaw`
-            SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
-            INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
+          return (data = await res.json());
+        }
+        [data, resCount] = await Promise.all([
+          db.$queryRaw`
+              SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
+              INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
+              WHERE rdm.da_code = ${searchParams.q || ""} AND
+              rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
+              ORDER BY rdm.mv_date DESC, rdm.da_code ASC
+              LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+              `,
+          db.$queryRaw`
+           SELECT COUNT(rdm.da_code) as total FROM rdl_da_movement rdm 
+           WHERE rdm.da_code = ${searchParams.q || ""} AND
+              rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
+         `,
+        ]);
+      } else {
+        [data, resCount] = await Promise.all([
+          db.$queryRaw`
+              SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
+              INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
+              WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
+              ORDER BY rdm.mv_date DESC, rdm.da_code ASC
+              LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+              `,
+          db.$queryRaw`
+            SELECT COUNT(rdm.da_code) as total FROM rdl_da_movement rdm 
             WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-            ORDER BY rdm.mv_date DESC, rdm.da_code ASC
-            LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
-            `,
-        db.$queryRaw`
-          SELECT COUNT(rdm.da_code) as total FROM rdl_da_movement rdm 
-          WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-        `,
-      ]);
+          `,
+        ]);
+      }
+    } else {
+      if (searchParams.q) {
+        if (searchParams.start === formateDateDB(currentDate)) {
+          const res = await fetch(
+            process.env.DA_MOVEMENT_API + "/api/v1/da_movement/analytics/v1",
+            {
+              method: "GET",
+              body: JSON.stringify({
+                da_code: searchParams.q,
+                mv_date: searchParams.start,
+              }),
+            }
+          );
+
+          if (!res.ok) throw new Error((await res.json()).message);
+
+          return (data = await res.json());
+        }
+        [data, resCount] = await Promise.all([
+          db.$queryRaw`
+              SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
+              INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
+              WHERE rdm.da_code = ${searchParams.q || ""} AND
+              rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
+              AND rul.depot_code=${authUser.depot_code}
+              ORDER BY rdm.mv_date DESC, rdm.da_code ASC
+              LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+              `,
+          db.$queryRaw`
+           SELECT COUNT(rdm.da_code) as total FROM rdl_da_movement rdm 
+           INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
+           WHERE rdm.da_code = ${searchParams.q || ""} AND
+              rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
+              AND rul.depot_code=${authUser.depot_code}
+         `,
+        ]);
+      } else {
+        [data, resCount] = await Promise.all([
+          db.$queryRaw`
+              SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
+              INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
+              WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
+              AND rul.depot_code=${authUser.depot_code}
+              ORDER BY rdm.mv_date DESC, rdm.da_code ASC
+              LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
+              `,
+          db.$queryRaw`
+            SELECT COUNT(rdm.da_code) as total FROM rdl_da_movement rdm 
+            INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
+            WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
+            AND rul.depot_code=${authUser.depot_code}
+          `,
+        ]);
+      }
     }
 
     count = Number(resCount[0]?.total);

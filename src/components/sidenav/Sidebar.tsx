@@ -46,7 +46,9 @@ export default function Sidebar({
           <Map className="size-7" />
           <div className="">
             <h1 className="font-title tracking-[1rem] text-lg">ODMS</h1>
-            <h2 className="text-[10px] -mt-2 text-muted-foreground">Radient Distributions</h2>
+            <h2 className="text-[10px] -mt-1 text-muted-foreground">
+              Radient Distributions
+            </h2>
           </div>
         </div>
         <ScrollArea className="h-[calc(100dvh-2rem)] md:h-[calc(100dvh-2rem)] px-5 md:px-5 md:py-0">
@@ -141,29 +143,26 @@ export default function Sidebar({
             </div>
 
             {/* statistics */}
-            {userRole != "depot" && (
-              <div className="mt-3">
-                <h4 className="text-muted-foreground text-xs mb-3">
-                  Analytics
-                </h4>
 
-                <div className="flex flex-col gap-2">
-                  <NavLink
-                    icon={<Users className="size-4" />}
-                    name="Partner Delivery"
-                    href="/admin/analytics/partner-delivery"
-                    onClick={onClose}
-                  />
+            <div className="mt-3">
+              <h4 className="text-muted-foreground text-xs mb-3">Analytics</h4>
 
-                  <NavLink
-                    icon={<FileUser className="size-4" />}
-                    name="DA Movement Info"
-                    href="/admin/analytics/da-movement-info"
-                    onClick={onClose}
-                  />
-                </div>
+              <div className="flex flex-col gap-2">
+                <NavLink
+                  icon={<Users className="size-4" />}
+                  name="Partner Delivery"
+                  href="/admin/analytics/partner-delivery"
+                  onClick={onClose}
+                />
+
+                <NavLink
+                  icon={<FileUser className="size-4" />}
+                  name="DA Movement Info"
+                  href="/admin/analytics/da-movement-info"
+                  onClick={onClose}
+                />
               </div>
-            )}
+            </div>
           </div>
         </ScrollArea>
       </div>

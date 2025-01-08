@@ -20,11 +20,11 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  const userRole = session.role;
+  // const userRole = session.role;
 
-  if (isProtectedRoute && userRole == "depot") {
-    return NextResponse.redirect(new URL("/admin", req.nextUrl));
-  }
+  // if (isProtectedRoute && userRole == "depot") {
+  //   return NextResponse.redirect(new URL("/admin", req.nextUrl));
+  // }
 
   return NextResponse.next();
 }
