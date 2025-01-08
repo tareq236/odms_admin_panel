@@ -102,6 +102,7 @@ export default function MovementMap({
 
   return (
     <div>
+      {JSON.stringify(data.length)}
       <GoogleMap
         mapContainerStyle={{
           width: "100%",
@@ -177,14 +178,14 @@ export default function MovementMap({
                 fontWeight: "bold",
               }}
               icon={
-                index !== 0
+                index + 1 != data.length && index !== 0
                   ? {
                       url: `https://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
                       scaledSize: new window.google.maps.Size(40, 40),
                     }
                   : undefined
               }
-              onClick={() => setSelectedData(item)}
+              onClick={() => setSelectedData({ ...item, index })}
             />
           ))
         )}
@@ -248,7 +249,9 @@ export default function MovementMap({
             onCloseClick={() => setSelectedData(null)} // Clear selection on close
           >
             <div>
-              <h5 className="text-md font-semibold mb-3">Stay Point Info</h5>
+              <h5 className="text-md font-semibold mb-3">
+                {selectedData.index == 0 ? "Start point " : selectedData.index + 1 == data.length ? "End point" : "Stay Point Info"}
+              </h5>
               <div className="flex flex-col gap-1 font-normal">
                 <p>
                   Date:{" "}
@@ -273,7 +276,7 @@ export default function MovementMap({
                     </div>
                   )}
 
-                {selectedData && selectedData?.time_in_minutes && (
+                {selectedData && selectedData.index !== 0 && selectedData.index + 1 !== data.length && selectedData?.time_in_minutes && (
                   <div className="">
                     Duration:{" "}
                     {formatNumber(Number(selectedData?.time_in_minutes ?? 0))}{" "}
@@ -337,7 +340,9 @@ export default function MovementMap({
               lat: Number(selectedCollectionData.cash_collection_latitude),
               lng: Number(selectedCollectionData.cash_collection_longitude),
             }}
-            onCloseClick={() => selectedCollectionData(null)}
+            onCloseClick={() => {
+              setSelectedCollectionData(null);
+            }}
           >
             <div className="flex flex-col gap-3">
               <h2 className="font-semibold text-sm">Cash Collection Info</h2>
