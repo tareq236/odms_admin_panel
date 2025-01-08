@@ -79,7 +79,7 @@ export default async function MapSection({
       GROUP BY rd.partner
       `,
       db2.$queryRaw`
-        SELECT user_id, latitude, longitude, speed, mv_date, mv_time
+        SELECT user_id, latitude, longitude, speed, mv_date, mv_time start_time
         FROM user_movement
         WHERE user_id = ${searchParams.q} AND mv_date = ${
         searchParams?.start ?? formateDateDB(new Date())

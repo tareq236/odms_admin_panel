@@ -115,7 +115,7 @@ export default function MovementMap({
         {/* Add other map elements here */}
         {routeData && routeData.length > 0 && (
           <Polyline
-            path={data.map((item) => {
+            path={routeData.map((item) => {
               return {
                 lat: Number(item.latitude),
                 lng: Number(item.longitude),
@@ -128,6 +128,27 @@ export default function MovementMap({
             }}
           />
         )}
+
+        {/* start end point */}
+        {routeData &&
+          routeData
+            .filter((_, i) => i === 0 || i + 1 == routeData.length)
+            .map((item, index) => (
+              <Marker
+                key={index}
+                position={{
+                  lat: Number(item.latitude),
+                  lng: Number(item.longitude),
+                }}
+                label={{
+                  text: `${index + 1}`,
+                  color: "white",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+                onClick={() => setSelectedData({ ...item, rIndex: index })}
+              />
+            ))}
 
         {/* Marker Clusterer component */}
         {zoom < 20 ? (
@@ -148,14 +169,10 @@ export default function MovementMap({
                     fontSize: "14px",
                     fontWeight: "bold",
                   }}
-                  icon={
-                    index !== 0
-                      ? {
-                          url: `https://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
-                          scaledSize: new window.google.maps.Size(40, 40),
-                        }
-                      : undefined
-                  }
+                  icon={{
+                    url: `https://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
+                    scaledSize: new window.google.maps.Size(40, 40),
+                  }}
                   clusterer={clusterer} // Attach to the clusterer
                   onClick={() => setSelectedData(marker)}
                 />
@@ -170,20 +187,16 @@ export default function MovementMap({
                 lat: Number(item.latitude),
                 lng: Number(item.longitude),
               }}
+              icon={{
+                url: `https://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
+                scaledSize: new window.google.maps.Size(40, 40),
+              }}
               label={{
                 text: `${index + 1}`,
                 color: "black",
                 fontSize: "14px",
                 fontWeight: "bold",
               }}
-              icon={
-                index + 1 != data.length && index !== 0
-                  ? {
-                      url: `https://maps.google.com/mapfiles/ms/icons/yellow-dot.png`,
-                      scaledSize: new window.google.maps.Size(40, 40),
-                    }
-                  : undefined
-              }
               onClick={() => setSelectedData({ ...item, index })}
             />
           ))
@@ -249,7 +262,11 @@ export default function MovementMap({
           >
             <div>
               <h5 className="text-md font-semibold mb-3">
-                {selectedData.index == 0 ? "Start point " : selectedData.index + 1 == data.length ? "End point" : "Stay Point Info"}
+                {selectedData?.rIndex == 0
+                  ? "Start point "
+                  : selectedData?.rIndex == 1
+                  ? "End point"
+                  : "Stay Point Info"}
               </h5>
               <div className="flex flex-col gap-1 font-normal">
                 <p>
@@ -258,30 +275,39 @@ export default function MovementMap({
                     ? formatDate(selectedData.mv_date)
                     : null}
                 </p>
-                {selectedData &&
-                  selectedData.start_time &&
-                  selectedData.end_time && (
-                    <div>
-                      Time:{" "}
-                      {format(
-                        toZonedTime(selectedData?.start_time, "UTC"),
-                        "h:mm aaa"
-                      )}{" "}
-                      -{" "}
-                      {format(
-                        toZonedTime(selectedData?.end_time, "UTC"),
-                        "h:mm aaa"
-                      )}
-                    </div>
-                  )}
-
-                {selectedData && selectedData.index !== 0 && selectedData.index + 1 !== data.length && selectedData?.time_in_minutes && (
-                  <div className="">
-                    Duration:{" "}
-                    {formatNumber(Number(selectedData?.time_in_minutes ?? 0))}{" "}
-                    mins
+                {selectedData && (
+                  <div>
+                    {selectedData.start_time && (
+                      <>
+                        Time:{" "}
+                        {format(
+                          toZonedTime(selectedData?.start_time, "UTC"),
+                          "h:mm aaa"
+                        )}{" "}
+                      </>
+                    )}
+                    {selectedData.end_time && (
+                      <>
+                        -{" "}
+                        {format(
+                          toZonedTime(selectedData?.end_time, "UTC"),
+                          "h:mm aaa"
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
+
+                {selectedData &&
+                  selectedData.index !== 0 &&
+                  selectedData.index + 1 !== data.length &&
+                  selectedData?.time_in_minutes && (
+                    <div className="">
+                      Duration:{" "}
+                      {formatNumber(Number(selectedData?.time_in_minutes ?? 0))}{" "}
+                      mins
+                    </div>
+                  )}
               </div>
             </div>
           </InfoWindow>
