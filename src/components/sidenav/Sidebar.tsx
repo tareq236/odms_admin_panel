@@ -155,12 +155,14 @@ export default function Sidebar({
                   onClick={onClose}
                 />
 
-                <NavLink
-                  icon={<FileUser className="size-4" />}
-                  name="DA Movement Info"
-                  href="/admin/analytics/da-movement-info"
-                  onClick={onClose}
-                />
+                {userRole === "admin" && (
+                  <NavLink
+                    icon={<FileUser className="size-4" />}
+                    name="DA Movement Info"
+                    href="/admin/analytics/da-movement-info"
+                    onClick={onClose}
+                  />
+                )}
               </div>
             </div>
           </div>
