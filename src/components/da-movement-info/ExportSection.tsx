@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
+import { formateDateDB } from "@/lib/formatters";
 import { Download } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useTransition } from "react";
@@ -24,7 +25,11 @@ function ExportSection() {
       let line = ``;
       for (let index in array[i]) {
         if (line !== "") line += ",";
-        line += array[i][index];
+        if (index === "mv_date") {
+          line += formateDateDB(new Date(array[i][index]));
+        } else {
+          line += array[i][index];
+        }
       }
       str += line + "\r\n";
     }
