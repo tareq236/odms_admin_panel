@@ -149,17 +149,17 @@ export default function Sidebar({
 
               <div className="flex flex-col gap-2">
                 <NavLink
-                  icon={<Users className="size-4" />}
-                  name="Partner Delivery"
-                  href="/admin/analytics/partner-delivery"
+                  icon={<FileUser className="size-4" />}
+                  name="DA Movement Info"
+                  href="/admin/analytics/da-movement-info"
                   onClick={onClose}
                 />
 
                 {userRole === "admin" && (
                   <NavLink
-                    icon={<FileUser className="size-4" />}
-                    name="DA Movement Info"
-                    href="/admin/analytics/da-movement-info"
+                    icon={<Users className="size-4" />}
+                    name="Partner Delivery"
+                    href="/admin/analytics/partner-delivery"
                     onClick={onClose}
                   />
                 )}
