@@ -4,12 +4,6 @@ import { formateDateDB } from "@/lib/formatters";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
-  const daCode = Number(searchParams.get("q"));
-  const qDate = `${
-    searchParams.has("start")
-      ? searchParams.get("start")
-      : formateDateDB(new Date())
-  }`;
 
   const currentDate = new Date();
   const queryDate =
@@ -30,34 +24,55 @@ export async function GET(req: NextRequest) {
           currentDate.getMonth(),
           currentDate.getDate() - 1
         );
-  const dateStart = formateDateDB(queryDate);
+  const dateStart = searchParams.get("start") || formateDateDB(queryDate);
 
-  const dateEnd = formateDateDB(
-    new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate()
-    )
-  );
+  const dateEnd =
+    searchParams.get("end") ||
+    formateDateDB(
+      new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate()
+      )
+    );
 
   let data: any[] | unknown;
 
   try {
-    if (searchParams.has("q")) {
-      data = await db.$queryRaw`
-        SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
-            INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
-            WHERE rdm.da_code = ${searchParams.get("q") || ""} AND
-            rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-            ORDER BY rdm.mv_date DESC, rdm.da_code ASC
-      `;
+    if (searchParams.has("filter") || searchParams.has("start")) {
+      if (searchParams.has("q")) {
+        data = await db.$queryRaw`
+          SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
+              INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
+              WHERE rdm.da_code = ${searchParams.get("q") || ""} AND
+              rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
+              ORDER BY rdm.mv_date DESC, rdm.da_code ASC
+        `;
+      } else {
+        data = await db.$queryRaw`
+          SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
+              INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
+              WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
+              ORDER BY rdm.mv_date DESC, rdm.da_code ASC
+        `;
+      }
     } else {
-      data = await db.$queryRaw`
-        SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
-            INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
-            WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-            ORDER BY rdm.mv_date DESC, rdm.da_code ASC
-      `;
+      if (searchParams.has("q")) {
+        data = await db.$queryRaw`
+          SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
+              INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
+              WHERE rdm.da_code = ${searchParams.get("q") || ""}
+              ORDER BY rdm.mv_date DESC, rdm.da_code ASC
+              limit 100
+        `;
+      } else {
+        data = await db.$queryRaw`
+          SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
+              INNER JOIN rdl_user_list rul ON rul.sap_id = rdm.da_code
+              ORDER BY rdm.mv_date DESC, rdm.da_code ASC
+              limit 100
+        `;
+      }
     }
 
     return Response.json(data as any[]);

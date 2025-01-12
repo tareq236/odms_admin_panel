@@ -35,7 +35,7 @@ function ExportSection() {
   const downloadCSV = async () => {
     const res = await fetch(
       `/api/movement-info?filter=${
-        searchParams.has("filter") ? searchParams.get("filter") : "d"
+        searchParams.has("filter") ? searchParams.get("filter") : "m"
       }${searchParams.has("q") ? "&q=" + searchParams.get("q") : ""}`
     );
     if (!res.ok) {
