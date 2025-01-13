@@ -52,7 +52,8 @@ export const getAttendance = async ({
           SELECT ra.*, ru.full_name, ru.sap_id, COUNT(*) OVER() count FROM rdl_users_list ru
           LEFT JOIN rdl_attendance ra ON ru.sap_id = ra.sap_id 
           AND DATE(ra.start_date_time) = ${formateDateDB(startDate)}
-          WHERE ra.sap_id = ${searchParams.q}
+          WHERE ra.sap_id is null
+          AND ru.sap_id = ${searchParams.q}
           LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
         `;
         } else {
@@ -90,12 +91,11 @@ export const getAttendance = async ({
       } else { // get absence
         if (searchParams.q) {
           data = await db.$queryRaw`
-          SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
-          INNER JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
-          WHERE DATE(ra.start_date_time) = ${formateDateDB(startDate)}
-          AND ra.sap_id = ${searchParams.q} AND ru.depot_code = ${
-            authUser.depot_code
-          }
+          SELECT ra.*, ru.full_name, ru.sap_id, COUNT(*) OVER() count FROM rdl_users_list ru
+          LEFT JOIN rdl_attendance ra ON ru.sap_id = ra.sap_id AND DATE(ra.start_date_time) = ${formateDateDB(startDate)}
+          WHERE ra.sap_id is null
+          AND ru.depot_code = ${authUser.depot_code}
+          AND ru.sap_id = ${searchParams.q}
           LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
         `;
         } else {
