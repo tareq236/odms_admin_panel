@@ -10,11 +10,17 @@ function ProfileSection({ daInfo }: { daInfo: rdl_users_list }) {
         Profile Information
       </h2>
       {daInfo != null ? (
-        <article className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <article className="flex items-center justify-between flex-wrap gap-4">
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">DA Name</span>
             <span className="font-medium text-sm">{daInfo.full_name}</span>
           </p>
+
+          <p className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">Mobile</span>
+            <span className="font-medium text-sm">{daInfo.mobile_number}</span>
+          </p>
+
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Depot Name</span>
             <span className="font-medium text-sm">{daInfo.user_depot}</span>

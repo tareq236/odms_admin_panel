@@ -22,7 +22,7 @@ export default async function DaInfoSection({
       <h2 className="text-muted-foreground mb-3">DA Information</h2>
 
       {daInfo != null ? (
-        <article className="p-4 border rounded grid grid-cols-2 md:grid-cols-4 gap-4">
+        <article className="p-4 border rounded flex items-center flex-wrap justify-between gap-4">
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">DA Name</span>
             <span className="font-medium text-sm">{daInfo.full_name}</span>
@@ -30,6 +30,10 @@ export default async function DaInfoSection({
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Depot Name</span>
             <span className="font-medium text-sm">{daInfo.user_depot}</span>
+          </p>
+          <p className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">Mobile</span>
+            <span className="font-medium text-sm">{daInfo.mobile_number}</span>
           </p>
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Type</span>
