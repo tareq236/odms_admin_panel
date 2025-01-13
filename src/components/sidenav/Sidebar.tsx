@@ -27,6 +27,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { rdl_admin_user_list_role } from "@/prisma/generated/client1";
 import Spinner from "../ui/Spinner";
 import { FileUser } from "../constants/icons/icons";
+import Link from "next/link";
 
 export default function Sidebar({
   onClose,
@@ -42,7 +43,7 @@ export default function Sidebar({
     <div className="max-h-[calc(100dvh-1rem)] flex flex-col justify-between min-h-svh">
       <div className="top md:pt-5 min-h-[20rem] flex flex-col md:gap-5">
         {/* logo */}
-        <div className="logo text-primary p-5 md:px-5 md:py-0 flex items-center gap-2">
+        <Link href={'/'} className="logo text-primary p-5 md:px-5 md:py-0 flex items-center gap-2">
           <Map className="size-7" />
           <div className="">
             <h1 className="font-title tracking-[1rem] text-lg">ODMS</h1>
@@ -50,7 +51,7 @@ export default function Sidebar({
               Radient Distributions
             </h2>
           </div>
-        </div>
+        </Link>
         <ScrollArea className="h-[calc(100dvh-2rem)] md:h-[calc(100dvh-2rem)] px-5 md:px-5 md:py-0">
           {/* links */}
           <div className="flex flex-col gap-2">

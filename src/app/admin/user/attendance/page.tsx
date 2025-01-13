@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default async function UserAttendancePage({
   searchParams,
 }: {
-  searchParams: { q: string; p: string; start: string; end: string };
+  searchParams: { q: string; p: string; start: string; status: string };
 }) {
   return (
     <>
@@ -38,17 +38,17 @@ export default async function UserAttendancePage({
 const DataTable = async ({
   searchParams,
 }: {
-  searchParams: { q: string; p: string; start: string; end: string };
+  searchParams: { q: string; p: string; start: string; status: string };
 }) => {
-  let count: unknown| number = 0;
-  let data: any[] = [] ;
+  let count: unknown | number = 0;
+  let data: any[] = [];
   const limit = 20;
   let connectionError = false;
 
   try {
     let attendanceData = await getAttendance({ searchParams, limit });
-    data = attendanceData
-    count = attendanceData ? Number(attendanceData[0].count) : 0
+    data = attendanceData;
+    count = attendanceData ? Number(attendanceData[0].count) : 0;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if ((error.code = "P1001")) {
@@ -57,7 +57,6 @@ const DataTable = async ({
       }
     }
   }
-
 
   return (
     <section className="data-table-section">

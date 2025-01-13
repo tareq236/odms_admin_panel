@@ -20,12 +20,6 @@ export default async function CardContainer({
       ? new Date()
       : new Date(Number(date[0]), Number(date[1]) - 1, Number(date[2]));
 
-  let endDate = new Date(
-    startDate.getFullYear(),
-    startDate.getMonth(),
-    startDate.getDate() + 1
-  );
-
   let dailyAttendance: unknown | any;
   let userCount;
 
@@ -39,9 +33,7 @@ export default async function CardContainer({
         db.$queryRaw`
         SELECT COUNT(sap_id) as total_attendance
         FROM rdl_attendance 
-        WHERE start_date_time > ${formateDateDB(
-          startDate
-        )} AND start_date_time < ${endDate}
+        WHERE DATE(start_date_time) = ${formateDateDB(startDate)}
         GROUP BY CAST(start_date_time as DATE) 
         `,
         db.rdl_users_list.count(),
@@ -52,9 +44,7 @@ export default async function CardContainer({
         SELECT COUNT(id) as total_attendance
         FROM rdl_attendance ra
         LEFT JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
-        WHERE ra.start_date_time > ${formateDateDB(
-          startDate
-        )} AND ra.start_date_time < ${endDate} 
+        WHERE DATE(ra.start_date_time) = ${formateDateDB(startDate)}
         AND ru.depot_code = ${authUser.depot_code}
         GROUP BY CAST(start_date_time as DATE) 
         `,
@@ -66,17 +56,19 @@ export default async function CardContainer({
       ]);
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
     dailyAttendance = [{ total_attendance: 0 }];
     userCount = 0;
   }
   return (
-    <div className="right flex flex-wrap gap-3">
+    <div className="right flex flex-wrap gap-3 flex-1">
       <Card
+        state="1"
         title="Attendance"
         count={Number(dailyAttendance[0]?.total_attendance ?? 0)}
       />
       <Card
+        state="0"
         title="Absence"
         count={userCount - Number(dailyAttendance[0]?.total_attendance ?? 0)}
       />
