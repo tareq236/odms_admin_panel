@@ -15,6 +15,10 @@ const addSchema = z.object({
   password: z.string().min(6),
   status: z.string().min(1),
   user_type: z.string().optional(),
+  user_designation: z.string().optional(),
+  user_job_location: z.string().optional(),
+  user_depot: z.string().optional(),
+  depot_code: z.string().optional(),
 });
 
 export const createUser = async (prevState: unknown, formData: FormData) => {
@@ -30,7 +34,7 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
 
   const data = result.data;
 
-  const user = await db.rdl_user_list.findUnique({
+  const user = await db.rdl_users_list.findUnique({
     where: { sap_id: Number(data.sap_id) },
   });
 
@@ -57,6 +61,10 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
         status: Number(data.status),
         password: data.password,
         user_type: data.user_type,
+        user_depot: data.user_depot,
+        user_designation: data.user_designation,
+        user_job_location: data.user_job_location,
+        depot_code: data.user_depot,
         updated_at: new Date(),
       },
     });
@@ -119,6 +127,10 @@ export const updateUser = async (
         status: Number(data.status),
         password: data.password,
         user_type: data.user_type,
+        user_depot: data.user_depot,
+        user_designation: data.user_designation,
+        user_job_location: data.user_job_location,
+        depot_code: data.user_depot,
         updated_at: new Date(),
       },
     });
