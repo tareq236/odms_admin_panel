@@ -64,7 +64,7 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
         user_depot: data.user_depot,
         user_designation: data.user_designation,
         user_job_location: data.user_job_location,
-        depot_code: data.user_depot,
+        depot_code: data.depot_code,
         updated_at: new Date(),
       },
     });
@@ -130,7 +130,7 @@ export const updateUser = async (
         user_depot: data.user_depot,
         user_designation: data.user_designation,
         user_job_location: data.user_job_location,
-        depot_code: data.user_depot,
+        depot_code: data.depot_code,
         updated_at: new Date(),
       },
     });

@@ -106,7 +106,7 @@ export default function UserForm({ onClose, user }: UserFormProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="1">acitve</SelectItem>
+                  <SelectItem value="1">Active</SelectItem>
                   <SelectItem value="0">In Acitve</SelectItem>
                 </SelectGroup>
               </SelectContent>
