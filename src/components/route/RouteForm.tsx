@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { useFormState, useFormStatus } from "react-dom";
 import { createRoute, updateRoute } from "@/app/actions/routes";
 import { toast } from "sonner";
-import { rdl_route_sap, rdl_route_wise_depot } from "@/prisma/generated/client1";
+import { rdl_route_wise_depot } from "@/prisma/generated/client1";
 import Spinner from "../ui/Spinner";
 
 type RouteFormProps = {
@@ -49,7 +49,7 @@ export default function RouteForm({ route, onClose }: RouteFormProps) {
         </p>
 
         <p>
-          <Label htmlFor="depotCode">Depot coe</Label>
+          <Label htmlFor="depotCode">Depot code</Label>
           <Input
             id="depotCode"
             name="depotCode"

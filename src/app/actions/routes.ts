@@ -100,16 +100,17 @@ export const updateRoute = async (
   const data = result.data;
 
   try {
-
-    await db.rdl_route_sap.update({
+    await db.rdl_route_sap.upsert({
       where: { route: data.route },
-      data: {
+      create: {
         route: data.route,
         description: data.description,
-        updated_at: new Date(),
+      },
+      update: {
+        route: data.route,
+        description: data.description,
       },
     });
-
 
     await db.rdl_route_wise_depot.update({
       where: {
@@ -122,8 +123,6 @@ export const updateRoute = async (
         route_name: data.description,
       },
     });
-
-    
 
     revalidatePath("/admin");
     revalidatePath("/admin/route");
