@@ -3,15 +3,14 @@ import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
 import PageHeader from "@/components/ui/PageHeader";
 import { MapPinned } from "lucide-react";
 import React, { Suspense } from "react";
-import db from "../../../../../db/db";
 import SearchDa from "@/components/constants/SearchDa";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/dal";
-import { formateDateDB } from "@/lib/formatters";
 import type { Metadata } from "next";
 import MapSection from "@/components/da-movement/MapSection";
 import Spinner from "@/components/ui/Spinner";
 import NoData from "@/components/constants/NoData";
+import { getDaInfo } from "../_actions/daInfo";
 
 export const metadata: Metadata = {
   title: "DA Movement - ODMS Admin Panel",
@@ -22,38 +21,14 @@ export default async function DaMovementAnalyticsPage({
 }: {
   searchParams: { q: string; start: string; p: string };
 }) {
-  let daInfo;
-  try {
-    daInfo = await db.rdl_user_list.findUnique({
-      where: { sap_id: Number(searchParams.q || 0) },
-    });
-  } catch (error) {
-    daInfo = null;
-  }
-
   const user = await getUser();
 
   if (!user) redirect("/login");
 
-  const isDepotDA: any = await db.$queryRaw`
-    select count(*) over () as total
-    from
-        rdl_delivery_info_sap as a
-        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
-    WHERE
-        a.billing_date = ${
-          searchParams.start
-            ? `${searchParams.start}`
-            : `${formateDateDB(new Date())}`
-        }
-        AND a.da_code = ${Number(searchParams.q) || 0}
-        AND a.route IN (
-            SELECT route_code
-            FROM rdl_route_wise_depot
-            WHERE
-                depot_code =${user.depot_code}
-        )
-  `;
+  const { daInfo, isDepotDA } = await getDaInfo({
+    searchParams: searchParams,
+    user: user,
+  });
 
   return (
     <>
