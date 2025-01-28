@@ -48,7 +48,7 @@ export default function Sidebar({
           <div className="">
             <h1 className="font-title tracking-[1rem] text-lg">ODMS</h1>
             <h2 className="text-[10px] -mt-1 text-muted-foreground">
-              Radient Distributions
+              Radiant Distributions
             </h2>
           </div>
         </Link>

@@ -34,7 +34,7 @@ export default function Nav({ user }: { user: any }) {
             <div className="">
               <h1 className="font-title tracking-[1rem] text-sm">ODMS</h1>
               <h2 className="text-[9px] -mt-1 text-muted-foreground">
-                Radient Distributions
+                Radiant Distributions
               </h2>
             </div>
           </Link>
