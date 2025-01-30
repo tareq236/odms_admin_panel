@@ -134,6 +134,7 @@ export default async function CardSection({
           }
           icon={<PackageCheck className="size-4" />}
         />
+
         <Card
           paramString="cr"
           name="Collection Remainig"
@@ -143,8 +144,13 @@ export default async function CardSection({
           }
           amount={
             Number(deliveryDone[0]?.total_net_val || 0) -
-            Number(collectionDone[0]?.total_net_val || 0) -
-            Number(returnQuantity[0]?.total_return_amount || 0)
+              Number(collectionDone[0]?.total_net_val || 0) -
+              Number(returnQuantity[0]?.total_return_amount || 0) >
+            0.01
+              ? Number(deliveryDone[0]?.total_net_val || 0) -
+                Number(collectionDone[0]?.total_net_val || 0) -
+                Number(returnQuantity[0]?.total_return_amount || 0)
+              : 0
           }
           icon={<HandCoins className="size-4" />}
           isDown

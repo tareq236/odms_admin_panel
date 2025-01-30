@@ -18,7 +18,7 @@ async function GatePassSummaryPage({
     collectionDone,
   } = await getGatePassBill(searchParams);
 
-  if(!searchParams.q) return <SearchDa />
+  if (!searchParams.q) return <SearchDa />;
 
   return (
     <section className="flex flex-col gap-8">
@@ -49,8 +49,13 @@ async function GatePassSummaryPage({
           }
           cashCollectionRemainingAmount={
             Number(deliveryDone[0]?.total_net_val || 0) -
-            Number(collectionDone[0]?.total_net_val || 0) -
-            Number(returnQuantity[0]?.total_return_amount || 0)
+              Number(collectionDone[0]?.total_net_val || 0) -
+              Number(returnQuantity[0]?.total_return_amount || 0) >
+            0.01
+              ? Number(deliveryDone[0]?.total_net_val || 0) -
+                Number(collectionDone[0]?.total_net_val || 0) -
+                Number(returnQuantity[0]?.total_return_amount || 0)
+              : 0
           }
           totalReturn={Number(returnQuantity[0]?.total_return || 0)}
           returnAmount={Number(returnQuantity[0]?.total_return_amount || 0)}
@@ -60,35 +65,38 @@ async function GatePassSummaryPage({
       {/* single gate pass */}
       {gatePassData &&
         gatePassData.map((item: any, index) => (
-          <Accordion key={index} name={`Gate pass no. - ${gatePasses[index].gate_pass_no}`}>
-          <GatePassTable
+          <Accordion
             key={index}
-            totalAmount={Number(gatePasses[index].total_net_val)}
-            totalInvoice={Number(item[0].total_invoice || 0)}
-            cashCollection={Number(item[0].total_collection || 0)}
-            cashCollectionAmount={Number(item[0].collection_amount || 0)}
-            totalDelivered={Number(item[0].total_delivered || 0)}
-            totalDeliveredAmount={
-              Number(item[0].total_due || 0) +
-              Number(item[0].collection_amount || 0)
-            }
-            deliveryRemaining={
-              Number(item[0].total_invoice || 0) -
-              Number(item[0].total_delivered || 0)
-            }
-            deliveryRemainingAmount={
-              Number(gatePasses[index].total_net_val) -
-              Number(item[0].total_due || 0) -
-              Number(item[0].return_amount || 0)
-            }
-            returnAmount={Number(item[0].return_amount || 0)}
-            totalReturn={Number(item[0].total_return || 0)}
-            cashCollectionRemaining={
-              Number(item[0].total_delivered || 0) -
-              Number(item[0].total_collection || 0)
-            }
-            cashCollectionRemainingAmount={Number(item[0].total_due || 0)}
-          />
+            name={`Gate pass no. - ${gatePasses[index].gate_pass_no}`}
+          >
+            <GatePassTable
+              key={index}
+              totalAmount={Number(gatePasses[index].total_net_val)}
+              totalInvoice={Number(item[0].total_invoice || 0)}
+              cashCollection={Number(item[0].total_collection || 0)}
+              cashCollectionAmount={Number(item[0].collection_amount || 0)}
+              totalDelivered={Number(item[0].total_delivered || 0)}
+              totalDeliveredAmount={
+                Number(item[0].total_due || 0) +
+                Number(item[0].collection_amount || 0)
+              }
+              deliveryRemaining={
+                Number(item[0].total_invoice || 0) -
+                Number(item[0].total_delivered || 0)
+              }
+              deliveryRemainingAmount={
+                Number(gatePasses[index].total_net_val) -
+                Number(item[0].total_due || 0) -
+                Number(item[0].return_amount || 0)
+              }
+              returnAmount={Number(item[0].return_amount || 0)}
+              totalReturn={Number(item[0].total_return || 0)}
+              cashCollectionRemaining={
+                Number(item[0].total_delivered || 0) -
+                Number(item[0].total_collection || 0)
+              }
+              cashCollectionRemainingAmount={Number(item[0].total_due || 0)}
+            />
           </Accordion>
         ))}
     </section>
