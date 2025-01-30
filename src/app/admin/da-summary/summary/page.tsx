@@ -47,16 +47,11 @@ async function GatePassSummaryPage({
             Number(deliveryDone[0]?.total_delivery_done || 0) -
             Number(collectionDone[0]?.total_collection_done || 0)
           }
-          cashCollectionRemainingAmount={
+          cashCollectionRemainingAmount={Math.abs(
             Number(deliveryDone[0]?.total_net_val || 0) -
               Number(collectionDone[0]?.total_net_val || 0) -
-              Number(returnQuantity[0]?.total_return_amount || 0) >
-            0.01
-              ? Number(deliveryDone[0]?.total_net_val || 0) -
-                Number(collectionDone[0]?.total_net_val || 0) -
-                Number(returnQuantity[0]?.total_return_amount || 0)
-              : 0
-          }
+              Number(returnQuantity[0]?.total_return_amount || 0)
+          )}
           totalReturn={Number(returnQuantity[0]?.total_return || 0)}
           returnAmount={Number(returnQuantity[0]?.total_return_amount || 0)}
         />
