@@ -2,6 +2,7 @@ import { rdl_conveyance } from "@/prisma/generated/client1";
 import db from "../../../../../../db/db";
 import { getUser } from "@/lib/dal";
 import { redirect } from "next/navigation";
+import { formateDateDB } from "@/lib/formatters";
 
 export const getConveyanceData = async ({
   searchParams,
@@ -51,14 +52,16 @@ export const getConveyanceData = async ({
   `;
 
   try {
-    if (user.role == 'admin' || (isDepotDA && isDepotDA.length > 0 && searchParams.q)) {
+    if (
+      user.role == "admin" ||
+      (isDepotDA && isDepotDA.length > 0 && searchParams.q)
+    ) {
       [data, count] = await Promise.all([
         db.$queryRaw`
-            SELECT rc.*, rul.full_name 
-            FROM rdl_conveyance rc
-            INNER JOIN rdl_user_list rul ON rc.da_code = rul.sap_id
-            WHERE rc.da_code = '50009' 
-            AND rc.created_at >= ${startDate} AND rc.created_at < ${endDate}
+            select rc.*, ru.full_name from rdl_conveyance rc
+            INNER JOIN rdl_users_list ru ON ru.sap_id=rc.da_code
+            where DATE(rc.created_at) = ${searchParams.start ? searchParams.start : formateDateDB(new Date())}
+            AND rc.da_code = ${searchParams.q || 0}
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
         `,
         db.rdl_conveyance.count({

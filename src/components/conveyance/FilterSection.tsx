@@ -2,7 +2,7 @@ import React from "react";
 import Search from "../ui/Search";
 import DatePicker from "../ui/DatePicker";
 import TrackSection from "./TrackSection";
-import { getConveyanceData } from "@/app/admin/map/conveyance/_action/action";
+import { getConveyanceData } from "@/app/admin/map/transport/_action/action";
 
 export default async function FilterSection({
   searchParams,

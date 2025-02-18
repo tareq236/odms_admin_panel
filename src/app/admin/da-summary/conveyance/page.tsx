@@ -1,7 +1,7 @@
 import SearchDa from "@/components/constants/SearchDa";
 import React, { Suspense } from "react";
 import TableSkeleton from "@/components/ui/TableSkeletion";
-import { DataTable } from "../../map/conveyance/page";
+import { DataTable } from "../../map/transport/page";
 
 export default function DaCoveyancePage({
   searchParams,

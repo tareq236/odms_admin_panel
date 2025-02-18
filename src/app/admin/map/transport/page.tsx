@@ -21,7 +21,7 @@ export default async function ConveyancePage({
   return (
     <>
       <PageHeader
-        title="Conveyance"
+        title="Transport"
         icon={<Waypoints className="size-5 fill-primary/20" />}
       />
 
@@ -49,6 +49,8 @@ export const DataTable = async ({
 
   return (
     <div className="data-table-section">
+      {/* {JSON.stringify(data)}
+      {JSON.stringify(count)} */}
       <ConveyanceTable
         data={data as any[]}
         connectionError={connectionError}
