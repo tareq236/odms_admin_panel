@@ -107,9 +107,9 @@ export default function SearchByDaId({
           <CommandInput
             placeholder="Type a command or search..."
             value={commandSearch}
-            // onValueChange={(search) => {
-            //   setCommandSearch(search);
-            // }}
+            onValueChange={(search) => {
+              setCommandSearch(search);
+            }}
           />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>

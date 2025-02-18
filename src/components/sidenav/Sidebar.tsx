@@ -115,8 +115,8 @@ export default function Sidebar({
               <div className="flex flex-col gap-2">
                 <NavLink
                   icon={<Waypoints className="size-4" />}
-                  name="Transport"
-                  href="/admin/map/transport"
+                  name="Transportation"
+                  href="/admin/map/transportation"
                   onClick={onClose}
                 />
 
