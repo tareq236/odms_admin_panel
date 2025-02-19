@@ -9,11 +9,11 @@ import { getConveyanceData } from "./_action/action";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Conveyance - ODMS Admin Panel",
+  title: "Transportations - ODMS Admin Panel",
 };
 
 
-export default async function ConveyancePage({
+export default async function TransportationsPage({
   searchParams,
 }: {
   searchParams: { p: string; q: string; start: string };
@@ -21,7 +21,7 @@ export default async function ConveyancePage({
   return (
     <>
       <PageHeader
-        title="Transport"
+        title="Transportation"
         icon={<Waypoints className="size-5 fill-primary/20" />}
       />
 
