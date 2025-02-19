@@ -61,7 +61,7 @@ function DeliveryTable({
           ) : connectionError ? (
             <TableRow className="table-row-nowrap">
               <TableCell
-                colSpan={8}
+                colSpan={100}
                 align="center"
                 className="py-20 text-gray-400 pointer-events-none"
               >

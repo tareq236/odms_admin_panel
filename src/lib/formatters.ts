@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { toZonedTime, format as formatTimeZone } from "date-fns-tz";
 
 const NUMBER_FORMATTER = new Intl.NumberFormat("en-IN", {
   maximumFractionDigits: 2,
@@ -17,9 +18,21 @@ export const formatDate = (date: Date) => {
   return DATE_FORMATTER.format(date);
 };
 
+export const formatDateTZ = (date: Date) => {
+  if (date == null) return `-`;
+  const utcDate = toZonedTime(date, "UTC");
+  return DATE_FORMATTER.format(utcDate);
+};
+
 export const formatDateTime = (date: Date) => {
   if (date == null) return `-`;
   return format(date, "MMM d, yyyy - h:mm aaa");
+};
+
+export const formatDateTimeTZ = (date: Date) => {
+  if (date == null) return `-`;
+  const utcDate = toZonedTime(date, "UTC");
+  return formatTimeZone(utcDate, "MMM d, yyyy - h:mm:ss aaa ");
 };
 
 export const formateDateDB = (date: Date) => {

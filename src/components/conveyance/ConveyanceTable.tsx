@@ -12,7 +12,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { MessageSquareOff, Search, ServerOff, Waypoints } from "lucide-react";
 import { Button } from "../ui/button";
-import { formatDate, formatDateTime, formatNumber } from "@/lib/formatters";
+import { formatDateTimeTZ, formatDateTZ, formatNumber } from "@/lib/formatters";
 import StatusTag from "./StatusTag";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import DetailsView from "./DetailsView";
@@ -73,11 +73,11 @@ function ConveyanceTable({
               <TableRow key={index}>
                 <TableCell className="min-w-fit">{item.da_code}</TableCell>
                 <TableCell className="min-w-fit">{item.full_name}</TableCell>
-                <TableCell>{formatDateTime(item.start_journey_date_time)}</TableCell>
-                <TableCell>{formatDateTime(item.end_journey_date_time as Date)}</TableCell>
+                <TableCell>{formatDateTimeTZ(item.start_journey_date_time)}</TableCell>
+                <TableCell>{formatDateTimeTZ(item.end_journey_date_time as Date)}</TableCell>
                 <TableCell>{formatNumber(item.transport_cost)}</TableCell>
                 <TableCell><StatusTag name={item.journey_status} /></TableCell>
-                <TableCell>{formatDate(item.created_at as Date)}</TableCell>
+                <TableCell>{formatDateTZ(item.created_at as Date)}</TableCell>
                 <TableCell>
                   <Button
                     variant={"link"}

@@ -4,11 +4,11 @@ import { usePathname, useSearchParams } from "next/navigation";
 import React from "react";
 import DetailsField from "./DetailsField";
 import StatusTag from "./StatusTag";
-import { formatDateTime, formatNumber } from "@/lib/formatters";
-import { Badge } from "../ui/badge";
+import { formatDateTimeTZ, formatNumber } from "@/lib/formatters";
+import { Badge, CustomBadge } from "../ui/badge";
 import RouteMap from "../google-map/RouteMap";
 import { useRouter } from "next-nprogress-bar";
-import { LocateFixed, Map } from "lucide-react";
+import { Map } from "lucide-react";
 
 function TrackDetails({ data }: { data: any[] }) {
   const searchParams = useSearchParams();
@@ -61,16 +61,19 @@ function TrackDetails({ data }: { data: any[] }) {
                   />
                 </section>
 
+                {/* billing info */}
                 <section className="billing-info grid grid-cols-2 gap-5 text-sm py-5 flex-wrap">
                   <DetailsField
                     fieldName="Journey start"
-                    fieldContent={formatDateTime(
-                      details.start_journey_date_time,
+                    fieldContent={formatDateTimeTZ(
+                      details.start_journey_date_time
                     )}
                   />
                   <DetailsField
                     fieldName="Journey end"
-                    fieldContent={formatDateTime(details.end_journey_date_time)}
+                    fieldContent={formatDateTimeTZ(
+                      details.end_journey_date_time
+                    )}
                   />
                   {details && details.transport_mode && (
                     <>
@@ -81,23 +84,11 @@ function TrackDetails({ data }: { data: any[] }) {
                             {JSON.parse(details.transport_mode).map(
                               (item: any, index: number) => (
                                 <div key={index}>
-                                  <Badge
-                                    className={`min-w-fit hover:bg-inital ${
-                                      index % 5 === 0
-                                        ? "bg-yellow-400 text-yellow-900"
-                                        : index % 4 === 0
-                                        ? "bg-teal-600"
-                                        : index % 3 === 0
-                                        ? "bg-rose-600 text-rose-50"
-                                        : index % 2 === 0
-                                        ? "bg-fuchsia-200 text-fuchsia-900"
-                                        : ""
-                                    }`}
-                                  >
+                                  <CustomBadge index={index}>
                                     {item}
-                                  </Badge>
+                                  </CustomBadge>
                                 </div>
-                              ),
+                              )
                             )}
                           </div>
                         }
@@ -114,7 +105,8 @@ function TrackDetails({ data }: { data: any[] }) {
             ))}
       </section>
 
-      <section className="">
+      {/* map section */}
+      <section>
         {searchParams.has("mid") ? (
           data
             .filter((item) => {

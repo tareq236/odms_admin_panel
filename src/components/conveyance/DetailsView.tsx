@@ -1,7 +1,7 @@
 import React from "react";
 import StatusTag from "./StatusTag";
 import { MapPin } from "lucide-react";
-import { formatDateTime, formatNumber } from "@/lib/formatters";
+import { formatDateTime, formatDateTimeTZ, formatNumber } from "@/lib/formatters";
 import RouteMap from "../google-map/RouteMap";
 import { Badge } from "../ui/badge";
 import DetailsField from "./DetailsField";
@@ -22,11 +22,11 @@ export default function DetailsView({ details }: { details: any }) {
         <section className="billing-info grid grid-cols-2 gap-5 text-sm border-b py-5 flex-wrap">
           <DetailsField
             fieldName="Journey start"
-            fieldContent={formatDateTime(details.start_journey_date_time)}
+            fieldContent={formatDateTimeTZ(details.start_journey_date_time)}
           />
           <DetailsField
             fieldName="Journey end"
-            fieldContent={formatDateTime(details.end_journey_date_time)}
+            fieldContent={formatDateTimeTZ(details.end_journey_date_time)}
           />
           {details && details.transport_mode && (
             <>
