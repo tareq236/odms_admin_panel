@@ -14,7 +14,7 @@ export default async function DaInfoSection({
       where: { sap_id: Number(searchParams.q || 0) },
     });
   } catch (error) {
-    daInfo = null
+    daInfo = null;
   }
 
   return (
@@ -40,6 +40,7 @@ export default async function DaInfoSection({
             <span className="font-medium text-sm">{daInfo.user_type}</span>
           </p>
           <div className="flex flex-col gap-1 self-center">
+            <span className="text-xs text-muted-foreground">Status</span>
             <span className="font-medium text-sm">
               <UserStatusTag status={daInfo.status.toString() as string} />
             </span>

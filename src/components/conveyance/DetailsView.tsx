@@ -1,7 +1,7 @@
 import React from "react";
 import StatusTag from "./StatusTag";
 import { MapPin } from "lucide-react";
-import { formatDateTime, formatDateTimeTZ, formatNumber } from "@/lib/formatters";
+import { formatDateTimeTZ, formatNumber } from "@/lib/formatters";
 import RouteMap from "../google-map/RouteMap";
 import { Badge } from "../ui/badge";
 import DetailsField from "./DetailsField";
@@ -53,7 +53,7 @@ export default function DetailsView({ details }: { details: any }) {
                             {item}
                           </Badge>
                         </div>
-                      ),
+                      )
                     )}
                   </div>
                 }
@@ -86,4 +86,3 @@ export default function DetailsView({ details }: { details: any }) {
     </article>
   );
 }
-

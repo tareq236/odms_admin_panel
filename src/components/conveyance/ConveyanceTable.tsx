@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHead,
@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
   TableCell,
+  TableCaption,
 } from "../ui/table";
 import { useSearchParams } from "next/navigation";
 import { MessageSquareOff, Search, ServerOff, Waypoints } from "lucide-react";
@@ -17,7 +18,7 @@ import StatusTag from "./StatusTag";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import DetailsView from "./DetailsView";
 
-function ConveyanceTable({
+export default function ConveyanceTable({
   data,
   connectionError,
 }: {
@@ -29,16 +30,17 @@ function ConveyanceTable({
 
   return (
     <>
-      <Table className="[tr:text-nowrap]">
+      <Table className="[&_th]:text-nowrap">
         <TableHeader>
           <TableRow>
-            <TableHead>DA Code</TableHead>
-            <TableHead>DA Name</TableHead>
+            <TableHead className="text-nowrap">#</TableHead>
             <TableHead>Journey Start</TableHead>
             <TableHead>Journey End</TableHead>
+            <TableHead>Journey From</TableHead>
+            <TableHead>Journey To</TableHead>
+            <TableHead>Distance</TableHead>
             <TableHead>Cost</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Journey Date</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -71,13 +73,41 @@ function ConveyanceTable({
           ) : data.length > 0 ? (
             data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="min-w-fit">{item.da_code}</TableCell>
-                <TableCell className="min-w-fit">{item.full_name}</TableCell>
-                <TableCell>{formatDateTimeTZ(item.start_journey_date_time)}</TableCell>
-                <TableCell>{formatDateTimeTZ(item.end_journey_date_time as Date)}</TableCell>
+                <TableCell className="text-nowrap"># {index + 1}</TableCell>
+                <TableCell>
+                  {formatDateTimeTZ(item.start_journey_date_time)}
+                </TableCell>
+                <TableCell>
+                  {formatDateTimeTZ(item.end_journey_date_time as Date)}
+                </TableCell>
+                <TableCell>
+                  {item.start_journey_latitude && (
+                    <ReverseGeocodeCell
+                      lat={item.start_journey_latitude}
+                      long={item.start_journey_longitude}
+                    />
+                  )}
+                </TableCell>
+                <TableCell>
+                  {item.end_journey_latitude && (
+                    <ReverseGeocodeCell
+                      lat={item.end_journey_latitude}
+                      long={item.end_journey_longitude}
+                    />
+                  )}
+                </TableCell>
+                <TableCell>
+                  {item.start_journey_latitude && item.end_journey_latitude && (
+                    <DistanceCell
+                      origin={`${item.start_journey_latitude},${item.start_journey_longitude}`}
+                      destination={`${item.end_journey_latitude},${item.end_journey_longitude}`}
+                    />
+                  )}
+                </TableCell>
                 <TableCell>{formatNumber(item.transport_cost)}</TableCell>
-                <TableCell><StatusTag name={item.journey_status} /></TableCell>
-                <TableCell>{formatDateTZ(item.created_at as Date)}</TableCell>
+                <TableCell>
+                  <StatusTag name={item.journey_status} />
+                </TableCell>
                 <TableCell>
                   <Button
                     variant={"link"}
@@ -106,7 +136,6 @@ function ConveyanceTable({
         </TableBody>
       </Table>
 
-
       {/* delivery details modal */}
       <Dialog open={view} onOpenChange={setView}>
         <DialogContent className="md:min-w-[90vw] md:max-w-xl">
@@ -125,4 +154,59 @@ function ConveyanceTable({
   );
 }
 
-export default ConveyanceTable;
+const DistanceCell = ({
+  origin,
+  destination,
+}: {
+  origin: string;
+  destination: string;
+}) => {
+  const [distance, setDistance] = useState("Loading...");
+
+  useEffect(() => {
+    const fetchDistance = async () => {
+      try {
+        const url =  `/api/distance?origins=${origin}&destinations=${destination}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.status === "OK") {
+          setDistance(data.rows[0].elements[0].distance.text);
+        } else {
+          setDistance("Error");
+        }
+      } catch (error) {
+        setDistance("Failed to load");
+      }
+    };
+
+    fetchDistance();
+  }, [origin, destination]);
+
+  return <span>{distance}</span>;
+};
+
+const ReverseGeocodeCell = ({ lat, long }: { lat: number; long: number }) => {
+  const [location, setLocation] = useState("Loading...");
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.status === "OK") {
+          setLocation(data.results[0].formatted_address);
+        } else {
+          setLocation("Not Found");
+        }
+      } catch (error) {
+        setLocation("Error Loading");
+      }
+    };
+
+    fetchLocation();
+  }, [lat, long]);
+
+  return <span>{location}</span>;
+};

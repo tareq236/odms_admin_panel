@@ -30,7 +30,7 @@ function Search({ placeholder = "Search...", type='search' }: { placeholder?: st
   }
 
   return (
-    <form onSubmit={handleSubmit} className="relative min-w-[5rem]">
+    <form onSubmit={handleSubmit} className="relative min-w-[8rem] flex-1 sm:flex-none">
       <Input
         type={type}
         name="search"

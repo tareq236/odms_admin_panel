@@ -7,11 +7,11 @@ import { Waypoints } from "lucide-react";
 import React, { Suspense } from "react";
 import { getConveyanceData } from "./_action/action";
 import type { Metadata } from "next";
+import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
 
 export const metadata: Metadata = {
   title: "Transportations - ODMS Admin Panel",
 };
-
 
 export default async function TransportationsPage({
   searchParams,
@@ -27,6 +27,10 @@ export default async function TransportationsPage({
 
       <Suspense>
         <FilterSection searchParams={searchParams} />
+      </Suspense>
+
+      <Suspense>
+        <DaInfoSection searchParams={searchParams} />
       </Suspense>
 
       <Suspense fallback={<TableSkeleton />}>
@@ -48,13 +52,8 @@ export const DataTable = async ({
   });
 
   return (
-    <div className="data-table-section">
-      {/* {JSON.stringify(data)}
-      {JSON.stringify(count)} */}
-      <ConveyanceTable
-        data={data as any[]}
-        connectionError={connectionError}
-      />
+    <div>
+      <ConveyanceTable data={data as any[]} connectionError={connectionError} />
       <PagePagination limit={limit} count={count} />
     </div>
   );
