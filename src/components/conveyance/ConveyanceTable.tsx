@@ -214,7 +214,7 @@ export default function ConveyanceTable({
   );
 }
 
-const DistanceCell = ({
+export const DistanceCell = ({
   origin,
   destination,
 }: {
@@ -246,7 +246,7 @@ const DistanceCell = ({
   return <span>{distance}</span>;
 };
 
-const ReverseGeocodeCell = ({ lat, long }: { lat: number; long: number }) => {
+export const ReverseGeocodeCell = ({ lat, long }: { lat: number; long: number }) => {
   const [location, setLocation] = useState("Loading...");
 
   useEffect(() => {

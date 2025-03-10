@@ -4,7 +4,7 @@ import { Badge } from "../ui/badge";
 export default function CustomBadge({index, title}: {index: number, title: string}) {
   return (
     <Badge
-      className={`hover:bg-inital text-nowrap ${
+      className={`hover:bg-inital text-nowrap text-[10px] ${
         title === "Rickshaw"
           ? "bg-yellow-400 text-yellow-900"
           : title === "Auto Rickshaw"

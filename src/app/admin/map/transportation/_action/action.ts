@@ -58,11 +58,10 @@ export const getConveyanceData = async ({
     ) {
       [data, count] = await Promise.all([
         db.$queryRaw`
-            select rc.*, ru.full_name from rdl_conveyance rc
+            select rc.*, ru.* from rdl_conveyance rc
             INNER JOIN rdl_users_list ru ON ru.sap_id=rc.da_code
             where DATE(rc.created_at) = ${searchParams.start ? searchParams.start : formateDateDB(new Date())}
             AND rc.da_code = ${searchParams.q || 0}
-            LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
         `,
         db.rdl_conveyance.count({
           where: {

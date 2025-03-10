@@ -56,7 +56,7 @@ export const DataTable = async ({
   return (
     <div className="flex flex-col gap-2">
       <ConveyanceTable data={data as any[]} connectionError={connectionError} />
-      <PagePagination limit={limit} count={count} />
+      {/* <PagePagination limit={limit} count={count} /> */}
     </div>
   );
 };

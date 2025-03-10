@@ -6,6 +6,7 @@ import { getConveyanceData } from "@/app/admin/map/transportation/_action/action
 import { Button } from "../ui/button";
 import { Printer } from "lucide-react";
 import Link from "next/link";
+import { formateDateDB } from "@/lib/formatters";
 
 export default async function FilterSection({
   searchParams,
@@ -27,7 +28,7 @@ export default async function FilterSection({
       {count > 0 && (
         <div className="flex items-center gap-2 flex-wrap">
           <Button variant={'outline'} className="text-primary" asChild>
-            <Link href={`/print/transportation?q=${searchParams.q}&start=${searchParams.start}`}>
+            <Link href={`/print/transportation?q=${searchParams.q}&start=${searchParams.start ?? formateDateDB(new Date())}`}>
             <Printer className="size-4 mr-2" /> Print
             </Link>
           </Button>
