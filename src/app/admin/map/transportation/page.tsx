@@ -29,9 +29,11 @@ export default async function TransportationsPage({
         <FilterSection searchParams={searchParams} />
       </Suspense>
 
-      <Suspense>
-        <DaInfoSection searchParams={searchParams} />
-      </Suspense>
+      {searchParams.q && (
+        <Suspense>
+          <DaInfoSection searchParams={searchParams} />
+        </Suspense>
+      )}
 
       <Suspense fallback={<TableSkeleton />}>
         <DataTable searchParams={searchParams} />
@@ -52,7 +54,7 @@ export const DataTable = async ({
   });
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <ConveyanceTable data={data as any[]} connectionError={connectionError} />
       <PagePagination limit={limit} count={count} />
     </div>

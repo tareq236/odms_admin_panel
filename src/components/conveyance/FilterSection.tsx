@@ -16,7 +16,7 @@ export default async function FilterSection({
   });
 
   return (
-    <section className="filter-section flex-wrap">
+    <section className="filter-section flex-wrap print:hidden">
       <div className="flex items-center gap-5 flex-wrap">
         <DatePicker />
         <Search placeholder="Search by DA code" />

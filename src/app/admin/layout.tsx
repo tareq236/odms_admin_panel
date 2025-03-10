@@ -19,9 +19,9 @@ export default async function AdminLayout({
 
   return (
     <SocketProvider>
-      <div className="relative min-h-screen md:flex">
+      <div className="relative min-h-screen md:flex print:block">
         {/* sidebar */}
-        <aside className="hidden min-h-screen h-full bg-white border-r md:block md:sticky top-0 left-0 md:min-w-[15rem] z-20">
+        <aside className="hidden min-h-screen h-full bg-white border-r md:block md:sticky top-0 left-0 md:min-w-[15rem] z-20  print:hidden">
           <Sidebar userRole={user.role as rdl_admin_user_list_role} />
         </aside>
 

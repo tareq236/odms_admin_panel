@@ -16,3 +16,12 @@ export function convertTZ(date: string, tzString: string) {
   );
 }
 
+export const timeConversion = (milliseconds: number) => {
+  const hours = milliseconds / (1000 * 60 * 60);
+  const minutes = Number("." + hours.toString().split(".")[1]) * 60;
+  const seconds = Number("." + minutes.toString().split(".")[1]) * 60;
+  let time = hours.toFixed(0) !== "0" ? `${hours.toFixed(0)} h` : ``;
+  time += minutes.toFixed(0) !== "0" ? ` ${minutes.toFixed(0)} m` : ``;
+  time += ` ${seconds.toFixed(0)} s`;
+  return time;
+};

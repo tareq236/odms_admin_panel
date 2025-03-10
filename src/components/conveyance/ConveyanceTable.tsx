@@ -9,6 +9,7 @@ import {
   TableRow,
   TableCell,
   TableCaption,
+  TableFooter,
 } from "../ui/table";
 import { useSearchParams } from "next/navigation";
 import { MessageSquareOff, Search, ServerOff, Waypoints } from "lucide-react";
@@ -17,6 +18,7 @@ import { formatDateTimeTZ, formatDateTZ, formatNumber } from "@/lib/formatters";
 import StatusTag from "./StatusTag";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import DetailsView from "./DetailsView";
+import { timeConversion } from "@/lib/utils";
 
 export default function ConveyanceTable({
   data,
@@ -28,14 +30,42 @@ export default function ConveyanceTable({
   const [view, setView] = useState<any>(false);
   const searchParams = useSearchParams();
 
+  const calculateTotalDuration = () => {
+    let duration = 0;
+
+    if (!data) return duration;
+
+    data.map((item) => {
+      if (item.start_journey_date_time && item.end_journey_date_time) {
+        duration += item.end_journey_date_time - item.start_journey_date_time;
+      }
+    });
+
+    return duration
+  };
+
+
+  const calculateTotalCost = () => {
+    let cost = 0;
+
+    if (!data) return cost;
+
+    data.map((item) => {
+        cost += Number(item.transport_cost ?? 0);
+    });
+
+    return cost
+  };
+
   return (
     <>
-      <Table className="[&_th]:text-nowrap">
+      <Table className="[&_th]:text-nowrap print:[&_th]:text-wrap print:[&_th]:w-[10%] print:[&_tr]:w-[10%]">
         <TableHeader>
           <TableRow>
             <TableHead className="text-nowrap">#</TableHead>
             <TableHead>Journey Start</TableHead>
             <TableHead>Journey End</TableHead>
+            <TableHead>Duration</TableHead>
             <TableHead>Journey From</TableHead>
             <TableHead>Journey To</TableHead>
             <TableHead>Distance</TableHead>
@@ -81,6 +111,13 @@ export default function ConveyanceTable({
                   {formatDateTimeTZ(item.end_journey_date_time as Date)}
                 </TableCell>
                 <TableCell>
+                  {item.start_journey_date_time &&
+                    item.end_journey_date_time &&
+                    timeConversion(
+                      item.end_journey_date_time - item.start_journey_date_time
+                    )}
+                </TableCell>
+                <TableCell>
                   {item.start_journey_latitude && (
                     <ReverseGeocodeCell
                       lat={item.start_journey_latitude}
@@ -108,7 +145,7 @@ export default function ConveyanceTable({
                 <TableCell>
                   <StatusTag name={item.journey_status} />
                 </TableCell>
-                <TableCell>
+                <TableCell className="print:hidden">
                   <Button
                     variant={"link"}
                     className="rounded-full"
@@ -134,6 +171,13 @@ export default function ConveyanceTable({
             </>
           )}
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={3}>Total</TableCell>
+            <TableCell colSpan={4}>{timeConversion(calculateTotalDuration())}</TableCell>
+            <TableCell colSpan={3}>{formatNumber(calculateTotalCost())}</TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
 
       {/* delivery details modal */}
@@ -166,7 +210,7 @@ const DistanceCell = ({
   useEffect(() => {
     const fetchDistance = async () => {
       try {
-        const url =  `/api/distance?origins=${origin}&destinations=${destination}`;
+        const url = `/api/distance?origins=${origin}&destinations=${destination}`;
         const response = await fetch(url);
         const data = await response.json();
 

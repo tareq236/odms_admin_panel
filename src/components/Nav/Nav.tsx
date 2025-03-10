@@ -11,7 +11,7 @@ export default function Nav({ user }: { user: any }) {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
-    <nav className="sticky top-0 bg-white w-full border-b z-10 md:hidden">
+    <nav className="sticky top-0 bg-white w-full border-b z-10 md:hidden print:hidden">
       {/* navbar */}
       <div className="flex justify-between items-center gap-5 px-5 py-6 shadow-sm h-14">
         <div className="left flex gap-2 items-center">
