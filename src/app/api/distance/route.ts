@@ -16,7 +16,6 @@ export async function GET(req: Request) {
     const response = await fetch(url);
     const data = await response.json()
 
-    console.log(data)
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: "Error fetching data", details: error.message }, { status: 500 });

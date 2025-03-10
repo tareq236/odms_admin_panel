@@ -25,7 +25,7 @@ export default async function AdminLayout({
           <Sidebar userRole={user.role as rdl_admin_user_list_role} />
         </aside>
 
-        <div className="w-full md:w-[calc(100%-15rem)]">
+        <div className="w-full md:w-[calc(100%-15rem)] print:w-full">
           <Nav user={user} />
           <main className="container py-6 w-full">{children}</main>
         </div>

@@ -5,6 +5,7 @@ import { formatDateTimeTZ, formatNumber } from "@/lib/formatters";
 import RouteMap from "../google-map/RouteMap";
 import { Badge } from "../ui/badge";
 import DetailsField from "./DetailsField";
+import CustomBadge from "../badge/TransportationBadge";
 
 export default function DetailsView({ details }: { details: any }) {
   return (
@@ -37,21 +38,7 @@ export default function DetailsView({ details }: { details: any }) {
                     {JSON.parse(details.transport_mode).map(
                       (item: any, index: number) => (
                         <div key={index}>
-                          <Badge
-                            className={`hover:bg-inital ${
-                              index % 5 === 0
-                                ? "bg-yellow-400 text-yellow-900"
-                                : index % 4 === 0
-                                ? "bg-teal-600"
-                                : index % 3 === 0
-                                ? "bg-rose-600 text-rose-50"
-                                : index % 2 === 0
-                                ? "bg-fuchsia-200 text-fuchsia-900"
-                                : ""
-                            }`}
-                          >
-                            {item}
-                          </Badge>
+                          <CustomBadge index={index} title={item} />
                         </div>
                       )
                     )}

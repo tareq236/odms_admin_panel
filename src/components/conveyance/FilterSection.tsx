@@ -3,6 +3,9 @@ import Search from "../ui/Search";
 import DatePicker from "../ui/DatePicker";
 import TrackSection from "./TrackSection";
 import { getConveyanceData } from "@/app/admin/map/transportation/_action/action";
+import { Button } from "../ui/button";
+import { Printer } from "lucide-react";
+import Link from "next/link";
 
 export default async function FilterSection({
   searchParams,
@@ -21,7 +24,16 @@ export default async function FilterSection({
         <DatePicker />
         <Search placeholder="Search by DA code" />
       </div>
-      {(count > 0) && <TrackSection data={data as any[]} />}
+      {count > 0 && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button variant={'outline'} className="text-primary" asChild>
+            <Link href={`/print/transportation?q=${searchParams.q}&start=${searchParams.start}`}>
+            <Printer className="size-4 mr-2" /> Print
+            </Link>
+          </Button>
+          <TrackSection data={data as any[]} />
+        </div>
+      )}
     </section>
   );
 }

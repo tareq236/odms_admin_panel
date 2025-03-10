@@ -8,17 +8,17 @@ import {
   TableHeader,
   TableRow,
   TableCell,
-  TableCaption,
   TableFooter,
 } from "../ui/table";
 import { useSearchParams } from "next/navigation";
 import { MessageSquareOff, Search, ServerOff, Waypoints } from "lucide-react";
 import { Button } from "../ui/button";
-import { formatDateTimeTZ, formatDateTZ, formatNumber } from "@/lib/formatters";
+import { formatTimeTZ, formatNumber } from "@/lib/formatters";
 import StatusTag from "./StatusTag";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import DetailsView from "./DetailsView";
 import { timeConversion } from "@/lib/utils";
+import CustomBadge from "../badge/TransportationBadge";
 
 export default function ConveyanceTable({
   data,
@@ -41,9 +41,8 @@ export default function ConveyanceTable({
       }
     });
 
-    return duration
+    return duration;
   };
-
 
   const calculateTotalCost = () => {
     let cost = 0;
@@ -51,27 +50,28 @@ export default function ConveyanceTable({
     if (!data) return cost;
 
     data.map((item) => {
-        cost += Number(item.transport_cost ?? 0);
+      cost += Number(item.transport_cost ?? 0);
     });
 
-    return cost
+    return cost;
   };
 
   return (
     <>
-      <Table className="[&_th]:text-nowrap print:[&_th]:text-wrap print:[&_th]:w-[10%] print:[&_tr]:w-[10%]">
+      <Table className=" relative [&_th]:text-nowrap print:[&_th]:text-wrap print:[&_th]:w-[10%] print:[&_tr]:w-[10%] print:my-2">
         <TableHeader>
           <TableRow>
             <TableHead className="text-nowrap">#</TableHead>
-            <TableHead>Journey Start</TableHead>
-            <TableHead>Journey End</TableHead>
+            <TableHead>Start</TableHead>
+            <TableHead>End</TableHead>
             <TableHead>Duration</TableHead>
-            <TableHead>Journey From</TableHead>
-            <TableHead>Journey To</TableHead>
+            <TableHead>From</TableHead>
+            <TableHead>To</TableHead>
             <TableHead>Distance</TableHead>
             <TableHead>Cost</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>mode</TableHead>
+            <TableHead className="print:hidden">Actions</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -101,14 +101,15 @@ export default function ConveyanceTable({
               </TableCell>
             </TableRow>
           ) : data.length > 0 ? (
+            // table data
             data.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="text-nowrap"># {index + 1}</TableCell>
-                <TableCell>
-                  {formatDateTimeTZ(item.start_journey_date_time)}
+                <TableCell className="text-nowrap">
+                  {formatTimeTZ(item.start_journey_date_time)}
                 </TableCell>
-                <TableCell>
-                  {formatDateTimeTZ(item.end_journey_date_time as Date)}
+                <TableCell className="text-nowrap">
+                  {formatTimeTZ(item.end_journey_date_time as Date)}
                 </TableCell>
                 <TableCell>
                   {item.start_journey_date_time &&
@@ -117,7 +118,7 @@ export default function ConveyanceTable({
                       item.end_journey_date_time - item.start_journey_date_time
                     )}
                 </TableCell>
-                <TableCell>
+                <TableCell className="min-w-[10rem]"> 
                   {item.start_journey_latitude && (
                     <ReverseGeocodeCell
                       lat={item.start_journey_latitude}
@@ -125,7 +126,7 @@ export default function ConveyanceTable({
                     />
                   )}
                 </TableCell>
-                <TableCell>
+                <TableCell className="min-w-[10rem]">
                   {item.end_journey_latitude && (
                     <ReverseGeocodeCell
                       lat={item.end_journey_latitude}
@@ -145,6 +146,15 @@ export default function ConveyanceTable({
                 <TableCell>
                   <StatusTag name={item.journey_status} />
                 </TableCell>
+                <TableCell>
+                  {item.transport_mode && JSON.parse(item.transport_mode).map(
+                    (title: any, index: number) => (
+                      <div key={index}>
+                        <CustomBadge index={index} title={title} />
+                      </div>
+                    )
+                  )}
+                </TableCell>
                 <TableCell className="print:hidden">
                   <Button
                     variant={"link"}
@@ -160,7 +170,7 @@ export default function ConveyanceTable({
             <>
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={100}
                   align="center"
                   className="py-20 text-gray-400 pointer-events-none"
                 >
@@ -171,13 +181,19 @@ export default function ConveyanceTable({
             </>
           )}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell colSpan={4}>{timeConversion(calculateTotalDuration())}</TableCell>
-            <TableCell colSpan={3}>{formatNumber(calculateTotalCost())}</TableCell>
-          </TableRow>
-        </TableFooter>
+        {data.length > 0 && (
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={3}>Total</TableCell>
+              <TableCell colSpan={4}>
+                {timeConversion(calculateTotalDuration())}
+              </TableCell>
+              <TableCell colSpan={4}>
+                {formatNumber(calculateTotalCost())}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        )}
       </Table>
 
       {/* delivery details modal */}
