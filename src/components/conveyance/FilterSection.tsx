@@ -29,7 +29,7 @@ export default async function FilterSection({
         <div className="flex items-center gap-2 flex-wrap">
           <Button variant={'outline'} className="text-primary" asChild>
             <Link href={`/print/transportation?q=${searchParams.q}&start=${searchParams.start ?? formateDateDB(new Date())}`}>
-            <Printer className="size-4 mr-2" /> Print
+            <Printer className="size-4 mr-2" /> Export
             </Link>
           </Button>
           <TrackSection data={data as any[]} />
