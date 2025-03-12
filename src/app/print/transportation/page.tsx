@@ -93,7 +93,10 @@ export default async function TransportationPrintPage({
                   Conveyance bill
                 </h3>
 
-                <Field fieldName="Date" fieldInput={formatDate(new Date(searchParams.start ?? new Date()), 'LLL dd, yyyy')} />
+                <div className="flex items-center gap-2">
+                  <span className="font-bold">Date:</span>
+                  <p>{formatDate(new Date(searchParams.start ?? new Date()), 'LLL dd, yyyy')}</p>
+                </div>
               </div>
 
               {/* da info */}
