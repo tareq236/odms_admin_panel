@@ -2,6 +2,9 @@ import UserStatusTag from "@/components/user/UserStatusTag";
 import React from "react";
 import db from "../../../../db/db";
 import { MessageSquareOff } from "lucide-react";
+import { getUser } from "@/lib/dal";
+import { formateDateDB } from "@/lib/formatters";
+import { redirect } from "next/navigation";
 
 export default async function DaInfoSection({
   searchParams,
@@ -9,10 +12,40 @@ export default async function DaInfoSection({
   searchParams: { p: string; q: string; start: string };
 }) {
   let daInfo;
+
+  const user = await getUser();
+
+  if (!user) redirect("/login");
+
+  const isDepotDA: any = await db.$queryRaw`
+        select count(*) over () as total
+        from
+            rdl_delivery_info_sap as a
+            LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+        WHERE
+            a.billing_date = ${
+              searchParams.start
+                ? `${searchParams.start}`
+                : `${formateDateDB(new Date())}`
+            }
+            AND a.da_code = ${Number(searchParams.q) || 0}
+            AND a.route IN (
+                SELECT route_code
+                FROM rdl_route_wise_depot
+                WHERE
+                    depot_code =${user.depot_code}
+            )
+      `;
+
   try {
-    daInfo = await db.rdl_users_list.findUnique({
-      where: { sap_id: Number(searchParams.q || 0) },
-    });
+    if (
+      user.role == "admin" ||
+      (isDepotDA && isDepotDA.length > 0 && searchParams.q)
+    ) {
+      daInfo = await db.rdl_users_list.findUnique({
+        where: { sap_id: Number(searchParams.q || 0) },
+      });
+    }
   } catch (error) {
     daInfo = null;
   }
