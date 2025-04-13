@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatNumber, formatTimeTZ } from "@/lib/formatters";
+import { formateDateDB, formatNumber, formatTimeTZ } from "@/lib/formatters";
 import { numberToWords, timeConversion } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import Image from "next/image";
@@ -36,15 +36,38 @@ export default async function TransportationPrintPage({
   endDate[endDate.length - 1] = Number(endDate[endDate.length - 1]) + 1;
   endDate = endDate.join("-");
 
-  const { data: daMovementInfoData } = await getDaMovementInfoData(
-    {
-      p: "1",
-      q: searchParams.q,
-      start: searchParams.start,
-      end: endDate,
-    },
-    1
-  );
+  // get da movement info data
+  let movementData: any;
+  console.log(searchParams.start, formateDateDB(new Date()))
+
+  if (searchParams.start !== formateDateDB(new Date())) {
+    const { data: daMovementInfoData } = await getDaMovementInfoData(
+      {
+        p: "1",
+        q: searchParams.q,
+        start: searchParams.start,
+        end: endDate,
+      },
+      1
+    );
+
+    movementData = daMovementInfoData;
+  } else {
+    try {
+      const response = await fetch(
+        `http://128.199.199.164:8000/api/v1/da_movement/analytics/v1?da_code=${searchParams.q}`
+      );
+      const data = await response.json();
+
+      console.log(data)
+
+      if (!response.ok) throw data;
+
+      movementData = [data.data];
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const daData = data as any[];
 
@@ -272,11 +295,11 @@ export default async function TransportationPrintPage({
                 <h2 className="font-semibold">DA movement Information</h2>
                 <div className="mt-3 grid grid-cols-[0.4fr_1fr] border-y p-1 gap-1">
                   <h3 className="font-semibold">Movement Distance (km)</h3>
-                  <p>{(daMovementInfoData as any)[0]?.mv_distance_km}</p>
+                  <p>{formatNumber((movementData as any)?.[0]?.mv_distance_km.toFixed(2))}</p>
                   <h3 className="font-semibold">Movement Duration</h3>
                   <p>
                     {timeConversion(
-                      Number((daMovementInfoData as any)[0]?.mv_time_minutes) *
+                      Number((movementData as any)?.[0]?.mv_time_minutes) *
                         60 *
                         1000
                     )}
