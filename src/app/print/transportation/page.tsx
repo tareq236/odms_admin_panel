@@ -1,5 +1,7 @@
+import { getDaMovementInfoData } from "@/app/admin/analytics/da-movement-info/_actions/action";
 import { getConveyanceData } from "@/app/admin/map/transportation/_action/action";
 import CustomBadge from "@/components/badge/TransportationBadge";
+import NoData from "@/components/constants/NoData";
 import {
   DistanceCell,
   ReverseGeocodeCell,
@@ -29,6 +31,21 @@ export default async function TransportationPrintPage({
     searchParams: searchParams,
   });
 
+  // generate end date from start date
+  let endDate: any = searchParams.start.split("-");
+  endDate[endDate.length - 1] = Number(endDate[endDate.length - 1]) + 1;
+  endDate = endDate.join("-");
+
+  const { data: daMovementInfoData } = await getDaMovementInfoData(
+    {
+      p: "1",
+      q: searchParams.q,
+      start: searchParams.start,
+      end: endDate,
+    },
+    1
+  );
+
   const daData = data as any[];
 
   const calculateTotalDuration = () => {
@@ -52,6 +69,18 @@ export default async function TransportationPrintPage({
 
     (data as any[]).map((item) => {
       cost += Number(item.transport_cost ?? 0);
+    });
+
+    return cost;
+  };
+
+  const calculateTotalDistance = () => {
+    let cost = 0;
+
+    if (!data) return cost;
+
+    (data as any[]).map((item) => {
+      cost += Number(item?.distance ?? 0);
     });
 
     return cost;
@@ -95,22 +124,31 @@ export default async function TransportationPrintPage({
 
                 <div className="flex items-center gap-2">
                   <span className="font-bold">Date:</span>
-                  <p>{formatDate(new Date(searchParams.start ?? new Date()), 'LLL dd, yyyy')}</p>
+                  <p>
+                    {formatDate(
+                      new Date(searchParams.start ?? new Date()),
+                      "LLL dd, yyyy"
+                    )}
+                  </p>
                 </div>
               </div>
 
               {/* da info */}
               <article className="grid grid-cols-2 gap-1 mb-3 border-y py-3">
-                <Field fieldName="Name" fieldInput={daData[0].full_name} />
-                <Field fieldName="ID" fieldInput={daData[0].sap_id} />
-                <Field
-                  fieldName="Designation"
-                  fieldInput={daData[0].user_designation}
-                />
-                <Field
-                  fieldName="Name of Depot"
-                  fieldInput={daData[0].user_depot}
-                />
+                {daData.length > 0 && (
+                  <>
+                    <Field fieldName="Name" fieldInput={daData[0].full_name} />
+                    <Field fieldName="ID" fieldInput={daData[0].sap_id} />
+                    <Field
+                      fieldName="Designation"
+                      fieldInput={daData[0].user_designation}
+                    />
+                    <Field
+                      fieldName="Name of Depot"
+                      fieldInput={daData[0].user_depot}
+                    />
+                  </>
+                )}
               </article>
             </th>
           </tr>
@@ -171,13 +209,14 @@ export default async function TransportationPrintPage({
                               )}
                           </TableCell>
                           <TableCell>
-                            {item.start_journey_latitude &&
+                            {/* {item.start_journey_latitude &&
                               item.end_journey_latitude && (
                                 <DistanceCell
                                   origin={`${item.start_journey_latitude},${item.start_journey_longitude}`}
                                   destination={`${item.end_journey_latitude},${item.end_journey_longitude}`}
                                 />
-                              )}
+                              )} */}
+                            {formatNumber(item?.distance) + " m" || "-"}
                           </TableCell>
                           <TableCell>
                             {item.transport_mode &&
@@ -194,8 +233,10 @@ export default async function TransportationPrintPage({
                                 )
                               )}
                           </TableCell>
-                          <TableCell>
-                            {formatNumber(item.transport_cost)}
+                          <TableCell align="right">
+                            <span className="flex justify-end">
+                              {formatNumber(item.transport_cost)}/-
+                            </span>
                           </TableCell>
                         </TableRow>
                       ))
@@ -213,9 +254,13 @@ export default async function TransportationPrintPage({
                       <TableCell colSpan={1}>
                         {timeConversion(calculateTotalDuration())}
                       </TableCell>
-                      <TableCell colSpan={2}></TableCell>
+                      <TableCell colSpan={2}>
+                        {formatNumber(calculateTotalDistance())} m
+                      </TableCell>
                       <TableCell>
-                        {formatNumber(calculateTotalCost())}
+                        <span className="flex justify-end">
+                          {formatNumber(calculateTotalCost())}/-
+                        </span>
                       </TableCell>
                     </TableRow>
                   </TableFooter>
@@ -229,7 +274,29 @@ export default async function TransportationPrintPage({
         <tfoot>
           <tr>
             <td>
+              {/* da movement info section */}
+              <div className="mt-5">
+                <h2 className="font-semibold">DA movement Information</h2>
+                <div className="mt-3 grid grid-cols-[0.4fr_1fr] border-y p-1 gap-1">
+                  <h3 className="font-semibold">Movement Distance (km)</h3>
+                  <p>{(daMovementInfoData as any)[0]?.mv_distance_km}</p>
+                  <h3 className="font-semibold">Movement Duration</h3>
+                  <p>
+                    {timeConversion(
+                      Number((daMovementInfoData as any)[0]?.mv_time_minutes) *
+                        60 *
+                        1000
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {/* signature section */}
               <div className="flex justify-between gap-5 items-center mt-14 mb-10">
+                <div className="border-t border-black min-w-[220px] text-center pt-3">
+                  <span>Prepared By</span>
+                </div>
+
                 <div className="border-t border-black min-w-[220px] text-center pt-3">
                   <span>Supervisor&apos;s Signature</span>
                 </div>
@@ -239,7 +306,11 @@ export default async function TransportationPrintPage({
                 </div>
               </div>
 
-              <div className="fixed bottom-0 text-xs">This is digitally generated by ODMS Admin panel - Radiant Distributions Limited</div>
+              {/* comment section */}
+              <div className="fixed bottom-0 text-xs">
+                This is digitally generated by ODMS Admin panel - Radiant
+                Distributions Limited
+              </div>
             </td>
           </tr>
         </tfoot>

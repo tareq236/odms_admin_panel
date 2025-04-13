@@ -118,7 +118,7 @@ export default function ConveyanceTable({
                       item.end_journey_date_time - item.start_journey_date_time
                     )}
                 </TableCell>
-                <TableCell className="min-w-[10rem]"> 
+                <TableCell className="min-w-[10rem]">
                   {item.start_journey_latitude && (
                     <ReverseGeocodeCell
                       lat={item.start_journey_latitude}
@@ -135,25 +135,27 @@ export default function ConveyanceTable({
                   )}
                 </TableCell>
                 <TableCell>
-                  {item.start_journey_latitude && item.end_journey_latitude && (
+                  {/* {item.start_journey_latitude && item.end_journey_latitude && (
                     <DistanceCell
                       origin={`${item.start_journey_latitude},${item.start_journey_longitude}`}
                       destination={`${item.end_journey_latitude},${item.end_journey_longitude}`}
                     />
-                  )}
+                  )} */}
+                  {formatNumber(item?.distance) + " m" || "-"}
                 </TableCell>
                 <TableCell>{formatNumber(item.transport_cost)}</TableCell>
                 <TableCell>
                   <StatusTag name={item.journey_status} />
                 </TableCell>
                 <TableCell>
-                  {item.transport_mode && JSON.parse(item.transport_mode).map(
-                    (title: any, index: number) => (
-                      <div key={index}>
-                        <CustomBadge index={index} title={title} />
-                      </div>
-                    )
-                  )}
+                  {item.transport_mode &&
+                    JSON.parse(item.transport_mode).map(
+                      (title: any, index: number) => (
+                        <div key={index}>
+                          <CustomBadge index={index} title={title} />
+                        </div>
+                      )
+                    )}
                 </TableCell>
                 <TableCell className="print:hidden">
                   <Button
@@ -246,7 +248,13 @@ export const DistanceCell = ({
   return <span>{distance}</span>;
 };
 
-export const ReverseGeocodeCell = ({ lat, long }: { lat: number; long: number }) => {
+export const ReverseGeocodeCell = ({
+  lat,
+  long,
+}: {
+  lat: number;
+  long: number;
+}) => {
   const [location, setLocation] = useState("Loading...");
 
   useEffect(() => {

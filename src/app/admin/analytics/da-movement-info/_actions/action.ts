@@ -7,7 +7,7 @@ export const getDaMovementInfoData = async (
   searchParams: {
     p: string;
     q: string;
-    filter: string;
+    filter?: string;
     start: string;
     end: string;
   },
