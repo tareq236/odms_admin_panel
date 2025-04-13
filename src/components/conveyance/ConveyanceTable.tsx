@@ -135,12 +135,6 @@ export default function ConveyanceTable({
                   )}
                 </TableCell>
                 <TableCell>
-                  {/* {item.start_journey_latitude && item.end_journey_latitude && (
-                    <DistanceCell
-                      origin={`${item.start_journey_latitude},${item.start_journey_longitude}`}
-                      destination={`${item.end_journey_latitude},${item.end_journey_longitude}`}
-                    />
-                  )} */}
                   {formatNumber(item?.distance) + " m" || "-"}
                 </TableCell>
                 <TableCell>{formatNumber(item.transport_cost)}</TableCell>

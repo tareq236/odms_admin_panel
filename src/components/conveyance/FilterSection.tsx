@@ -14,7 +14,7 @@ export default async function FilterSection({
   searchParams: { p: string; q: string; start: string };
 }) {
   let limit = 20;
-  const { data, count } = await getConveyanceData({
+  const { data } = await getConveyanceData({
     searchParams: searchParams,
     limit: limit,
   });
@@ -25,11 +25,15 @@ export default async function FilterSection({
         <DatePicker />
         <Search placeholder="Search by DA code" />
       </div>
-      {count > 0 && (
+      {(data as any).length > 0 && (
         <div className="flex items-center gap-2 flex-wrap">
-          <Button variant={'outline'} className="text-primary" asChild>
-            <Link href={`/print/transportation?q=${searchParams.q}&start=${searchParams.start ?? formateDateDB(new Date())}`}>
-            <Printer className="size-4 mr-2" /> Export
+          <Button variant={"outline"} className="text-primary" asChild>
+            <Link
+              href={`/print/transportation?q=${searchParams.q}&start=${
+                searchParams.start ?? formateDateDB(new Date())
+              }`}
+            >
+              <Printer className="size-4 mr-2" /> Export
             </Link>
           </Button>
           <TrackSection data={data as any[]} />

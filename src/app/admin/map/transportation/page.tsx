@@ -48,7 +48,7 @@ export const DataTable = async ({
   searchParams: { p: string; q: string; start: string };
 }) => {
   let limit = 20;
-  const { data, count, connectionError } = await getConveyanceData({
+  const { data, connectionError } = await getConveyanceData({
     searchParams: searchParams,
     limit: limit,
   });
@@ -56,7 +56,6 @@ export const DataTable = async ({
   return (
     <div className="flex flex-col gap-2">
       <ConveyanceTable data={data as any[]} connectionError={connectionError} />
-      {/* <PagePagination limit={limit} count={count} /> */}
     </div>
   );
 };
