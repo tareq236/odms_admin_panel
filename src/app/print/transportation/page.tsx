@@ -38,7 +38,7 @@ export default async function TransportationPrintPage({
 
   // get da movement info data
   let movementData: any;
-  console.log(searchParams.start, formateDateDB(new Date()))
+  console.log(searchParams.start, formateDateDB(new Date()));
 
   if (searchParams.start !== formateDateDB(new Date())) {
     const { data: daMovementInfoData } = await getDaMovementInfoData(
@@ -59,7 +59,7 @@ export default async function TransportationPrintPage({
       );
       const data = await response.json();
 
-      console.log(data)
+      console.log(data);
 
       if (!response.ok) throw data;
 
@@ -257,11 +257,9 @@ export default async function TransportationPrintPage({
                         </TableRow>
                       ))
                     : null}
-                </TableBody>
 
-                {(data as any[]).length > 0 && (
-                  <TableFooter className="[&>td]:font-bold [&_td]:p-2">
-                    <TableRow>
+                  {(data as any[]).length > 0 && (
+                    <TableRow className="bg-muted [&_td]:py-2">
                       <TableCell colSpan={4}>
                         In Words: {numberToWords(calculateTotalCost())} taka
                         only
@@ -279,8 +277,8 @@ export default async function TransportationPrintPage({
                         </span>
                       </TableCell>
                     </TableRow>
-                  </TableFooter>
-                )}
+                  )}
+                </TableBody>
               </Table>
             </td>
           </tr>
@@ -295,7 +293,11 @@ export default async function TransportationPrintPage({
                 <h2 className="font-semibold">DA movement Information</h2>
                 <div className="mt-3 grid grid-cols-[0.4fr_1fr] border-y p-1 gap-1">
                   <h3 className="font-semibold">Movement Distance (km)</h3>
-                  <p>{formatNumber((movementData as any)?.[0]?.mv_distance_km.toFixed(2))}</p>
+                  <p>
+                    {formatNumber(
+                      (movementData as any)?.[0]?.mv_distance_km.toFixed(2)
+                    )}
+                  </p>
                   <h3 className="font-semibold">Movement Duration</h3>
                   <p>
                     {timeConversion(
