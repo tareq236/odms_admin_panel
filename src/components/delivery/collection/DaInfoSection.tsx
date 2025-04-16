@@ -3,7 +3,6 @@ import React from "react";
 import db from "../../../../db/db";
 import { MessageSquareOff } from "lucide-react";
 import { getUser } from "@/lib/dal";
-import { formateDateDB } from "@/lib/formatters";
 import { redirect } from "next/navigation";
 
 export default async function DaInfoSection({
