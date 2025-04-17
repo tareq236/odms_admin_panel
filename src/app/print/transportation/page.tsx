@@ -157,7 +157,7 @@ export default async function TransportationPrintPage({
               </div>
 
               {/* da info */}
-              <article className="grid grid-cols-2 gap-1 mb-3 border-y py-3">
+              <article className="grid grid-cols-4 gap-1 mb-3 border-y py-3">
                 {daData.length > 0 && (
                   <>
                     <Field fieldName="Name" fieldInput={daData[0].full_name} />
@@ -198,13 +198,13 @@ export default async function TransportationPrintPage({
                   {(data as any[]).length > 0
                     ? (data as any[]).map((item, index) => (
                         <TableRow key={item.id}>
-                          <TableCell>
+                          <TableCell className="text-nowrap">
                             {formatTimeTZ(
                               item.start_journey_date_time,
                               "h:mm aaa"
                             )}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="text-nowrap">
                             {formatTimeTZ(
                               item.end_journey_date_time as Date,
                               "h:mm aaa"
@@ -236,13 +236,13 @@ export default async function TransportationPrintPage({
                               )}
                           </TableCell>
                           <TableCell className="max-w-16">
-                            {distanceConversion(item?.distance)}
+                            {item?.distance} km
                           </TableCell>
                           <TableCell>
                             {item.transport_mode &&
                               JSON.parse(item.transport_mode).map(
                                 (title: any, index: number) => (
-                                  <div key={index}>
+                                  <div className="my-1" key={index}>
                                     {
                                       <CustomBadge
                                         index={index}
@@ -272,9 +272,7 @@ export default async function TransportationPrintPage({
                       <TableCell>
                         {timeConversion(calculateTotalDuration())}
                       </TableCell>
-                      <TableCell>
-                        {distanceConversion(calculateTotalDistance())}
-                      </TableCell>
+                      <TableCell>{calculateTotalDistance()} km</TableCell>
                       <TableCell colSpan={2}>
                         <span className="flex justify-end">
                           {formatNumber(calculateTotalCost())}/-
@@ -284,14 +282,7 @@ export default async function TransportationPrintPage({
                   )}
                 </TableBody>
               </Table>
-            </td>
-          </tr>
-        </tbody>
 
-        {/* page footer */}
-        <tfoot>
-          <tr>
-            <td>
               {/* da movement info section */}
               <div className="mt-5">
                 <h2 className="font-semibold">DA movement Information</h2>
@@ -313,7 +304,14 @@ export default async function TransportationPrintPage({
                   </p>
                 </div>
               </div>
+            </td>
+          </tr>
+        </tbody>
 
+        {/* page footer */}
+        <tfoot>
+          <tr>
+            <td>
               {/* signature section */}
               <div className="flex justify-between gap-5 items-center mt-14 mb-10">
                 <div className="border-t border-black min-w-[220px] text-center pt-3">
@@ -350,9 +348,9 @@ const Field = ({
   fieldInput: string;
 }) => {
   return (
-    <div className="flex">
-      <h4 className="min-w-[120px] font-bold">{fieldName}</h4>
-      <h5>{fieldInput}</h5>
+    <div className="flex flex-col">
+      <h4 className="min-w-[120px] text-xs">{fieldName}</h4>
+      <h5 className="text-sm font-bold">{fieldInput}</h5>
     </div>
   );
 };
