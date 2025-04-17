@@ -92,9 +92,5 @@ export function numberToWords(number: number) {
 export const distanceConversion = (distanceMeter?: number) => {
   if (!distanceMeter) return `-`;
 
-  if (distanceMeter > 100) {
-    return (distanceMeter / 1000).toFixed(2) + " km";
-  }
-
-  return distanceMeter + " m";
+  return (distanceMeter / 1000).toFixed(2) + " km";
 };

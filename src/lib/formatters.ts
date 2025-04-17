@@ -35,10 +35,13 @@ export const formatDateTimeTZ = (date: Date) => {
   return formatTimeZone(utcDate, "MMM d, yyyy - h:mm:ss aaa ");
 };
 
-export const formatTimeTZ = (date: Date) => {
+export const formatTimeTZ = (
+  date: Date,
+  dateString?: string
+) => {
   if (date == null) return `-`;
   const utcDate = toZonedTime(date, "UTC");
-  return formatTimeZone(utcDate, "h:mm:ss aaa ");
+  return formatTimeZone(utcDate, dateString ?? "h:mm:ss aaa");
 };
 
 export const formateDateDB = (date: Date) => {

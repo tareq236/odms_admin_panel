@@ -181,16 +181,15 @@ export default async function TransportationPrintPage({
         <tbody>
           <tr>
             <td>
-              <Table className="[&_th]:font-bold [&_th]:text-secondary-foreground [&_td]:px-1.5  [&_td]:border [&_td]:border-black [&_th]:border [&_th]:border-black">
+              <Table className="[&_th]:font-bold [&_th]:text-secondary-foreground [&_th]:px-1.5 [&_th]:py-1 [&_th]:h-fit [&_td]:px-1.5 [&_td]:py-0.25 [&_td]:h-fit  [&_td]:border [&_td]:border-black [&_th]:border [&_th]:border-black">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-nowrap">#</TableHead>
                     <TableHead>Start</TableHead>
                     <TableHead>End</TableHead>
                     <TableHead>From</TableHead>
                     <TableHead>To</TableHead>
                     <TableHead>Duration</TableHead>
-                    <TableHead>Distance</TableHead>
+                    <TableHead className="max-w-16">Distance</TableHead>
                     <TableHead>Mode</TableHead>
                     <TableHead>Cost</TableHead>
                   </TableRow>
@@ -199,12 +198,17 @@ export default async function TransportationPrintPage({
                   {(data as any[]).length > 0
                     ? (data as any[]).map((item, index) => (
                         <TableRow key={item.id}>
-                          <TableCell>#{index + 1}</TableCell>
                           <TableCell>
-                            {formatTimeTZ(item.start_journey_date_time)}
+                            {formatTimeTZ(
+                              item.start_journey_date_time,
+                              "h:mm aaa"
+                            )}
                           </TableCell>
                           <TableCell>
-                            {formatTimeTZ(item.end_journey_date_time as Date)}
+                            {formatTimeTZ(
+                              item.end_journey_date_time as Date,
+                              "h:mm aaa"
+                            )}
                           </TableCell>
 
                           <TableCell className="min-w-[5rem]">
@@ -231,7 +235,7 @@ export default async function TransportationPrintPage({
                                   item.start_journey_date_time
                               )}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="max-w-16">
                             {distanceConversion(item?.distance)}
                           </TableCell>
                           <TableCell>
@@ -260,18 +264,18 @@ export default async function TransportationPrintPage({
 
                   {(data as any[]).length > 0 && (
                     <TableRow className="bg-muted [&_td]:py-2">
-                      <TableCell colSpan={4}>
+                      <TableCell colSpan={3}>
                         In Words: {numberToWords(calculateTotalCost())} taka
                         only
                       </TableCell>
                       <TableCell>Total</TableCell>
-                      <TableCell colSpan={1}>
+                      <TableCell>
                         {timeConversion(calculateTotalDuration())}
                       </TableCell>
-                      <TableCell colSpan={2}>
+                      <TableCell>
                         {distanceConversion(calculateTotalDistance())}
                       </TableCell>
-                      <TableCell>
+                      <TableCell colSpan={2}>
                         <span className="flex justify-end">
                           {formatNumber(calculateTotalCost())}/-
                         </span>

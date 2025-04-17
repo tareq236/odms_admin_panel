@@ -7,8 +7,8 @@ export default async function PrintLayout({
   children: React.ReactNode;
 }) {
   return (
-    <body className="page">
+    <div className="page">
       <main className="container">{children}</main>
-    </body>
+    </div>
   );
 }

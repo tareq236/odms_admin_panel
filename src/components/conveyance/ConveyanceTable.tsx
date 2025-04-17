@@ -270,5 +270,18 @@ export const ReverseGeocodeCell = ({
     fetchLocation();
   }, [lat, long]);
 
-  return <span>{location}</span>;
+  return (
+    <>
+      <span>
+        {location.split(",").length < 3
+          ? location
+          : location
+              .replace(", বাংলাদেশ", "")
+              .replace("Bangladesh", "")
+              .split(",")
+              .filter((item) => !item.includes("+"))
+              .join(",")}
+      </span>
+    </>
+  );
 };
