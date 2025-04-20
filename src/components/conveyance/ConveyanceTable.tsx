@@ -56,6 +56,18 @@ export default function ConveyanceTable({
     return cost;
   };
 
+  const calculateTotalDistance = () => {
+    let cost = 0;
+
+    if (!data) return cost;
+
+    (data as any[]).map((item) => {
+      cost += Number(item?.distance ?? 0);
+    });
+
+    return cost;
+  };
+
   return (
     <>
       <Table className=" relative [&_th]:text-nowrap print:[&_th]:text-wrap print:[&_th]:w-[10%] print:[&_tr]:w-[10%] print:my-2">
@@ -135,7 +147,7 @@ export default function ConveyanceTable({
                   )}
                 </TableCell>
                 <TableCell>
-                  {formatNumber(item?.distance) + " m" || "-"}
+                  {formatNumber(item?.distance) + " km" || "-"}
                 </TableCell>
                 <TableCell>{formatNumber(item.transport_cost)}</TableCell>
                 <TableCell>
@@ -181,9 +193,10 @@ export default function ConveyanceTable({
           <TableFooter>
             <TableRow>
               <TableCell colSpan={3}>Total</TableCell>
-              <TableCell colSpan={4}>
+              <TableCell colSpan={3}>
                 {timeConversion(calculateTotalDuration())}
               </TableCell>
+              <TableCell>{calculateTotalDistance().toFixed(2)} km</TableCell>
               <TableCell colSpan={4}>
                 {formatNumber(calculateTotalCost())}
               </TableCell>

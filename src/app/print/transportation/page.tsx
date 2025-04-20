@@ -236,7 +236,7 @@ export default async function TransportationPrintPage({
                               )}
                           </TableCell>
                           <TableCell className="max-w-16">
-                            {item?.distance} km
+                            {item?.transport_mode && item?.distance + " km"}
                           </TableCell>
                           <TableCell>
                             {item.transport_mode &&
@@ -272,7 +272,7 @@ export default async function TransportationPrintPage({
                       <TableCell>
                         {timeConversion(calculateTotalDuration())}
                       </TableCell>
-                      <TableCell>{calculateTotalDistance()} km</TableCell>
+                      <TableCell>{calculateTotalDistance().toFixed(2)} km</TableCell>
                       <TableCell colSpan={2}>
                         <span className="flex justify-end">
                           {formatNumber(calculateTotalCost())}/-
