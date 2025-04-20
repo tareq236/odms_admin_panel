@@ -142,7 +142,7 @@ export default async function TransportationPrintPage({
               {/* bill type */}
               <div className="my-5 text-center flex justify-between items-center gap-5">
                 <h3 className="w-fit border px-4 py-2 rounded-sm font-bold">
-                  Transportation bill
+                  Transportation
                 </h3>
 
                 <div className="flex items-center gap-2">
