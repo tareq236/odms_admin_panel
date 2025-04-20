@@ -243,12 +243,7 @@ export default async function TransportationPrintPage({
                               JSON.parse(item.transport_mode).map(
                                 (title: any, index: number) => (
                                   <div className="my-1" key={index}>
-                                    {
-                                      <CustomBadge
-                                        index={index}
-                                        title={title}
-                                      />
-                                    }
+                                    {<div key={index} className="text-xs">{title}</div>}
                                   </div>
                                 )
                               )}
@@ -272,7 +267,9 @@ export default async function TransportationPrintPage({
                       <TableCell>
                         {timeConversion(calculateTotalDuration())}
                       </TableCell>
-                      <TableCell>{calculateTotalDistance().toFixed(2)} km</TableCell>
+                      <TableCell>
+                        {calculateTotalDistance().toFixed(2)} km
+                      </TableCell>
                       <TableCell colSpan={2}>
                         <span className="flex justify-end">
                           {formatNumber(calculateTotalCost())}/-

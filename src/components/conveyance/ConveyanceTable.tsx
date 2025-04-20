@@ -286,14 +286,15 @@ export const ReverseGeocodeCell = ({
   return (
     <>
       <span>
-        {location.split(",").length < 3
+        {/* {location.split(",").length < 3
           ? location
           : location
               .replace(", বাংলাদেশ", "")
               .replace("Bangladesh", "")
               .split(",")
               .filter((item) => !item.includes("+"))
-              .join(",")}
+              .join(",")} */}
+        {location}
       </span>
     </>
   );
