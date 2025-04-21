@@ -25,12 +25,9 @@ function DeliveryTable({
   connectionError: boolean;
 }) {
   const searchParams = useSearchParams();
-  const [view, setView] = useState<any>(false)
-
+  const [view, setView] = useState<any>(false);
 
   return (
-
-
     <>
       <Table className="[tr:text-nowrap]">
         <TableHeader>
@@ -64,7 +61,7 @@ function DeliveryTable({
           ) : connectionError ? (
             <TableRow className="table-row-nowrap">
               <TableCell
-                colSpan={8}
+                colSpan={100}
                 align="center"
                 className="py-20 text-gray-400 pointer-events-none"
               >
@@ -75,7 +72,15 @@ function DeliveryTable({
           ) : data.length > 0 ? (
             data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="min-w-fit">{item.da_code}</TableCell>
+                <TableCell className="min-w-fit">
+                  <Button
+                    variant={"link"}
+                    className="rounded-full"
+                    onClick={() => setView(item)}
+                  >
+                    {item.da_code}
+                  </Button>
+                </TableCell>
                 <TableCell className="min-w-fit">{item.da_name}</TableCell>
                 <TableCell>{item.billing_doc_no}</TableCell>
                 <TableCell>{formatDate(item.billing_date)}</TableCell>
@@ -84,9 +89,13 @@ function DeliveryTable({
                 <TableCell>{item.partner_name}</TableCell>
                 <TableCell>{item.gate_pass_no}</TableCell>
                 <TableCell>
-                    <Button variant={'link'} className="rounded-full" onClick={() => setView(item)}>
-                      Details
-                    </Button>
+                  <Button
+                    variant={"link"}
+                    className="rounded-full"
+                    onClick={() => setView(item)}
+                  >
+                    Details
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
@@ -107,7 +116,6 @@ function DeliveryTable({
         </TableBody>
       </Table>
 
-
       {/* delivery details modal */}
       <Dialog open={view} onOpenChange={setView}>
         <DialogContent className="md:w-[90vw] md:max-w-xl">
@@ -119,10 +127,9 @@ function DeliveryTable({
           </DialogHeader>
 
           {/* form */}
-          <DeliveryDetailsView details={view}/>
+          <DeliveryDetailsView details={view} />
         </DialogContent>
       </Dialog>
-
     </>
   );
 }

@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 
 const TableSkeleton = () => {
   return (
-    <>
+    <div className='my-5'>
       <Table>
         <TableHeader>
           <TableRow>
@@ -46,7 +46,7 @@ const TableSkeleton = () => {
           ))}
         </TableBody>
       </Table>
-    </>
+    </div>
   );
 };
 

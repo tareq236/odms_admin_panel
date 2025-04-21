@@ -3,15 +3,21 @@ import PagePagination from "@/components/ui/PagePagination";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import AttendanceTable from "@/components/user/attendence/AttendanceTable";
 import FilterSection from "@/components/user/attendence/FilterSection";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/prisma/generated/client1";
 import { ListTodo } from "lucide-react";
 import React, { Suspense } from "react";
 import { getAttendance } from "@/app/actions/attendance";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "User Attendance - ODMS Admin Panel",
+};
+
 export default async function UserAttendancePage({
   searchParams,
 }: {
-  searchParams: { q: string; p: string; start: string; end: string };
+  searchParams: { q: string; p: string; start: string; status: string };
 }) {
   return (
     <>
@@ -29,29 +35,24 @@ export default async function UserAttendancePage({
   );
 }
 
-export type AttendanceTableProps = Prisma.rdl_attendanceGetPayload<{
-  include: { rdl_user_list: true };
-}>;
-
 const DataTable = async ({
   searchParams,
 }: {
-  searchParams: { q: string; p: string; start: string; end: string };
+  searchParams: { q: string; p: string; start: string; status: string };
 }) => {
-  let count = 0;
+  let count: unknown | number = 0;
   let data: any[] = [];
   const limit = 20;
   let connectionError = false;
 
   try {
-    const { data: attendanceData, count: attendanceCount } =
-      await getAttendance({ searchParams, limit });
+    let attendanceData = await getAttendance({ searchParams, limit });
     data = attendanceData;
-    count = attendanceCount;
+    count = attendanceData ? Number(attendanceData[0].count) : 0;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if ((error.code = "P1001")) {
-        data = [] as AttendanceTableProps[];
+        data = [] as any[];
         connectionError = true;
       }
     }
@@ -59,11 +60,8 @@ const DataTable = async ({
 
   return (
     <section className="data-table-section">
-      <AttendanceTable
-        data={data as AttendanceTableProps[]}
-        connectionError={connectionError}
-      />
-      <PagePagination limit={limit} count={count} />
+      <AttendanceTable data={data as any[]} connectionError={connectionError} />
+      <PagePagination limit={limit} count={count as number} />
     </section>
   );
 };

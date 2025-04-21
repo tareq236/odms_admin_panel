@@ -6,7 +6,12 @@
 @font-face {
   font-family: 'Inter';
   src: url('/fonts/inter.ttf');
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+
+@font-face {
+  font-family: 'SpaceGrotesk';
+  src: url('/fonts/SpaceGrotesk-Bold.ttf');
 }
 
 
@@ -100,6 +105,11 @@
 }
 
 
-* {
+.font-sans {
   font-family: 'Inter';
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+.font-title {
+  font-family: 'SpaceGrotesk';
 }

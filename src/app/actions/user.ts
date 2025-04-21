@@ -3,8 +3,8 @@
 import { z } from "zod";
 import db from "../../../db/db";
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
-import { notFound, redirect } from "next/navigation";
+import { Prisma } from "@/prisma/generated/client1";
+import { redirect } from "next/navigation";
 import { verifySession } from "@/lib/dal";
 import { deleteSession } from "@/lib/session";
 
@@ -15,6 +15,10 @@ const addSchema = z.object({
   password: z.string().min(6),
   status: z.string().min(1),
   user_type: z.string().optional(),
+  user_designation: z.string().optional(),
+  user_job_location: z.string().optional(),
+  user_depot: z.string().optional(),
+  depot_code: z.string().optional(),
 });
 
 export const createUser = async (prevState: unknown, formData: FormData) => {
@@ -30,7 +34,7 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
 
   const data = result.data;
 
-  const user = await db.rdl_user_list.findUnique({
+  const user = await db.rdl_users_list.findUnique({
     where: { sap_id: Number(data.sap_id) },
   });
 
@@ -49,7 +53,7 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
   }
 
   try {
-    await db.rdl_user_list.create({
+    await db.rdl_users_list.create({
       data: {
         sap_id: Number(data.sap_id),
         full_name: data.full_name,
@@ -57,6 +61,10 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
         status: Number(data.status),
         password: data.password,
         user_type: data.user_type,
+        user_depot: data.user_depot,
+        user_designation: data.user_designation,
+        user_job_location: data.user_job_location,
+        depot_code: data.depot_code,
         updated_at: new Date(),
       },
     });
@@ -77,7 +85,7 @@ export const createUser = async (prevState: unknown, formData: FormData) => {
 export const updateUser = async (
   id: number,
   prevState: unknown,
-  formData: FormData,
+  formData: FormData
 ) => {
   const auth = await verifySession();
   if (!auth.isAuth) {
@@ -97,7 +105,7 @@ export const updateUser = async (
 
   const data = result.data;
 
-  const user = await db.rdl_user_list.findUnique({
+  const user = await db.rdl_users_list.findUnique({
     where: { sap_id: Number(data.sap_id) },
   });
 
@@ -110,7 +118,7 @@ export const updateUser = async (
   }
 
   try {
-    await db.rdl_user_list.update({
+    await db.rdl_users_list.update({
       where: { sap_id: id },
       data: {
         sap_id: Number(data.sap_id),
@@ -119,6 +127,10 @@ export const updateUser = async (
         status: Number(data.status),
         password: data.password,
         user_type: data.user_type,
+        user_depot: data.user_depot,
+        user_designation: data.user_designation,
+        user_job_location: data.user_job_location,
+        depot_code: data.depot_code,
         updated_at: new Date(),
       },
     });
@@ -151,11 +163,11 @@ export const deleteUser = async (id: number) => {
     redirect("/login");
   }
 
-  const user = await db.rdl_user_list.findUnique({ where: { sap_id: id } });
+  const user = await db.rdl_users_list.findUnique({ where: { sap_id: id } });
 
-  if (user == null) return notFound();
+  if (user == null) throw new Error("User is not found");
 
-  await db.rdl_user_list.delete({ where: { sap_id: id } });
+  await db.rdl_users_list.delete({ where: { sap_id: id } });
 
   revalidatePath("/admin");
   revalidatePath("/admin/user/management");

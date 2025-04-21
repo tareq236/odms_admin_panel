@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client2"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL2")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spatial_ref_sys {
+  srid      Int     @id
+  auth_name String? @db.VarChar(256)
+  auth_srid Int?
+  srtext    String? @db.VarChar(2048)
+  proj4text String? @db.VarChar(2048)
+}
+
+model user_movement {
+  id           BigInt                    @id(map: "user_movement_d_pkey") @default(autoincrement())
+  user_id      String?                   @db.VarChar
+  user_name    String?                   @db.VarChar
+  user_mobile  String?                   @db.VarChar
+  mv_date      DateTime?                 @db.Date
+  mv_time      DateTime?                 @db.Time(6)
+  geo_location Unsupported("geography")?
+  longitude    Decimal?                  @db.Decimal(14, 11)
+  latitude     Decimal?                  @db.Decimal(14, 11)
+  accuracy     Float?
+  altitude     Float?
+  speed        Float?
+  created_at   DateTime?                 @default(now()) @db.Timestamp(6)
+}
+
+model user_movement_dev {
+  id           BigInt                    @id(map: "user_movment_pkey") @default(autoincrement())
+  user_id      String?                   @db.VarChar
+  user_name    String?                   @db.VarChar
+  user_mobile  String?                   @db.VarChar
+  mv_date      DateTime?                 @db.Date
+  mv_time      DateTime?                 @db.Time(6)
+  geo_location Unsupported("geography")?
+  longitude    Decimal?                  @db.Decimal(14, 11)
+  latitude     Decimal?                  @db.Decimal(14, 11)
+  accuracy     Float?
+  altitude     Float?
+  speed        Float?
+  created_at   DateTime?                 @default(now()) @db.Timestamp(6)
+}

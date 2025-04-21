@@ -1,4 +1,5 @@
-import 'server-only';
+import 'server-only'
+
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 
@@ -24,9 +25,9 @@ export async function decrypt(session: string | undefined = '') {
   }
 }
 
-export async function createSession(userId: string) {
+export async function createSession(user: any) {
   const expiresAt = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
-  const session = await encrypt({ userId, expiresAt });
+  const session = await encrypt({ ...user, expiresAt });
 
   cookies().set('session', session, {
     httpOnly: true,
@@ -37,6 +38,6 @@ export async function createSession(userId: string) {
   });
 }
 
-export function deleteSession() {
-  cookies().delete('session');
+export async function deleteSession() {
+  await cookies().delete('session')
 }

@@ -4,9 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { decrypt } from "./session";
 import db from "../../db/db";
-import { cache } from "react";
 
-export const verifySession = cache(async () => {
+export const verifySession = async () => {
   const cookie = cookies().get("session")?.value;
   const session = await decrypt(cookie);
 
@@ -19,24 +18,29 @@ export const verifySession = cache(async () => {
   });
 
   if (user == null) {
-    return { isAuth: false, userId: null }
+    return { isAuth: false, userId: null };
   }
 
   return { isAuth: true, userId: session.userId };
-});
+};
 
-export const getUser = cache(async () => {
-  const session = await verifySession();
-  if (!session) return null;
-
+export const getUser = async () => {
   try {
+    const session = await verifySession();
+    if (!session) return null;
     const data = await db.rdl_admin_user_list.findUnique({
       where: { id: Number(session.userId) },
       select: {
         id: true,
         full_name: true,
+        depot_code: true,
+        role: true,
       },
     });
+
+    if (data == null) {
+      throw new Error();
+    }
 
     const user = data;
 
@@ -45,4 +49,4 @@ export const getUser = cache(async () => {
     console.log("Failed to fetch user");
     return null;
   }
-});
+};

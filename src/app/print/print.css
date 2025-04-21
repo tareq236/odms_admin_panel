@@ -1,0 +1,86 @@
+.page {
+    @page {
+        size: A4;
+        margin: 0.5in;
+    }
+
+    body {
+        counter-reset: page;
+    }
+
+    .page-number::after {
+        counter-increment: page;
+        content: "Page " counter(page);
+        position: fixed;
+        bottom: 0;
+        right: 10px;
+        text-align: center;
+        font-size: 12px;
+        color: #555;
+    }
+
+
+    .container {
+        width: 210mm;
+        min-height: fit-content;
+        padding: 0.0125in;
+        font-family: "Inter", sans-serif;
+        font-size: 12px;
+        background: white;
+        position: relative;
+    }
+
+    .h1 {
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .h2 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .font-para {
+        font-size: 12px;
+        font-weight: normal;
+    }
+
+    .display-hidden {
+        display: none;
+    }
+
+    table tr :where(td, th) {
+        font-size: 12px;
+        font-weight: 500;
+        text-align: left;
+    }
+
+    .table tr {
+        border-bottom: 1px solid gray;
+        border-top: 1px solid gray;
+    }
+
+    .table tr td:nth-child(3) {
+        padding-left: 3rem;
+    }
+
+    .table :where(td, th) {
+        padding: 0.5rem;
+    }
+
+    .table th {
+        font-weight: 700;
+    }
+
+
+
+    @media print {
+        .container {
+            border: none;
+            padding: 0;
+        }
+
+
+    }
+}

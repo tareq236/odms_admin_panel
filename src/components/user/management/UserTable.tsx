@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import Tooltips from "@/components/ui/Tooltips";
 import { formatDate } from "@/lib/formatters";
-import { rdl_user_list } from "@prisma/client";
+import { rdl_users_list } from "@/prisma/generated/client1";
 import { Edit, MessageSquareOff, ServerOff, Trash, UserPen } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import UserForm from "./UserForm";
@@ -39,7 +39,7 @@ function UserTable({
   data,
   connectionError,
 }: {
-  data: rdl_user_list[];
+  data: rdl_users_list[];
   connectionError: boolean;
 }) {
   const [editUser, setEditUser] = useState<any>(false);
@@ -56,6 +56,7 @@ function UserTable({
             <TableHead>Name</TableHead>
             <TableHead>Mobile</TableHead>
             <TableHead>User Type</TableHead>
+            <TableHead>Depot</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -80,7 +81,8 @@ function UserTable({
                 <TableCell>{item.sap_id}</TableCell>
                 <TableCell>{item.full_name}</TableCell>
                 <TableCell>{item.mobile_number}</TableCell>
-                <TableCell>{item.user_type}</TableCell>
+                <TableCell>{item.user_type || `-`}</TableCell>
+                <TableCell>{item.user_depot || `-`}</TableCell>
                 <TableCell className="min-w-[120px]"><UserStatusTag status={item.status.toString()} /></TableCell>
                 <TableCell>{formatDate(item.created_at)}</TableCell>
                 <TableCell className="flex justify-end gap-2">
@@ -155,8 +157,14 @@ function UserTable({
               disabled={isPending}
               onClick={() => {
                 startTransition(async () => {
-                  await deleteUser(delUser);
-                  toast.success("User is deleted");
+                  try {
+                    await deleteUser(delUser);
+                    toast.success("User is deleted");
+                  } catch (error) {
+                    console.log(error)
+                    toast.warning("Something went wrong!");
+                  }
+                 
                 });
               }}
             >

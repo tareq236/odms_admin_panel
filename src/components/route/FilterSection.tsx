@@ -11,8 +11,13 @@ import Search from "@/components/ui/Search";
 import { Plus, Route } from "lucide-react";
 import React, { useState } from "react";
 import RouteForm from "./RouteForm";
+import { AuthUserProps } from "@/app/admin/route/page";
 
-export default function FilterSection() {
+export default function FilterSection({
+  user,
+}: {
+  user: AuthUserProps
+}) {
   const [add, setAdd] = useState(false);
 
   return (
@@ -20,14 +25,16 @@ export default function FilterSection() {
       <section className="filter-section">
         <Search placeholder="Search by route" />
 
-        <Button
-          onClick={() => {
-            setAdd(true);
-          }}
-        >
-          <Plus className="size-4 mr-2" />
-          <span>Add</span>
-        </Button>
+        {user.role === "admin" && (
+          <Button
+            onClick={() => {
+              setAdd(true);
+            }}
+          >
+            <Plus className="size-4 mr-2" />
+            <span>Add</span>
+          </Button>
+        )}
       </section>
 
       {/* add user dialog */}
