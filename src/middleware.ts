@@ -3,7 +3,7 @@ import { decrypt } from "@/lib/session";
 import { cookies } from "next/headers";
 
 const protectedRoutes = [
-  // "/admin/user/management",
+  "/admin/user/management",
   "/admin/analytics/partner-delivery",
 ];
 
@@ -23,7 +23,7 @@ export default async function middleware(req: NextRequest) {
   const userRole = session.role;
 
   if (isProtectedRoute && userRole == "depot") {
-    return NextResponse.redirect(new URL("/admin", req.nextUrl));
+    return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
   return NextResponse.next();
