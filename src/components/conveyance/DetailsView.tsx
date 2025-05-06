@@ -3,7 +3,6 @@ import StatusTag from "./StatusTag";
 import { MapPin } from "lucide-react";
 import { formatDateTimeTZ, formatNumber } from "@/lib/formatters";
 import RouteMap from "../google-map/RouteMap";
-import { Badge } from "../ui/badge";
 import DetailsField from "./DetailsField";
 import CustomBadge from "../badge/TransportationBadge";
 

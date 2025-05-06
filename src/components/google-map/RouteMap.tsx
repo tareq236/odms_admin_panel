@@ -23,8 +23,34 @@ export default function RouteMap({
 }) {
   const position = { lat: startLat, lng: startLng };
 
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/map/transportation?q=50009&start=2025-03-06") // Replace with your API endpoint
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+
+      console.log(data)
+
+  }, [startLat, loading]);
+
   return (
     <div className="w-[100%] aspect-square md:aspect-video">
+      {JSON.stringify(data)}
       <APIProvider
         apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string}
         language="en"
@@ -36,7 +62,6 @@ export default function RouteMap({
           fullscreenControl={false}
           disableDefaultUI={true}
         >
-          
           {endLat && endLng ? (
             <Directions
               startLat={startLat}
