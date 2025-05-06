@@ -1,146 +1,109 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
-  APIProvider,
-  Map,
+  GoogleMap,
   Marker,
-  useMap,
-  useMapsLibrary,
-} from "@vis.gl/react-google-maps";
-import { MapPinCheckInside, MapPinPlusInside, Ruler } from "lucide-react";
+  Polyline,
+  useJsApiLoader,
+} from "@react-google-maps/api";
+import Spinner from "../ui/Spinner";
 
 export default function RouteMap({
   startLat,
   startLng,
-  endLat,
-  endLng,
+  data,
+  loading,
 }: {
   startLat: number;
   startLng: number;
-  endLat?: number;
-  endLng?: number;
+  data?: any[];
+  loading: boolean;
 }) {
-  const position = { lat: startLat, lng: startLng };
+  const [center, setCenter] = useState({
+    lat: Number(startLat),
+    lng: Number(startLng),
+  });
 
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
 
-  useEffect(() => {
-    fetch("/api/map/transportation?q=50009&start=2025-03-06") // Replace with your API endpoint
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
+  const onLoad = (map: google.maps.Map): void => {
+    mapRef.current = map; // Store the map instance
+  };
 
-      console.log(data)
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string,
+  });
 
-  }, [startLat, loading]);
+  if (!isLoaded || loading)
+    return (
+      <div className="flex justify-center items-center min-h-40">
+        <Spinner className="size-20" borderBottomColor="border-b-primary" />
+      </div>
+    );
 
   return (
-    <div className="w-[100%] aspect-square md:aspect-video">
-      {JSON.stringify(data)}
-      <APIProvider
-        apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string}
-        language="en"
-        region="bd"
+    <div className="w-full aspect-square md:aspect-video min-h-full">
+      <GoogleMap
+        mapContainerStyle={{
+          width: "100%",
+          height: "100%",
+        }}
+        zoom={17}
+        center={center}
+        onLoad={onLoad}
       >
-        <Map
-          defaultCenter={position}
-          defaultZoom={15}
-          fullscreenControl={false}
-          disableDefaultUI={true}
-        >
-          {endLat && endLng ? (
-            <Directions
-              startLat={startLat}
-              startLng={startLng}
-              endLat={endLat}
-              endLng={endLng}
+        {/* Add other map elements here */}
+        {data &&
+          (data as any[]).length > 0 &&
+          (data as any).map((item: any, index: number) => (
+            <Marker
+              key={index}
+              position={{
+                lat: Number(item.latitude),
+                lng: Number(item.longitude),
+              }}
+              label={{
+                text: `${index + 1}`,
+                color:
+                  index == 0
+                    ? "white"
+                    : index + 1 == (data as any[]).length
+                    ? "white"
+                    : "black",
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+              icon={{
+                url: `https://maps.google.com/mapfiles/ms/icons/${
+                  index == 0
+                    ? "red"
+                    : index + 1 == (data as any[]).length
+                    ? "blue"
+                    : "yellow"
+                }-dot.png`,
+                scaledSize: new window.google.maps.Size(40, 40),
+              }}
             />
-          ) : (
-            <Marker position={{ lat: startLat, lng: startLng }} />
-          )}
-        </Map>
-      </APIProvider>
+          ))}
+
+        {data && (data as any[]).length > 0 && (
+          <Polyline
+            path={(data as any[]).map((item) => {
+              return {
+                lat: Number(item.latitude),
+                lng: Number(item.longitude),
+              };
+            })}
+            options={{
+              strokeColor: "#0000FF", // Color of the street line
+              strokeOpacity: 0.8,
+              strokeWeight: 4, // Line thickness
+            }}
+          />
+        )}
+      </GoogleMap>
     </div>
   );
 }
-
-const Directions = ({
-  startLat,
-  startLng,
-  endLat,
-  endLng,
-}: {
-  startLat: number;
-  startLng: number;
-  endLat: number;
-  endLng: number;
-}) => {
-  const map = useMap();
-  const routeLibrary = useMapsLibrary("routes");
-  const [dircetionService, setDirectionService] =
-    useState<google.maps.DirectionsService>();
-  const [directionsRenderer, setDirectionsRenderer] =
-    useState<google.maps.DirectionsRenderer>();
-  const [routes, setRoutes] = useState<google.maps.DirectionsRoute[]>([]);
-  const [routeIndex, setRouteIndex] = useState(0);
-  const selected = routes[routeIndex];
-  const leg = selected?.legs[0];
-
-  useEffect(() => {
-    if (!routeLibrary || !map) return;
-    setDirectionService(new routeLibrary.DirectionsService());
-    setDirectionsRenderer(new routeLibrary.DirectionsRenderer({ map }));
-  }, [routeLibrary, map, startLat]);
-
-  useEffect(() => {
-    if (!dircetionService || !directionsRenderer) return;
-
-    dircetionService
-      .route({
-        origin: { lat: startLat, lng: startLng },
-        destination: { lat: endLat, lng: endLng },
-        travelMode: google.maps.TravelMode.DRIVING,
-        provideRouteAlternatives: true,
-      })
-      .then((response) => {
-        directionsRenderer.setDirections(response);
-        setRoutes(response.routes);
-      });
-  }, [dircetionService, directionsRenderer, startLat, startLng]);
-
-  if (!leg) return null;
-
-  return (
-    <>
-      <div className="absolute top-2 bg-white/90 px-4 py-2 right-2 left-2 md:right-12 md:left-12 text-sm flex flex-wrap justify-center gap-2 md:gap-5 rounded-full border border-primary">
-        <h2>{selected.summary}</h2>
-        <div className="flex items-center gap-2">
-          <MapPinPlusInside className="size-4 text-primary" />{" "}
-          <span>{leg.start_address.split(",")[0]}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <MapPinCheckInside className="size-4 text-primary" />{" "}
-          <span>{leg.end_address.split(",")[0]}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Ruler className="size-4 text-primary" />{" "}
-          <span>{leg.distance?.text}</span>
-        </div>
-      </div>
-    </>
-  );
-};

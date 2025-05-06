@@ -71,18 +71,6 @@ export default function MovementMap({
     }));
   };
 
-  // Function to create markers for clustering
-  const createDeliveryMarkers = (): any => {
-    return deliveryList.map((location) => ({
-      position: {
-        lat: Number(location.delivery_latitude),
-        lng: Number(location.delivery_longitude),
-      },
-      title: location.id,
-      ...location,
-    }));
-  };
-
   const onZoomChanged = (): void => {
     if (mapRef.current) {
       setZoom(mapRef.current.getZoom() || 8); // Fallback to 8 if getZoom returns null

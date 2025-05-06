@@ -26,6 +26,6 @@ export async function GET(req: NextRequest) {
   } catch (error: any) {
     return Response.json({
       error: error.message,
-    });
+    },{status: 400});
   }
 }

@@ -1,20 +1,70 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DetailsField from "./DetailsField";
 import StatusTag from "./StatusTag";
-import { formatDateTimeTZ, formatNumber } from "@/lib/formatters";
+import {
+  formatDateTimeTZ,
+  formateDateDB,
+  formatNumber,
+} from "@/lib/formatters";
 import { Badge, CustomBadge } from "../ui/badge";
 import RouteMap from "../google-map/RouteMap";
 import { useRouter } from "next-nprogress-bar";
 import { Map } from "lucide-react";
+import { ReverseGeocodeCell } from "./ConveyanceTable";
 
 function TrackDetails({ data }: { data: any[] }) {
   const searchParams = useSearchParams();
   const route = useRouter();
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
+
+  const [res, setRes] = useState<any[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const filterData = data.filter((map) => {
+    return map.id === Number(searchParams.get("mid"));
+  })[0];
+
+  const modifiedStartTime =
+    filterData?.start_journey_date_time ?? ""
+      ? JSON.stringify(filterData.start_journey_date_time)
+          .split("T")[1]
+          .slice(0, 11)
+      : "";
+  const modifiedEndTime =
+    filterData?.end_journey_date_time ?? ""
+      ? JSON.stringify(filterData.end_journey_date_time)
+          .split("T")[1]
+          .slice(0, 11)
+      : "";
+
+  useEffect(() => {
+    fetch(
+      `/api/map/transportation?q=${searchParams.get("q")}&start=${
+        searchParams.has("start")
+          ? searchParams.get("start")
+          : formateDateDB(new Date())
+      }&start_time=${modifiedStartTime}&end_time=${modifiedEndTime}`
+    ) // Replace with your API endpoint
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setRes(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [data, loading, searchParams]);
 
   return (
     <div className="grid lg:grid-cols-[0.25fr_0.75fr] gap-5">
@@ -63,6 +113,30 @@ function TrackDetails({ data }: { data: any[] }) {
 
                 {/* billing info */}
                 <section className="billing-info grid grid-cols-2 gap-5 text-sm py-5 flex-wrap">
+                  {res && (res as any[]).length > 0 && (
+                    <>
+                      <DetailsField
+                        fieldName="Start Location"
+                        fieldContent={
+                          <ReverseGeocodeCell
+                            lat={res[0].latitude}
+                            long={res[0].longitude}
+                          />
+                        }
+                      />
+
+                      <DetailsField
+                        fieldName="End Locaion"
+                        fieldContent={
+                          <ReverseGeocodeCell
+                            lat={res[res.length - 1].latitude}
+                            long={res[res.length - 1].longitude}
+                          />
+                        }
+                      />
+                    </>
+                  )}
+
                   <DetailsField
                     fieldName="Journey start"
                     fieldContent={formatDateTimeTZ(
@@ -117,8 +191,8 @@ function TrackDetails({ data }: { data: any[] }) {
                 key={value.id}
                 startLat={Number(value.start_journey_latitude)}
                 startLng={Number(value.start_journey_longitude)}
-                endLat={Number(value.end_journey_latitude)}
-                endLng={Number(value.end_journey_longitude)}
+                data={res as any[]}
+                loading={loading}
               />
             ))
         ) : (
