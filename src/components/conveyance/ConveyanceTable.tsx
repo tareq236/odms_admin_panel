@@ -116,7 +116,7 @@ export default function ConveyanceTable({
             // table data
             data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="text-nowrap"># {index + 1}</TableCell>
+                <TableCell className="text-nowrap">{index + 1}</TableCell>
                 <TableCell className="text-nowrap">
                   {formatTimeTZ(item.start_journey_date_time)}
                 </TableCell>

@@ -1,9 +1,6 @@
 import { getDaMovementInfoData } from "@/app/admin/analytics/da-movement-info/_actions/action";
 import { getConveyanceData } from "@/app/admin/map/transportation/_action/action";
-import CustomBadge from "@/components/badge/TransportationBadge";
-import NoData from "@/components/constants/NoData";
 import {
-  DistanceCell,
   ReverseGeocodeCell,
 } from "@/components/conveyance/ConveyanceTable";
 import PrintButton from "@/components/print/transportation/PrintButton";
@@ -11,13 +8,12 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { formateDateDB, formatNumber, formatTimeTZ } from "@/lib/formatters";
-import { distanceConversion, numberToWords, timeConversion } from "@/lib/utils";
+import { numberToWords, timeConversion } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import Image from "next/image";
 import React from "react";
@@ -184,6 +180,7 @@ export default async function TransportationPrintPage({
               <Table className="[&_th]:font-bold [&_th]:text-secondary-foreground [&_th]:px-1.5 [&_th]:py-1 [&_th]:h-fit [&_td]:px-1.5 [&_td]:py-0.25 [&_td]:h-fit  [&_td]:border [&_td]:border-black [&_th]:border [&_th]:border-black">
                 <TableHeader>
                   <TableRow>
+                    <TableHead>S.N.</TableHead>
                     <TableHead>Start</TableHead>
                     <TableHead>End</TableHead>
                     <TableHead>From</TableHead>
@@ -198,6 +195,7 @@ export default async function TransportationPrintPage({
                   {(data as any[]).length > 0
                     ? (data as any[]).map((item, index) => (
                         <TableRow key={item.id}>
+                          <TableCell>{index + 1}</TableCell>
                           <TableCell className="text-nowrap">
                             {formatTimeTZ(
                               item.start_journey_date_time,
@@ -257,9 +255,10 @@ export default async function TransportationPrintPage({
                       ))
                     : null}
 
+                    {/* data table footer */}
                   {(data as any[]).length > 0 && (
                     <TableRow className="bg-muted [&_td]:py-2">
-                      <TableCell colSpan={3}>
+                      <TableCell colSpan={4}>
                         In Words: {numberToWords(calculateTotalCost())} taka
                         only
                       </TableCell>
