@@ -16,7 +16,6 @@ function ProfileSection({
 
   return (
     <div className="border rounded p-4">
-      {JSON.stringify(daRoute)}
       <h2 className="text-foreground font-semibold mb-5 text-lg">
         Profile Information
       </h2>
