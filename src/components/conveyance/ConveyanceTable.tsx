@@ -338,8 +338,9 @@ const EndPointReverseGeocodeCell = ({
         );
         const location = await res.json();
 
-        if (!res.ok) {
-          setLocation("Not Found");
+        if (!res.ok || location.length === 0) {
+          setLocation("-");
+          return;
         }
 
         // get geocode from google api
