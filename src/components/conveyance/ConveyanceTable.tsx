@@ -339,7 +339,7 @@ const EndPointReverseGeocodeCell = ({
         const location = await res.json();
 
         if (!res.ok || location.length === 0) {
-          setLocation("-");
+          setLocation("Unknown");
           return;
         }
 
