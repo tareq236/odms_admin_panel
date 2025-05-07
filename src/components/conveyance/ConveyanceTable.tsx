@@ -140,9 +140,9 @@ export default function ConveyanceTable({
                 </TableCell>
                 <TableCell className="min-w-[10rem]">
                   {item.end_journey_latitude && (
-                    <ReverseGeocodeCell
-                      lat={item.end_journey_latitude}
-                      long={item.end_journey_longitude}
+                    <EndPointReverseGeocodeCell
+                      endTime={item.end_journey_date_time}
+                      startTime={item.start_journey_date_time}
                     />
                   )}
                 </TableCell>
@@ -296,6 +296,72 @@ export const ReverseGeocodeCell = ({
               .join(",")} */}
         {location}
       </span>
+    </>
+  );
+};
+
+const EndPointReverseGeocodeCell = ({
+  endTime,
+  startTime,
+}: {
+  endTime: Date;
+  startTime: Date;
+}) => {
+  const [location, setLocation] = useState("Loading...");
+  const searchParams = useSearchParams();
+
+  const allParams: Record<string, string> = {};
+  for (const [key, value] of searchParams.entries()) {
+    allParams[key] = value;
+  }
+
+  // modify time
+  const modifiedStartTime = startTime
+    ? JSON.stringify(startTime).split("T")[1].slice(0, 11)
+    : "";
+  const modifiedEndTime = endTime
+    ? JSON.stringify(endTime).split("T")[1].slice(0, 11)
+    : "";
+
+  allParams["start_time"] = modifiedStartTime;
+  allParams["end_time"] = modifiedEndTime;
+
+  // create searchparams
+  const params = new URLSearchParams(allParams).toString();
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        // get end point from postgres
+        const res = await fetch(
+          "/api/map/transportation/geolocation?" + params
+        );
+        const location = await res.json();
+
+        if (!res.ok) {
+          setLocation("Not Found");
+        }
+
+        // get geocode from google api
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location[0].latitude},${location[0].longitude}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.status === "OK") {
+          setLocation(data.results[0].formatted_address);
+        } else {
+          setLocation("Not Found");
+        }
+      } catch (error) {
+        setLocation("Error Loading");
+      }
+    };
+
+    fetchLocation();
+  }, [endTime]);
+
+  return (
+    <>
+      <span>{location}</span>
     </>
   );
 };
