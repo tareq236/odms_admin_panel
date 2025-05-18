@@ -300,7 +300,7 @@ export const ReverseGeocodeCell = ({
   );
 };
 
-const EndPointReverseGeocodeCell = ({
+export const EndPointReverseGeocodeCell = ({
   endTime,
   startTime,
 }: {

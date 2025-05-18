@@ -1,6 +1,7 @@
 import { getDaMovementInfoData } from "@/app/admin/analytics/da-movement-info/_actions/action";
 import { getConveyanceData } from "@/app/admin/map/transportation/_action/action";
 import {
+  EndPointReverseGeocodeCell,
   ReverseGeocodeCell,
 } from "@/components/conveyance/ConveyanceTable";
 import PrintButton from "@/components/print/transportation/PrintButton";
@@ -219,9 +220,9 @@ export default async function TransportationPrintPage({
                           </TableCell>
                           <TableCell className="min-w-[5rem]">
                             {item.end_journey_latitude && (
-                              <ReverseGeocodeCell
-                                lat={item.end_journey_latitude}
-                                long={item.end_journey_longitude}
+                              <EndPointReverseGeocodeCell
+                                endTime={item.end_journey_date_time}
+                                startTime={item.start_journey_date_time}
                               />
                             )}
                           </TableCell>
@@ -234,14 +235,18 @@ export default async function TransportationPrintPage({
                               )}
                           </TableCell>
                           <TableCell className="max-w-16">
-                            {item?.transport_mode && item?.distance + " km"}
+                            {item?.transport_mode && item?.distance || "0"} km
                           </TableCell>
                           <TableCell>
                             {item.transport_mode &&
                               JSON.parse(item.transport_mode).map(
                                 (title: any, index: number) => (
                                   <div className="my-1" key={index}>
-                                    {<div key={index} className="text-xs">{title}</div>}
+                                    {
+                                      <div key={index} className="text-xs">
+                                        {title}
+                                      </div>
+                                    }
                                   </div>
                                 )
                               )}
@@ -255,7 +260,7 @@ export default async function TransportationPrintPage({
                       ))
                     : null}
 
-                    {/* data table footer */}
+                  {/* data table footer */}
                   {(data as any[]).length > 0 && (
                     <TableRow className="bg-muted [&_td]:py-2">
                       <TableCell colSpan={4}>
