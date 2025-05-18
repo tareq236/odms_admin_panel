@@ -16,7 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { CartData } from "@/app/admin/page";
+import { ChartData } from "@/app/admin/page";
 import { formatDate } from "@/lib/formatters";
 import ChartMonthSelect from "@/components/home/Select";
 
@@ -40,7 +40,7 @@ export function ChartSection({
   data,
   count,
 }: {
-  data: CartData[];
+  data: ChartData[];
   count: number;
 }) {
   const [activeChart, setActiveChart] =

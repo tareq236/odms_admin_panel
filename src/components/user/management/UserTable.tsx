@@ -18,8 +18,14 @@ import {
 import Tooltips from "@/components/ui/Tooltips";
 import { formatDate } from "@/lib/formatters";
 import { rdl_users_list } from "@/prisma/generated/client1";
-import { Edit, MessageSquareOff, ServerOff, Trash, UserPen } from "lucide-react";
-import React, { useState, useTransition } from "react";
+import {
+  Edit,
+  MessageSquareOff,
+  ServerOff,
+  Trash,
+  UserPen,
+} from "lucide-react";
+import React, { useEffect, useState, useTransition } from "react";
 import UserForm from "./UserForm";
 import {
   AlertDialog,
@@ -37,15 +43,21 @@ import UserStatusTag from "../UserStatusTag";
 
 function UserTable({
   data,
-  connectionError,
+  error,
 }: {
   data: rdl_users_list[];
-  connectionError: boolean;
+  error?: string;
 }) {
   const [editUser, setEditUser] = useState<any>(false);
   const [delUser, setDelUser] = useState<any>();
 
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <>
@@ -64,18 +76,7 @@ function UserTable({
         </TableHeader>
 
         <TableBody>
-          {connectionError ? (
-            <TableRow>
-              <TableCell
-                colSpan={7}
-                align="center"
-                className="py-20 text-gray-400 pointer-events-none"
-              >
-                <ServerOff className="size-10" />
-                <span className="text-[11px]">Database Discounted</span>
-              </TableCell>
-            </TableRow>
-          ) : data.length > 0 ? (
+          {data.length > 0 &&
             data.map((item) => (
               <TableRow key={item.sap_id}>
                 <TableCell>{item.sap_id}</TableCell>
@@ -83,7 +84,9 @@ function UserTable({
                 <TableCell>{item.mobile_number}</TableCell>
                 <TableCell>{item.user_type || `-`}</TableCell>
                 <TableCell>{item.user_depot || `-`}</TableCell>
-                <TableCell className="min-w-[120px]"><UserStatusTag status={item.status.toString()} /></TableCell>
+                <TableCell className="min-w-[120px]">
+                  <UserStatusTag status={item.status.toString()} />
+                </TableCell>
                 <TableCell>{formatDate(item.created_at)}</TableCell>
                 <TableCell className="flex justify-end gap-2">
                   <Tooltips title="Edit">
@@ -101,28 +104,14 @@ function UserTable({
                       size={"icon"}
                       variant={"destructive"}
                       className="rounded-full size-8"
-                        onClick={() => setDelUser(item.sap_id)}
+                      onClick={() => setDelUser(item.sap_id)}
                     >
                       <Trash className="size-4" />
                     </Button>
                   </Tooltips>
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <>
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  align="center"
-                  className="py-20 text-gray-400 pointer-events-none"
-                >
-                  <MessageSquareOff className="size-10" />
-                  <span className="text-[11px]">No data</span>
-                </TableCell>
-              </TableRow>
-            </>
-          )}
+            ))}
         </TableBody>
       </Table>
 
@@ -145,10 +134,12 @@ function UserTable({
       <AlertDialog open={!!delUser} onOpenChange={setDelUser}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-bold">Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle className="font-bold">
+              Are you absolutely sure?
+            </AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete this
-              <b> user</b> and remove data from servers.
+              <b> {delUser} user</b> and remove data from servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -161,10 +152,9 @@ function UserTable({
                     await deleteUser(delUser);
                     toast.success("User is deleted");
                   } catch (error) {
-                    console.log(error)
+                    console.log(error);
                     toast.warning("Something went wrong!");
                   }
-                 
                 });
               }}
             >

@@ -7,7 +7,7 @@ import { ChartSection } from "@/components/home/ChartSections";
 import { getUser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 
-export type CartData = {
+export type ChartData = {
   day: Date;
   total_attendance: bigint;
 };
@@ -37,7 +37,7 @@ export default async function Home({
     "yyyy-MM-dd"
   );
   let count = 0;
-  let data: CartData[] | unknown;
+  let data: ChartData[] | unknown;
 
   // get auth user info
   const authUser = await getUser();
@@ -82,7 +82,7 @@ export default async function Home({
   return (
     <div>
       <Header />
-      <ChartSection data={data as CartData[]} count={count} />
+      <ChartSection data={data as ChartData[]} count={count} />
     </div>
   );
 }
