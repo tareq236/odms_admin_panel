@@ -40,6 +40,7 @@ import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { toast } from "sonner";
 import { deleteUser } from "@/app/actions/user";
 import UserStatusTag from "../UserStatusTag";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 function UserTable({
   data,
@@ -163,6 +164,7 @@ function UserTable({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
     </>
   );
 }

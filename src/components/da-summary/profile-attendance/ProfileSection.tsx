@@ -25,7 +25,7 @@ function ProfileSection({
           <Field name="Depot Name" value={daInfo?.user_depot} />
           <Field name="Mobile" value={daInfo?.mobile_number} />
           <Field name="Type" value={daInfo?.user_type} />
-          {routeName && <Field name="Route" value={routeName} />}
+          <Field name="Route" value={routeName || "No data found"} />
 
           <Field
             name="Status"
