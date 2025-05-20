@@ -1,46 +1,24 @@
-import { getUser } from "@/lib/dal";
+import { getUser, verifyAutuser } from "@/lib/dal";
 import db from "../../../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
 import { redirect } from "next/navigation";
+import { getPermission } from "@/app/actions/permisson";
 
 export const getDeliveryCollection = async ({
   searchParams,
   limit = 20,
-  connectionError = false,
 }: {
   searchParams: { status: string; p: string; q: string; start: string };
   limit: number;
-  connectionError: boolean;
 }) => {
   let count: any = [{ total: 0 }];
-  let data;
+  let data: any[] | unknown = [];
+  let error = undefined;
 
-  const user = await getUser();
-
-  if (!user) redirect("/login");
-
-  const isDepotDA: any = await db.$queryRaw`
-    select count(*) over () as total
-    from
-        rdl_delivery_info_sap as a
-        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
-    WHERE
-        a.billing_date = ${
-          searchParams.start
-            ? `${searchParams.start}`
-            : `${formateDateDB(new Date())}`
-        }
-        AND a.da_code = ${Number(searchParams.q) || 0}
-        AND a.route IN (
-            SELECT route_code
-            FROM rdl_route_wise_depot
-            WHERE
-                depot_code =${user.depot_code}
-        )
-  `;
+  const isPermitted = await getPermission(searchParams.q ?? null);
 
   try {
-    if (user.role === "admin" || (isDepotDA && isDepotDA.length > 0)) {
+    if (isPermitted) {
       if (searchParams.q && searchParams.status) {
         // delivery done
         if (searchParams.status == "dd") {
@@ -309,13 +287,12 @@ export const getDeliveryCollection = async ({
       }
     } else {
       data = [] as any[];
-      connectionError = false;
     }
   } catch (error) {
     data = [] as any[];
-    connectionError = true;
     console.log(error);
+    error = (error as any).message.split("\n").pop();
   }
 
-  return { data, count, connectionError };
+  return { data, count, error };
 };

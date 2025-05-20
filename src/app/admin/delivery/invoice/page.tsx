@@ -10,6 +10,8 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { AuthUserProps } from "../../route/page";
 import { getInvoiceInfo } from "./_actions/action";
+import DaInfoSection from "@/components/delivery/DaInfoSection";
+import db from "../../../../../db/db";
 
 export const metadata: Metadata = {
   title: "Delivery Invoice - ODMS Admin Panel",
@@ -24,6 +26,12 @@ export default async function DevlierInvoicePage({
 
   if (!user) redirect("/login");
 
+  const daInfo = await db.rdl_users_list.findFirst({
+    where: {
+      sap_id: Number(searchParams.q) || undefined,
+    },
+  });
+
   return (
     <>
       <PageHeader
@@ -34,6 +42,13 @@ export default async function DevlierInvoicePage({
       <Suspense>
         <FilterSection />
       </Suspense>
+
+      {(user.role === "admin" || daInfo?.depot_code == user.depot_code) &&
+        searchParams.q != null && (
+          <Suspense>
+            <DaInfoSection searchParams={searchParams} />
+          </Suspense>
+        )}
 
       <Suspense fallback={<TableSkeleton />}>
         <DataTable user={user} searchParams={searchParams} />

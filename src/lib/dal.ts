@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { decrypt } from "./session";
 import db from "../../db/db";
+import { AuthUser } from "@/types/AuthUser";
 
 export const verifySession = async () => {
   const cookie = cookies().get("session")?.value;
@@ -45,6 +46,20 @@ export const getUser = async () => {
     const user = data;
 
     return user;
+  } catch (error) {
+    console.log("Failed to fetch user");
+    return null;
+  }
+};
+
+export const verifyAutuser: () => Promise<AuthUser | null> = async () => {
+  try {
+    const cookie = cookies().get("session")?.value;
+    const session = await decrypt(cookie);
+
+    const user = session;
+
+    return user as AuthUser;
   } catch (error) {
     console.log("Failed to fetch user");
     return null;

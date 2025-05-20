@@ -6,13 +6,15 @@ import PagePagination from "@/components/ui/PagePagination";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import { PackageCheck } from "lucide-react";
 import React, { Suspense } from "react";
-import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
+import DaInfoSection from "@/components/delivery/DaInfoSection";
 import CollectionDetailsView from "@/components/delivery/collection/CollectionDetailsView";
 import { getDeliveryCollection } from "./_action/action";
 import type { Metadata } from "next";
 import { getUser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import db from "../../../../../db/db";
+import NoData from "@/components/constants/NoData";
+import SearchDa from "@/components/constants/SearchDa";
 
 export const metadata: Metadata = {
   title: "Delivery Collection - ODMS Admin Panel",
@@ -85,18 +87,14 @@ export const DataTable = async ({
 }) => {
   const limit = 20;
 
-  const { data, count, connectionError } = await getDeliveryCollection({
+  const { data, count, error } = await getDeliveryCollection({
     searchParams: searchParams,
     limit: limit,
-    connectionError: false,
   });
 
   return (
     <div className="data-table-section my-6">
-      <DeliveryCollectionTable
-        data={data as any[]}
-        connectionError={connectionError}
-      >
+      <DeliveryCollectionTable data={data as any[]} error={error}>
         {searchParams.dId && (
           <Suspense fallback={<p>Loading...</p>}>
             {/* anc */}
@@ -104,6 +102,12 @@ export const DataTable = async ({
           </Suspense>
         )}
       </DeliveryCollectionTable>
+
+      {/* search by da */}
+      {!searchParams.q && (data as any[]).length === 0 && <SearchDa />}
+
+      {/* NO data state */}
+      {searchParams.q && (data as any[]).length === 0 && <NoData />}
       <PagePagination limit={limit} count={Number(count[0]?.total || 0)} />
     </div>
   );

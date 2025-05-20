@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -22,14 +22,15 @@ import {
 } from "../../ui/dialog";
 import StatusTag from "./StatusTag";
 import { useRouter } from "next-nprogress-bar";
+import { toast } from "sonner";
 
 function DeliveryCollectionTable({
   data,
-  connectionError,
+  error,
   children,
 }: {
   data: any[];
-  connectionError: boolean;
+  error?: string;
   children: React.ReactNode;
 }) {
   const searchParams = useSearchParams();
@@ -38,6 +39,12 @@ function DeliveryCollectionTable({
   const pathName = usePathname();
   const router = useRouter();
   const params = new URLSearchParams(searchParams);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <>
@@ -58,31 +65,7 @@ function DeliveryCollectionTable({
         </TableHeader>
 
         <TableBody>
-          {!searchParams.has("q") ? (
-            <>
-              <TableRow>
-                <TableCell
-                  colSpan={9}
-                  align="center"
-                  className="py-20 text-gray-400 pointer-events-none"
-                >
-                  <Search className="size-10" />
-                  <span className="text-[11px]">Search by DA Code</span>
-                </TableCell>
-              </TableRow>
-            </>
-          ) : connectionError ? (
-            <TableRow className="table-row-nowrap">
-              <TableCell
-                colSpan={9}
-                align="center"
-                className="py-20 text-gray-400 pointer-events-none"
-              >
-                <ServerOff className="size-10" />
-                <span className="text-[11px]">Database Discounted</span>
-              </TableCell>
-            </TableRow>
-          ) : data.length > 0 ? (
+          {data.length > 0 &&
             data.map((item, index) => (
               <TableRow key={index}>
                 <TableCell>
@@ -113,17 +96,15 @@ function DeliveryCollectionTable({
                 <TableCell>
                   {formatNumber(Number(item.cash_collection))}
                 </TableCell>
+                <TableCell>{formatNumber(Number(item.due_amount))}</TableCell>
                 <TableCell>
-                  {formatNumber(
-                    Number(item.due_amount),
-                  )}
+                  {formatNumber(Number(item.return_amount))}
                 </TableCell>
                 <TableCell>
                   {formatNumber(
-                    Number(item.return_amount),
+                    Number(item.net_val) - Number(item.return_amount)
                   )}
                 </TableCell>
-                <TableCell>{formatNumber(Number(item.net_val) - Number(item.return_amount))}</TableCell>
                 <TableCell>
                   <Button
                     variant={"link"}
@@ -140,22 +121,7 @@ function DeliveryCollectionTable({
                   </Button>
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            // for no data
-            <>
-              <TableRow>
-                <TableCell
-                  colSpan={9}
-                  align="center"
-                  className="py-20 text-gray-400 pointer-events-none"
-                >
-                  <MessageSquareOff className="size-10" />
-                  <span className="text-[11px]">No data</span>
-                </TableCell>
-              </TableRow>
-            </>
-          )}
+            ))}
         </TableBody>
       </Table>
 

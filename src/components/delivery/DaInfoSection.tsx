@@ -1,6 +1,6 @@
 import UserStatusTag from "@/components/user/UserStatusTag";
 import React, { ReactNode } from "react";
-import db from "../../../../db/db";
+import db from "../../../db/db";
 import { MessageSquareOff } from "lucide-react";
 import { getUser } from "@/lib/dal";
 import { redirect } from "next/navigation";
@@ -49,7 +49,7 @@ export default async function DaInfoSection({
           <Field name="Depot Name" value={daInfo?.user_depot} />
           <Field name="Mobile" value={daInfo?.mobile_number} />
           <Field name="Type" value={daInfo?.user_type} />
-          {routeName && <Field name="Route" value={routeName} />}
+          <Field name="Route" value={routeName || "No data found"} />
 
           <Field
             name="Status"

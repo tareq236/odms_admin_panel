@@ -1,5 +1,5 @@
 import TrackingMapSection from "@/components/da-tracking/TrackingMapSection";
-import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
+import DaInfoSection from "@/components/delivery/DaInfoSection";
 import React, { Suspense } from "react";
 import SearchDa from "@/components/constants/SearchDa";
 import { redirect } from "next/navigation";

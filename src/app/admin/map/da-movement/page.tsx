@@ -1,5 +1,5 @@
 import FilterSection from "@/components/da-movement/FilterSection";
-import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
+import DaInfoSection from "@/components/delivery/DaInfoSection";
 import PageHeader from "@/components/ui/PageHeader";
 import { MapPinned } from "lucide-react";
 import React, { Suspense } from "react";
