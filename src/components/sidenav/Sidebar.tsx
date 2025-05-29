@@ -169,6 +169,22 @@ export default function Sidebar({
                 )}
               </div>
             </div>
+
+            {/* expired product */}
+            <div className="mt-3">
+              <h4 className="text-muted-foreground text-xs mb-3">
+                Expired Products
+              </h4>
+
+              <div className="flex flex-col gap-2">
+                <NavLink
+                  icon={<ScrollText className="size-4" />}
+                  name="Request List"
+                  href="/admin/expired-products/request-list"
+                  onClick={onClose}
+                />
+              </div>
+            </div>
           </div>
         </ScrollArea>
       </div>
