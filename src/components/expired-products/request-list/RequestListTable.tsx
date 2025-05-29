@@ -15,15 +15,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Tooltips from "@/components/ui/Tooltips";
 import { formatDate } from "@/lib/formatters";
-import { Eye, ScrollText, Trash, UserPen } from "lucide-react";
-import React, { useEffect, useState, useTransition } from "react";
+import { ScrollText } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { RequestlistDetails } from "@/types/request-list";
 import StatusBadge from "../StatusBadge";
 import RequestInvoiceDetails from "./RequestInvoiceDetails";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function RequestListTable({
   data,
@@ -33,9 +32,6 @@ export default function RequestListTable({
   error?: string;
 }) {
   const [view, setView] = useState<any>(false);
-  const [delUser, setDelUser] = useState<any>();
-
-  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (error) {
@@ -81,26 +77,13 @@ export default function RequestListTable({
                     : "-"}
                 </TableCell>
                 <TableCell className="flex justify-end gap-2">
-                  <Tooltips title="View">
-                    <Button
-                      size={"icon"}
-                      variant={"outline"}
-                      className="rounded-full size-8"
-                      onClick={() => setView(item)}
-                    >
-                      <Eye className="size-4" />
-                    </Button>
-                  </Tooltips>
-                  <Tooltips title="Delete">
-                    <Button
-                      size={"icon"}
-                      variant={"destructive"}
-                      className="rounded-full size-8"
-                      onClick={() => setDelUser(item.id)}
-                    >
-                      <Trash className="size-4" />
-                    </Button>
-                  </Tooltips>
+                  <Button
+                    className="text-primary"
+                    variant={"ghost"}
+                    onClick={() => setView(item)}
+                  >
+                    View
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

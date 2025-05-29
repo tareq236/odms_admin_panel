@@ -1,15 +1,29 @@
 "use server";
 
-import { SearchParams } from "@/types/params";
-
 export const getRequestList = async ({
-  searchParams,
+  depotCode,
+  daId,
 }: {
-  searchParams: SearchParams;
+  depotCode: string;
+  daId?: string;
 }) => {
   try {
+    // create search params
+    const params = new URLSearchParams();
+
+    params.set("status", "request_approved");
+
+    if (depotCode) {
+      params.set("depot_id", depotCode);
+    }
+
+    if (daId) {
+      params.set("da_id", daId);
+    }
+
+    // fetch data
     const res = await fetch(
-      `http://103.168.140.132:5001/api/v1/withdrawal/request/list?depot_id=RD33&status=request_approved`
+      `http://103.168.140.132:5001/api/v1/withdrawal/request/list?${params.toString()}`
     );
     const data = await res.json();
 
