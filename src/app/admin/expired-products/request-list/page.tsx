@@ -65,7 +65,7 @@ const DataTable = async ({
   return (
     <section className="data-table-section">
       <RequestListTable data={res.data} error={undefined} />
-      {depot && res.data.length === 0 && <NoData />}
+      {validatedDepot && res.data.length === 0 && <NoData />}
       {user.role === "admin" && !depot && <SelectDepot />}
       <PagePagination limit={1} count={1} />
     </section>
