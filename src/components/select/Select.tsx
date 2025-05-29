@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Select as SelectUi,
   SelectContent,
@@ -8,11 +8,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectLabel,
 } from "../ui/Select";
 import { SelectProps } from "@radix-ui/react-select";
 import { useRouter } from "next-nprogress-bar";
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Input } from "../ui/input";
 
 export default function Select({
   placeholder,
@@ -36,7 +38,7 @@ export default function Select({
   return (
     <SelectUi
       {...props}
-      defaultValue={paramName && searchParams.get(paramName) || undefined }
+      defaultValue={(paramName && searchParams.get(paramName)) || undefined}
       onValueChange={(value) => {
         if (paramName) {
           const params = new URLSearchParams(searchParams);
