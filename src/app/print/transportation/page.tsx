@@ -52,7 +52,7 @@ export default async function TransportationPrintPage({
   } else {
     try {
       const response = await fetch(
-        `http://128.199.199.164:8000/api/v1/da_movement/analytics/v1?da_code=${searchParams.q}`
+        `${process.env.NEXT_PUBLIC_DA_MOVEMENT_API}/api/v1/da_movement/analytics/v1?da_code=${searchParams.q}`
       );
       const data = await response.json();
 
