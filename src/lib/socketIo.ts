@@ -6,7 +6,7 @@ const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_ENDPOINT;
 const options = {
   rememberUpgrade: true,
   transports: ["websocket"],
-  secure: true,
+  secure: false,
   rejectUnauthorized: false,
 };
 
