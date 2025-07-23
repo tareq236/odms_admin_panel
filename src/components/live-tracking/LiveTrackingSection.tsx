@@ -32,8 +32,6 @@ const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
     socket.on("coordinatesResultAndroid", async (data) => {
       const { user_details, location } = data.result;
 
-      console.log(data.result)
-
       if (authUser.role === "admin") {
         if (searchParams.has("q")) {
           if (user_details.sap_id == searchParams.get("q")) {
@@ -57,7 +55,7 @@ const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
         }
       } else {
         const isDepotUser = await findDepotUser(user_details.sap_id);
-        console.log(isDepotUser)
+        console.log(isDepotUser);
         if (isDepotUser) {
           if (searchParams.has("q")) {
             if (user_details.sap_id == searchParams.get("q")) {
@@ -89,7 +87,7 @@ const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
   };
 
   useEffect(() => {
-    handleSocket()
+    handleSocket();
   }, [socket, pathname, searchParams]);
 
   const handleMarkerMouseOver = (location: any) => {
