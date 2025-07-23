@@ -32,6 +32,8 @@ const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
     socket.on("coordinatesResultAndroid", async (data) => {
       const { user_details, location } = data.result;
 
+      console.log(data.result)
+
       if (authUser.role === "admin") {
         if (searchParams.has("q")) {
           if (user_details.sap_id == searchParams.get("q")) {
