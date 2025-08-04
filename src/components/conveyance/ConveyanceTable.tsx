@@ -207,7 +207,7 @@ export default function ConveyanceTable({
 
       {/* delivery details modal */}
       <Dialog open={view} onOpenChange={setView}>
-        <DialogContent className="md:min-w-[90vw] md:max-w-xl">
+        <DialogContent className="md:min-w-[90vw] max-h-[80vh] overflow-y-auto md:max-w-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Waypoints className="size-4 text-primary" />
@@ -271,7 +271,7 @@ export const ReverseGeocodeCell = ({
         const response = await fetch(url);
         const data = await response.json();
         if (data.status === "OK") {
-          setLocation(data.results[0].formatted_address);
+          setLocation(data.plus_code.compound_code);
         } else {
           setLocation("Not Found");
         }
@@ -285,17 +285,7 @@ export const ReverseGeocodeCell = ({
 
   return (
     <>
-      <span>
-        {/* {location.split(",").length < 3
-          ? location
-          : location
-              .replace(", বাংলাদেশ", "")
-              .replace("Bangladesh", "")
-              .split(",")
-              .filter((item) => !item.includes("+"))
-              .join(",")} */}
-        {location}
-      </span>
+      <span>{location}</span>
     </>
   );
 };
@@ -347,8 +337,9 @@ export const EndPointReverseGeocodeCell = ({
         const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location[0].latitude},${location[0].longitude}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`;
         const response = await fetch(url);
         const data = await response.json();
+
         if (data.status === "OK") {
-          setLocation(data.results[0].formatted_address);
+          setLocation(data.plus_code.compound_code);
         } else {
           setLocation("Not Found");
         }
