@@ -1,16 +1,16 @@
 import { Badge } from "@/components/ui/badge";
-import { formatDateTime, formatNumber } from "@/lib/formatters";
+import { formatDateTimeTZ, formatNumber } from "@/lib/formatters";
 import React from "react";
 
 function AttendanceSection({ daAttendance }: { daAttendance: any[] }) {
-  const startDate = daAttendance !=undefined && daAttendance.length > 0 ? daAttendance[0].start_date_time as Date : new Date();
-  const endDate = daAttendance !=undefined && daAttendance.length > 0 ? daAttendance[0].end_date_time as Date : new Date();
-  if (startDate) {
-    startDate.setUTCHours(0);
-  }
-  if (endDate) {
-    endDate.setUTCHours(0);
-  }
+  const startDate =
+    daAttendance != undefined && daAttendance.length > 0
+      ? (daAttendance[0].start_date_time as Date)
+      : new Date();
+  const endDate =
+    daAttendance != undefined && daAttendance.length > 0
+      ? (daAttendance[0].end_date_time as Date)
+      : new Date();
 
   return (
     <section className="border rounded p-4">
@@ -45,13 +45,13 @@ function AttendanceSection({ daAttendance }: { daAttendance: any[] }) {
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">Start from</span>
             <span className="font-medium text-sm">
-              {formatDateTime(startDate)}
+              {formatDateTimeTZ(startDate)}
             </span>
           </p>
           <p className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">End at</span>
             <span className="font-medium text-sm">
-              {formatDateTime(endDate)}
+              {formatDateTimeTZ(endDate)}
             </span>
           </p>
           <p className="flex flex-col gap-1">
