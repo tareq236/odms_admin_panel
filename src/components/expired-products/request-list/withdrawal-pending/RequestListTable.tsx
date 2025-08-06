@@ -20,7 +20,7 @@ import { ScrollText } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { RequestlistDetails } from "@/types/request-list";
-import StatusBadge from "../StatusBadge";
+import StatusBadge from "../../StatusBadge";
 import RequestInvoiceDetails from "./RequestInvoiceDetails";
 import { ScrollArea } from "@/components/ui/scroll-area";
 

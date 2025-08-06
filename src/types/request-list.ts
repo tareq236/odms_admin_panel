@@ -50,3 +50,31 @@ export interface Requestlist {
   unit_vat: number;
   expire_date: string;
 }
+
+export interface WithdrawalConfirmation {
+  id: number;
+  withdrawal_list: any[];
+  invoice_no: string;
+  invoice_type: string;
+  mio_id: string;
+  rm_id: string;
+  da_id: string | null;
+  depot_id: string | null;
+  route_id: string | null;
+  partner_id: string;
+  request_approval: boolean;
+  withdrawal_confirmation: boolean;
+  replacement_order: boolean;
+  order_approval: boolean;
+  order_delivery: boolean;
+  request_date: string | null;
+  request_approval_date: string;
+  withdrawal_date: string | null;
+  withdrawal_approval_date: string | null;
+  order_date: string | null;
+  order_approval_date: string | null;
+  delivery_date: string | null;
+  last_status: "request_approved" | "request_pending";
+  created_at: string;
+  updated_at: string;
+}

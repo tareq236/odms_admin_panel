@@ -1,6 +1,5 @@
 import { RequestlistDetails } from "@/types/request-list";
 import React, { ReactNode } from "react";
-import StatusBadge from "../StatusBadge";
 import {
   Table,
   TableBody,
@@ -10,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Table2 } from "lucide-react";
+import StatusBadge from "../../StatusBadge";
 
 export default function RequestInvoiceDetails({
   data,
