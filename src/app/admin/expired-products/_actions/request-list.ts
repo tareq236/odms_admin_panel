@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 export const getWithdrawalPendingList = async ({
   depotCode,
   daId,
@@ -61,15 +63,13 @@ export const getWithdrawalConfirmationList = async ({
 
     // fetch data
     const res = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_EXPIRED_PRODUCT_API
-      }/api/v1/withdrawal/list?mio_id=10001&status=all`
+      `${process.env.NEXT_PUBLIC_EXPIRED_PRODUCT_API}/api/v1/withdrawal/list?mio_id=10001&status=all`
     );
     const data = await res.json();
 
     if (!res.ok) throw Error(data);
 
-    console.log(data)
+    console.log(data);
 
     return {
       success: true,
@@ -82,6 +82,49 @@ export const getWithdrawalConfirmationList = async ({
       success: false,
       data: [],
       message: "Something went wrong",
+    };
+  }
+};
+
+export const updateAssignDA = async ({
+  daId,
+  invoiceNo,
+}: {
+  daId: number;
+  invoiceNo: number;
+}) => {
+  try {
+    // fetch data
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_EXPIRED_PRODUCT_API}/api/v1/withdrawal/assign-da`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          da_id: daId,
+          invoice_no: invoiceNo,
+        }),
+      }
+    );
+    const data = await res.json();
+
+    if (!res.ok) throw data;
+
+    revalidatePath('/admin/expired-products/request-list')
+
+    return {
+      success: true,
+      data: data,
+      message: "Assign DA successfull",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      data: null,
+      message: (error as Error).message ?? "Something went wrong",
     };
   }
 };

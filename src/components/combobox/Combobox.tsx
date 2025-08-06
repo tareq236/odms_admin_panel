@@ -27,10 +27,13 @@ type Data = {
 export function Combobox({
   data,
   onValueChange,
+  onSelect,
+  className,
   ...props
 }: React.ComponentProps<"input"> & {
   data: Data[];
   onValueChange?: (search: string) => void;
+  onSelect?: (value: string) => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
@@ -43,7 +46,7 @@ export function Combobox({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[200px] justify-between"
+            className={cn("w-[200px] justify-between", className)}
           >
             {value
               ? data.find((item) => item.value === value)?.label
@@ -65,8 +68,11 @@ export function Combobox({
                     key={item.value}
                     value={item.value}
                     onSelect={(currentValue) => {
-                      setValue(currentValue === value ? "" : currentValue);
+                      setValue(currentValue);
                       setOpen(false);
+                      if (onSelect) {
+                        onSelect(currentValue);
+                      }
                     }}
                   >
                     <CheckIcon

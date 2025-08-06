@@ -74,7 +74,7 @@ export default function RequestListTable({
                   {item.da_name ? (
                     item.da_name
                   ) : (
-                    <AssignDaForm depotCode={item.depot_id} />
+                    <AssignDaForm invoiceNo={item.invoice_no} depotCode={item.depot_id} />
                   )}
                 </TableCell>
                 <TableCell className="min-w-[120px]">

@@ -16,11 +16,11 @@ const getDaData = async ({
         ...(search && {
           OR: [
             {
-              sap_id: Number(search),
+              sap_id: isNaN(Number(search)) ? undefined : Number(search),
             },
             {
               full_name: {
-                startsWith: search,
+                contains: search,
               },
             },
           ],
@@ -29,7 +29,7 @@ const getDaData = async ({
       orderBy: {
         full_name: "asc",
       },
-      take: 5,
+      take: 20,
     });
 
     return {
