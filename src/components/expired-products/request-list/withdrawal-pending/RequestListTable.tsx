@@ -23,6 +23,7 @@ import { RequestlistDetails } from "@/types/request-list";
 import StatusBadge from "../../StatusBadge";
 import RequestInvoiceDetails from "./RequestInvoiceDetails";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import AssignDaForm from "./AssignDaForm";
 
 export default function RequestListTable({
   data,
@@ -51,6 +52,7 @@ export default function RequestListTable({
             <TableHead>Partner Name</TableHead>
             <TableHead>Customer Address</TableHead>
             <TableHead>Route</TableHead>
+            <TableHead>Assign DA</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Request Date</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -68,6 +70,13 @@ export default function RequestListTable({
                 <TableCell>{item.partner_name || `-`}</TableCell>
                 <TableCell>{item.customer_address || `-`}</TableCell>
                 <TableCell>{item.route_name || `-`}</TableCell>
+                <TableCell>
+                  {item.da_name ? (
+                    item.da_name
+                  ) : (
+                    <AssignDaForm depotCode={item.depot_id} />
+                  )}
+                </TableCell>
                 <TableCell className="min-w-[120px]">
                   <StatusBadge status={item.last_status} />
                 </TableCell>
