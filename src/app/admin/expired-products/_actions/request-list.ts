@@ -1,6 +1,10 @@
 "use server";
 
+import { FetchApiJSON } from "@/lib/helper";
 import { revalidatePath } from "next/cache";
+
+const expiredAPI = new FetchApiJSON();
+expiredAPI.setBaseUrl(process.env.NEXT_PUBLIC_EXPIRED_PRODUCT_API as string);
 
 export const getWithdrawalPendingList = async ({
   depotCode,
@@ -24,18 +28,13 @@ export const getWithdrawalPendingList = async ({
     }
 
     // fetch data
-    const res = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_EXPIRED_PRODUCT_API
-      }/api/v1/withdrawal/request/list?${params.toString()}`
+    const res = await expiredAPI.fetchData(
+      `/api/v1/withdrawal/request/list?${params.toString()}`
     );
-    const data = await res.json();
-
-    if (!res.ok) throw Error(data);
 
     return {
       success: true,
-      data: data.data,
+      data: res.data,
       message: "Data get successful",
     };
   } catch (error) {
@@ -62,18 +61,13 @@ export const getWithdrawalConfirmationList = async ({
     params.set("mio_id", "10001");
 
     // fetch data
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_EXPIRED_PRODUCT_API}/api/v1/withdrawal/list?mio_id=10001&status=all`
+    const res = await expiredAPI.fetchData(
+      `/api/v1/withdrawal/list?mio_id=10001&status=all`
     );
-    const data = await res.json();
-
-    if (!res.ok) throw Error(data);
-
-    console.log(data);
 
     return {
       success: true,
-      data: data,
+      data: res,
       message: "Data get successful",
     };
   } catch (error) {
@@ -95,28 +89,22 @@ export const updateAssignDA = async ({
 }) => {
   try {
     // fetch data
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_EXPIRED_PRODUCT_API}/api/v1/withdrawal/assign-da`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          da_id: daId,
-          invoice_no: invoiceNo,
-        }),
-      }
-    );
-    const data = await res.json();
+    const res = await expiredAPI.fetchData(`/api/v1/withdrawal/assign-da`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        da_id: daId,
+        invoice_no: invoiceNo,
+      }),
+    });
 
-    if (!res.ok) throw data;
-
-    revalidatePath('/admin/expired-products/request-list')
+    revalidatePath("/admin/expired-products/request-list");
 
     return {
       success: true,
-      data: data,
+      data: res,
       message: "Assign DA successfull",
     };
   } catch (error) {
