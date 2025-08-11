@@ -6,63 +6,18 @@ import { revalidatePath } from "next/cache";
 const expiredAPI = new FetchApiJSON();
 expiredAPI.setBaseUrl(process.env.NEXT_PUBLIC_EXPIRED_PRODUCT_API as string);
 
-export const getWithdrawalPendingList = async ({
-  depotCode,
-  daId,
-}: {
-  depotCode: string;
-  daId?: string;
-}) => {
+export const getRequestList = async (searchParams: any) => {
   try {
     // create search params
-    const params = new URLSearchParams();
-
-    params.set("status", "request_approved");
-
-    if (depotCode) {
-      params.set("depot_id", depotCode);
-    }
-
-    if (daId) {
-      params.set("da_id", daId);
-    }
+    const params = new URLSearchParams(
+      Object.fromEntries(
+        Object.entries(searchParams as Object).filter(([_, v]) => v != null && v !== "") // remove null, undefined, empty string
+      )
+    );
 
     // fetch data
     const res = await expiredAPI.fetchData(
       `/api/v1/withdrawal/request/list?${params.toString()}`
-    );
-
-    return {
-      success: true,
-      data: res.data,
-      message: "Data get successful",
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      success: false,
-      data: [],
-      message: "Something went wrong",
-    };
-  }
-};
-
-export const getWithdrawalConfirmationList = async ({
-  daId,
-}: {
-  daId?: string;
-}) => {
-  try {
-    // create search params
-    const params = new URLSearchParams();
-
-    params.set("status", "all");
-
-    params.set("mio_id", "10001");
-
-    // fetch data
-    const res = await expiredAPI.fetchData(
-      `/api/v1/withdrawal/list?mio_id=10001&status=all`
     );
 
     return {

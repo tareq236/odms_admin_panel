@@ -8,13 +8,23 @@ import React from "react";
 const tabList = [
   {
     id: 1,
-    title: "Withdrawal Pending",
-    params: "pending",
+    title: "Request List",
+    params: "request_approved",
   },
   {
     id: 2,
-    title: "Withdrawal Confirmation",
-    params: "confirmation",
+    title: "Withdrawal Pending",
+    params: "withdrawal_pending",
+  },
+  {
+    id: 3,
+    title: "Withdrawal Approval",
+    params: "withdrawal_approval",
+  },
+  {
+    id: 3,
+    title: "Withdrawal Approved",
+    params: "withdrawal_approved",
   },
 ];
 
@@ -23,7 +33,7 @@ export default function TabSection() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const validatedParams = searchParams.get("withdrawal") ?? "pending";
+  const validatedParams = searchParams.get("withdrawal") ?? "request_approved";
 
   return (
     <section className="overflow-x-auto mb-6">
