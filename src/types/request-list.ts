@@ -19,7 +19,7 @@ export interface RequestlistDetails {
   order_date: string | null;
   order_approval_date: string | null;
   delivery_date: string | null;
-  last_status: "request_approved" | "request_pending";
+  last_status: WithdrawalStatus;
   invoice_type: string;
   mio_name: string;
   mio_mobile: string;
@@ -36,6 +36,12 @@ export interface RequestlistDetails {
   request_list: Requestlist[];
 }
 
+export type WithdrawalStatus =
+  | "request_pending"
+  | "withdrawal_pending"
+  | "withdrawal_approval"
+  | "withdrawal_approved";
+
 export interface Requestlist {
   list_id: 27;
   matnr: string;
@@ -49,13 +55,11 @@ export interface Requestlist {
   unit_tp: number;
   unit_vat: number;
   expire_date: string;
+  materials: WithdrawalList[];
 }
 
 export interface WithdrawalConfirmation {
-  id: number;
-  withdrawal_list: any[];
   invoice_no: string;
-  invoice_type: string;
   mio_id: string;
   rm_id: string;
   da_id: string | null;
@@ -74,7 +78,24 @@ export interface WithdrawalConfirmation {
   order_date: string | null;
   order_approval_date: string | null;
   delivery_date: string | null;
-  last_status: "request_approved" | "request_pending";
-  created_at: string;
-  updated_at: string;
+  last_status: WithdrawalStatus;
+  da_name: string;
+  da_mobile_no: string;
+  partner_name: string;
+  partner_address: string;
+  partner_mobile_no: string;
+  contact_person: string;
+}
+
+export interface WithdrawalList {
+  matnr: string;
+  material_name: string;
+  batch: string;
+  request_pack_qty: number;
+  request_unit_qty: number;
+  request_net_val: number;
+  expire_date: string | Date;
+  withdrawal_pack_qty: number;
+  withdrawal_unit_qty: number;
+  withdrawal_net_val: number;
 }

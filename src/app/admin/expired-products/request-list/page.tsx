@@ -13,7 +13,8 @@ import { redirect } from "next/navigation";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import { AuthUser } from "@/types/AuthUser";
 import TabSection from "@/components/expired-products/request-list/TabSection";
-import ConfirmationListTable from "@/components/expired-products/request-list/withdrawal-confirmation/ConfirmationListTable";
+import { WithdrawalStatus } from "@/types/request-list";
+import WithdrawalApprovalTable from "@/components/expired-products/request-list/withdrawal-approval/WithdrawalApprovalTable";
 
 export default async function ExpiredProductsListPage({
   searchParams,
@@ -73,7 +74,14 @@ const RequestTableContainer = async ({
 
   return (
     <section className="data-table-section">
-      <RequestListTable data={res?.data.data} error={undefined} />
+      {["withdrawal_approval", "withdrawal_approved"].includes(
+        validatedWithdrawal as WithdrawalStatus
+      ) ? (
+        <WithdrawalApprovalTable data={res?.data.data} error={res.error} />
+      ) : (
+        <RequestListTable data={res?.data.data} error={res.error} />
+      )}
+
       {validatedDepot && res?.data?.data?.length === 0 && <NoData />}
       {user.role === "admin" && !depot && <SelectDepot />}
 

@@ -45,7 +45,6 @@ export default function RequestListTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>Invoice No.</TableHead>
             <TableHead>Invoice Type</TableHead>
             <TableHead>Depot</TableHead>
@@ -63,7 +62,6 @@ export default function RequestListTable({
           {data.length > 0 &&
             data.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.id}</TableCell>
                 <TableCell>{item.invoice_no}</TableCell>
                 <TableCell>{item.invoice_type}</TableCell>
                 <TableCell>{item.depot_name || `-`}</TableCell>

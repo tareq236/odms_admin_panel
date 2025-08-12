@@ -11,14 +11,24 @@ export const getRequestList = async (searchParams: any) => {
     // create search params
     const params = new URLSearchParams(
       Object.fromEntries(
-        Object.entries(searchParams as Object).filter(([_, v]) => v != null && v !== "") // remove null, undefined, empty string
+        Object.entries(searchParams as Object).filter(
+          ([_, v]) => v != null && v !== ""
+        ) // remove null, undefined, empty string
       )
     );
 
+    let apiUrl = `/api/v1/withdrawal/request/list`;
+
+    if (
+      ["withdrawal_approval", "withdrawal_approved"].includes(
+        searchParams.status
+      )
+    ) {
+      apiUrl = `/api/v1/withdrawal/final_list`;
+    }
+
     // fetch data
-    const res = await expiredAPI.fetchData(
-      `/api/v1/withdrawal/request/list?${params.toString()}`
-    );
+    const res = await expiredAPI.fetchData(`${apiUrl}?${params.toString()}`);
 
     return {
       success: true,
@@ -30,6 +40,7 @@ export const getRequestList = async (searchParams: any) => {
     return {
       success: false,
       data: [],
+      error: (error as Error).message,
       message: "Something went wrong",
     };
   }

@@ -17,7 +17,7 @@ import { WithdrawalConfirmation } from "@/types/request-list";
 import StatusBadge from "../../StatusBadge";
 import { Modal } from "@/components/modal/Modal";
 
-export default function ConfirmationListTable({
+export default function WithdrawalApprovalTable({
   data,
   error,
 }: {
@@ -37,12 +37,10 @@ export default function ConfirmationListTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>Invoice No.</TableHead>
-            <TableHead>Invoice Type</TableHead>
             <TableHead>Depot</TableHead>
             <TableHead>Partner Name</TableHead>
-            <TableHead>Route</TableHead>
+            <TableHead>Address</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Request Date</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -52,13 +50,11 @@ export default function ConfirmationListTable({
         <TableBody>
           {data && data?.length > 0 &&
             data.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.id}</TableCell>
+              <TableRow key={item.invoice_no}>
                 <TableCell>{item.invoice_no}</TableCell>
-                <TableCell>{item.invoice_type}</TableCell>
                 <TableCell>{item.depot_id || `-`}</TableCell>
-                <TableCell>{item.partner_id || `-`}</TableCell>
-                <TableCell>{item.route_id || `-`}</TableCell>
+                <TableCell>{item.partner_name || `-`}</TableCell>
+                <TableCell>{item.partner_address || `-`}</TableCell>
                 <TableCell className="min-w-[120px]">
                   <StatusBadge status={item.last_status} />
                 </TableCell>
