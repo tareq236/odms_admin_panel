@@ -22,10 +22,9 @@ const Modal = ({
               <span>{header.title}</span>
             </DialogTitle>
           </DialogHeader>
+          {/* content */}
+          {children}
         </ScrollArea>
-
-        {/* content */}
-        {children}
       </DialogContent>
     </Dialog>
   );

@@ -55,7 +55,6 @@ export interface Requestlist {
   unit_tp: number;
   unit_vat: number;
   expire_date: string;
-  materials: WithdrawalList[];
 }
 
 export interface WithdrawalConfirmation {
@@ -85,6 +84,7 @@ export interface WithdrawalConfirmation {
   partner_address: string;
   partner_mobile_no: string;
   contact_person: string;
+  materials: WithdrawalList[];
 }
 
 export interface WithdrawalList {

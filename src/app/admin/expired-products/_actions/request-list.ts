@@ -82,3 +82,37 @@ export const updateAssignDA = async ({
     };
   }
 };
+
+export const confirmWithdrawal = async ({
+  invoiceNo,
+}: {
+  invoiceNo: string;
+}) => {
+  try {
+    // fetch data
+    const res = await expiredAPI.fetchData(`/api/v1/withdrawal/confirmation`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        invoice_no: invoiceNo,
+      }),
+    });
+
+    revalidatePath("/admin/expired-products/request-list");
+
+    return {
+      success: true,
+      data: res,
+      message: "Withdrawal is confirmed successfully",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      data: null,
+      message: (error as Error).message ?? "Something went wrong",
+    };
+  }
+};

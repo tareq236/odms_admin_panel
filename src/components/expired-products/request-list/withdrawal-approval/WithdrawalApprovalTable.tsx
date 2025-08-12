@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { WithdrawalConfirmation } from "@/types/request-list";
 import StatusBadge from "../../StatusBadge";
 import { Modal } from "@/components/modal/Modal";
+import WithdrawalDetails from "./WithdrawalDetails";
 
 export default function WithdrawalApprovalTable({
   data,
@@ -48,7 +49,8 @@ export default function WithdrawalApprovalTable({
         </TableHeader>
 
         <TableBody>
-          {data && data?.length > 0 &&
+          {data &&
+            data?.length > 0 &&
             data.map((item) => (
               <TableRow key={item.invoice_no}>
                 <TableCell>{item.invoice_no}</TableCell>
@@ -80,10 +82,17 @@ export default function WithdrawalApprovalTable({
       {/* edit user dialog */}
       <Modal
         open={!!view}
-        header={{ icon: ScrollText, title: "Withdrawal Confirmed Product" }}
+        header={{ icon: ScrollText, title: "Withdrawal Product" }}
         onOpenChange={setView}
       >
-        No Data
+        {view && (
+          <WithdrawalDetails
+            onClose={() => {
+              setView(false);
+            }}
+            data={view}
+          />
+        )}
       </Modal>
     </>
   );
