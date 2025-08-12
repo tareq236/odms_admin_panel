@@ -78,8 +78,8 @@ const RequestTableContainer = async ({
       {user.role === "admin" && !depot && <SelectDepot />}
 
       <PagePagination
-        limit={Number(res.data.pagination.per_page ?? 0)}
-        count={Number(res.data.pagination.total_items ?? 0)}
+        limit={Number(res.data.pagination?.per_page ?? 1)}
+        count={Number(res.data.pagination?.total_items ?? 1)}
       />
     </section>
   );
