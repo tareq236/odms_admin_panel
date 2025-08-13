@@ -107,20 +107,32 @@ export default function WithdrawalDetails({
         <Table2 className="size-4" />{" "}
         <h2 className="text-foreground">Withdrawal List</h2>
       </div>
-      <div className=" w-full max-w-[90vw] md:max-w-[61rem] mx-auto border rounded-md overflow-x-auto">
-        <table className="w-full [&_td]:text-nowrap [&_td]:text-sm [&_th]:text-sm [&_td]:p-2 [&_th]:p-2">
-          <thead className="[&_tr]:border-y-0 [&_tr]:border-b">
+      <div className=" w-full max-w-[90vw] md:max-w-[61rem] mx-auto border border-muted-foreground/75 rounded-md overflow-x-auto">
+        <table className="w-full [&_th]:border-r [&_*]:border-muted-foreground/50 [&_td]:border-r [&_td]:text-nowrap [&_td]:text-sm [&_th]:text-sm [&_td]:p-2 [&_th]:p-2">
+          <thead className="[&_tr]:border-y-0 [&_tr]:border-b bg-muted/50">
             <tr>
-              <th>Matnr</th>
-              <th>Name</th>
-              <th>Batch</th>
-              <th>Pack Qty. (Request)</th>
-              <th>Unit Qty. (Request)</th>
-              <th>Net Value (Request)</th>
-              <th>Pack Qty. (Withdrawal)</th>
-              <th>Unit Qty. (Withdrawal)</th>
-              <th>Net Value (Withdrawal)</th>
-              <th>Expire Date</th>
+              <th rowSpan={2}>Matnr</th>
+              <th rowSpan={2} className="border-r-2">
+                Name
+              </th>
+              <th rowSpan={2} className="border-r-2">
+                Batch
+              </th>
+              <th colSpan={3} className="border-r-2">
+                Request
+              </th>
+              <th colSpan={3} className="border-r-2">
+                Withdrawal
+              </th>
+              <th rowSpan={2}>Expire Date</th>
+            </tr>
+            <tr>
+              <th>Pack Qty.</th>
+              <th>Unit Qty.</th>
+              <th className="border-r-2">Net Value</th>
+              <th>Pack Qty.</th>
+              <th>Unit Qty.</th>
+              <th className="border-r-2">Net Value</th>
             </tr>
           </thead>
           <tbody>
@@ -128,14 +140,20 @@ export default function WithdrawalDetails({
               data.materials.map((item) => (
                 <tr key={item.batch}>
                   <td>{item.matnr}</td>
-                  <td>{item.material_name}</td>
-                  <td>{item.batch}</td>
+                  <td className="border-r-2">
+                    {item.material_name}
+                  </td>
+                  <td className="border-r-2">{item.batch}</td>
                   <td>{item.request_pack_qty}</td>
                   <td>{item.request_unit_qty}</td>
-                  <td>{item.request_net_val}</td>
+                  <td className="border-r-2">
+                    {item.request_net_val}
+                  </td>
                   <td>{item.withdrawal_pack_qty}</td>
                   <td>{item.withdrawal_unit_qty}</td>
-                  <td>{item.withdrawal_net_val}</td>
+                  <td className="border-r-2">
+                    {item.withdrawal_net_val}
+                  </td>
                   <td>{formatDateTZ(new Date(item.expire_date))}</td>
                 </tr>
               ))}
@@ -200,7 +218,7 @@ const Field = ({
 }) => {
   return (
     <div className="flex flex-col gap-0.5">
-      <h4 className="text-sm text-muted-foreground">{name}</h4>
+      <h4 className="text-sm text-r-2">{name}</h4>
       {typeof value !== "string" || typeof value !== "number" ? (
         <p className="text-sm font-semibold">{value}</p>
       ) : (
