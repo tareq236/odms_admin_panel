@@ -1,15 +1,5 @@
-import {
-  RequestlistDetails,
-  WithdrawalConfirmation,
-} from "@/types/request-list";
+import { WithdrawalConfirmation } from "@/types/request-list";
 import React, { ReactNode } from "react";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Table2 } from "lucide-react";
 import StatusBadge from "../../StatusBadge";
 import { formatDateTZ } from "@/lib/formatters";
@@ -140,20 +130,14 @@ export default function WithdrawalDetails({
               data.materials.map((item) => (
                 <tr key={item.batch}>
                   <td>{item.matnr}</td>
-                  <td className="border-r-2">
-                    {item.material_name}
-                  </td>
+                  <td className="border-r-2">{item.material_name}</td>
                   <td className="border-r-2">{item.batch}</td>
                   <td>{item.request_pack_qty}</td>
                   <td>{item.request_unit_qty}</td>
-                  <td className="border-r-2">
-                    {item.request_net_val}
-                  </td>
+                  <td className="border-r-2">{item.request_net_val}</td>
                   <td>{item.withdrawal_pack_qty}</td>
                   <td>{item.withdrawal_unit_qty}</td>
-                  <td className="border-r-2">
-                    {item.withdrawal_net_val}
-                  </td>
+                  <td className="border-r-2">{item.withdrawal_net_val}</td>
                   <td>{formatDateTZ(new Date(item.expire_date))}</td>
                 </tr>
               ))}

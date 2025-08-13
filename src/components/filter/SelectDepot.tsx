@@ -1,13 +1,13 @@
 import React from "react";
-import Select from "../select/Select";
 import db from "../../../db/db";
+import { Combobox } from "../combobox/Combobox";
 
 export default async function SelectDepot() {
   const depot = await db.rdl_route_wise_depot.findMany({
-    distinct: 'depot_code',
+    distinct: "depot_code",
     orderBy: {
-        depot_name: 'asc'
-    }
+      depot_name: "asc",
+    },
   });
 
   const data = depot.map((item) => {
@@ -16,5 +16,13 @@ export default async function SelectDepot() {
       value: item.depot_code,
     };
   });
-  return <Select paramName="depot" placeholder="Select Depot" data={data as any[]} />;
+  return (
+    <>
+      <Combobox
+        paramName="depot"
+        placeholder="Select Depot"
+        data={data as any[]}
+      />
+    </>
+  );
 }

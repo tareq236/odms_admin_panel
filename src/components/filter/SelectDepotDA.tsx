@@ -1,6 +1,6 @@
 import React from "react";
-import Select from "../select/Select";
 import db from "../../../db/db";
+import { Combobox } from "../combobox/Combobox";
 
 export default async function SelectDepotDA({
   depotCode,
@@ -23,6 +23,6 @@ export default async function SelectDepotDA({
     };
   });
   return (
-    <Select paramName="da_id" placeholder="Select DA" data={data as any[]} />
+    <Combobox paramName="da_id" placeholder="Select DA" data={data as any[]} />
   );
 }

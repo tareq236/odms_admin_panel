@@ -15,6 +15,7 @@ import { AuthUser } from "@/types/AuthUser";
 import TabSection from "@/components/expired-products/request-list/TabSection";
 import { WithdrawalStatus } from "@/types/request-list";
 import WithdrawalApprovalTable from "@/components/expired-products/request-list/withdrawal-approval/WithdrawalApprovalTable";
+import { ErrorBoundary } from "@/components/boundary/ErrorBoundary";
 
 export default async function ExpiredProductsListPage({
   searchParams,
@@ -73,22 +74,24 @@ const RequestTableContainer = async ({
   });
 
   return (
-    <section className="data-table-section">
-      {["withdrawal_approval", "withdrawal_approved"].includes(
-        validatedWithdrawal as WithdrawalStatus
-      ) ? (
-        <WithdrawalApprovalTable data={res?.data.data} error={res.error} />
-      ) : (
-        <RequestListTable data={res?.data.data} error={res.error} />
-      )}
+    <ErrorBoundary error={res.error}>
+      <section className="data-table-section">
+        {["withdrawal_approval", "withdrawal_approved"].includes(
+          validatedWithdrawal as WithdrawalStatus
+        ) ? (
+          <WithdrawalApprovalTable data={res?.data?.data ?? []} />
+        ) : (
+          <RequestListTable data={res?.data?.data ?? []} />
+        )}
 
-      {validatedDepot && res?.data?.data?.length === 0 && <NoData />}
-      {user.role === "admin" && !depot && <SelectDepot />}
+        {validatedDepot && res?.data?.data?.length === 0 && <NoData />}
+        {user.role === "admin" && !depot && <SelectDepot />}
 
-      <PagePagination
-        limit={Number(res.data.pagination?.per_page ?? 1)}
-        count={Number(res.data.pagination?.total_items ?? 1)}
-      />
-    </section>
+        <PagePagination
+          limit={Number(res.data.pagination?.per_page ?? 1)}
+          count={Number(res.data.pagination?.total_items ?? 1)}
+        />
+      </section>
+    </ErrorBoundary>
   );
 };

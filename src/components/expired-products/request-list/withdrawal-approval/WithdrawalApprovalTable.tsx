@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/table";
 import { formatDate } from "@/lib/formatters";
 import { ScrollText } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
+import React, { useState } from "react";
 import { WithdrawalConfirmation } from "@/types/request-list";
 import StatusBadge from "../../StatusBadge";
 import { Modal } from "@/components/modal/Modal";
@@ -20,18 +19,10 @@ import WithdrawalDetails from "./WithdrawalDetails";
 
 export default function WithdrawalApprovalTable({
   data,
-  error,
 }: {
   data: WithdrawalConfirmation[];
-  error?: string;
 }) {
   const [view, setView] = useState<any>(false);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
 
   return (
     <>

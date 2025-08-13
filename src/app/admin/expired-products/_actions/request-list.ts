@@ -27,6 +27,8 @@ export const getRequestList = async (searchParams: any) => {
       apiUrl = `/api/v1/withdrawal/final_list`;
     }
 
+    console.log("PARAMS ",params.toString());
+
     // fetch data
     const res = await expiredAPI.fetchData(`${apiUrl}?${params.toString()}`);
 

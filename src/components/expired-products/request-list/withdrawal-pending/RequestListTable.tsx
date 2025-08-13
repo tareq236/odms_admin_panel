@@ -17,8 +17,7 @@ import {
 } from "@/components/ui/table";
 import { formatDate } from "@/lib/formatters";
 import { ScrollText } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
+import React, { useState } from "react";
 import { RequestlistDetails } from "@/types/request-list";
 import StatusBadge from "../../StatusBadge";
 import RequestInvoiceDetails from "./RequestInvoiceDetails";
@@ -27,18 +26,10 @@ import AssignDaForm from "./AssignDaForm";
 
 export default function RequestListTable({
   data,
-  error,
 }: {
   data: RequestlistDetails[];
-  error?: string;
 }) {
   const [view, setView] = useState<any>(false);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
 
   return (
     <>
@@ -72,7 +63,10 @@ export default function RequestListTable({
                   {item.da_name ? (
                     item.da_name
                   ) : (
-                    <AssignDaForm invoiceNo={item.invoice_no} depotCode={item.depot_id} />
+                    <AssignDaForm
+                      invoiceNo={item.invoice_no}
+                      depotCode={item.depot_id}
+                    />
                   )}
                 </TableCell>
                 <TableCell className="min-w-[120px]">

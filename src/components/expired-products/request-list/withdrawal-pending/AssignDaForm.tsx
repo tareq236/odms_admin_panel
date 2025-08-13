@@ -8,29 +8,6 @@ import { rdl_users_list } from "@/prisma/generated/client1";
 import React from "react";
 import { toast } from "sonner";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
-
 export default function AssignDaForm({
   depotCode,
   invoiceNo,
