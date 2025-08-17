@@ -118,10 +118,10 @@ export default function WithdrawalDetails({
             </tr>
             <tr>
               <th>Pack Qty.</th>
-              <th>Unit Qty.</th>
+              <th>Tab/Cap/Amp</th>
               <th className="border-r-2">Net Value</th>
               <th>Pack Qty.</th>
-              <th>Unit Qty.</th>
+              <th>Tab/Cap/Amp</th>
               <th className="border-r-2">Net Value</th>
             </tr>
           </thead>

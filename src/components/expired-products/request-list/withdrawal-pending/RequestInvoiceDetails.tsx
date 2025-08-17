@@ -131,7 +131,7 @@ export default function RequestInvoiceDetails({
               <TableHead>Batch</TableHead>
               <TableHead>Pack Qty.</TableHead>
               <TableHead>Strip Qty.</TableHead>
-              <TableHead>Unit Qty.</TableHead>
+              <TableHead>Tab/Cap/Amp</TableHead>
               <TableHead>Net Val.</TableHead>
               <TableHead>Unit TP</TableHead>
               <TableHead>Unit VAT</TableHead>
