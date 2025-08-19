@@ -1,5 +1,5 @@
 import FilterSection from "@/components/expired-products/FilterSection";
-import RequestListTable from "@/components/expired-products/request-list/withdrawal-pending/RequestListTable";
+import RequestListTable from "@/components/expired-products/withdrawal request/withdrawal-pending/RequestListTable";
 import PageHeader from "@/components/ui/PageHeader";
 import PagePagination from "@/components/ui/PagePagination";
 import { ScrollText } from "lucide-react";
@@ -12,9 +12,9 @@ import { verifyAutuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import { AuthUser } from "@/types/AuthUser";
-import TabSection from "@/components/expired-products/request-list/TabSection";
+import TabSection from "@/components/expired-products/withdrawal request/TabSection";
 import { WithdrawalStatus } from "@/types/request-list";
-import WithdrawalApprovalTable from "@/components/expired-products/request-list/withdrawal-approval/WithdrawalApprovalTable";
+import WithdrawalApprovalTable from "@/components/expired-products/withdrawal request/withdrawal-approval/WithdrawalApprovalTable";
 import { ErrorBoundary } from "@/components/boundary/ErrorBoundary";
 
 export default async function ExpiredProductsListPage({
@@ -30,7 +30,7 @@ export default async function ExpiredProductsListPage({
     <>
       <div className="flex items-center justify-between gap-5 flex-wrap mb-6">
         <PageHeader
-          title="Request List"
+          title="Withdrawal Request"
           icon={<ScrollText className="size-5 fill-primary/20" />}
         />
 

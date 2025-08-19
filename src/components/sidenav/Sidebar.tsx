@@ -5,6 +5,7 @@ import {
   Footprints,
   Home,
   IdCard,
+  List,
   ListTodo,
   LogOut,
   Map,
@@ -179,8 +180,14 @@ export default function Sidebar({
               <div className="flex flex-col gap-2">
                 <NavLink
                   icon={<ScrollText className="size-4" />}
-                  name="Request List"
-                  href="/admin/expired-products/request-list"
+                  name="Withdrawal Request"
+                  href="/admin/expired-products/withdrawal-request"
+                  onClick={onClose}
+                />
+                <NavLink
+                  icon={<List className="size-4" />}
+                  name="Replacement Order"
+                  href="/admin/expired-products/replacement-order"
                   onClick={onClose}
                 />
               </div>

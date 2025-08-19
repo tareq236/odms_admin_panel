@@ -8,23 +8,18 @@ import React from "react";
 const tabList = [
   {
     id: 1,
-    title: "Request List",
-    params: "request_approved",
+    title: "Delivery List",
+    params: "delivery_list",
   },
   {
     id: 2,
-    title: "Withdrawal Pending",
-    params: "withdrawal_pending",
+    title: "Delivery Pending",
+    params: "delivery_pending_list",
   },
   {
     id: 3,
-    title: "Withdrawal Approval",
-    params: "withdrawal_approval",
-  },
-  {
-    id: 3,
-    title: "Withdrawal Approved",
-    params: "withdrawal_approved",
+    title: "Delivered List",
+    params: "delivered_list",
   },
 ];
 
@@ -33,10 +28,10 @@ export default function TabSection() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const validatedParams = searchParams.get("withdrawal") ?? "request_approved";
+  const validatedParams = searchParams.get("replacement") ?? tabList[0].params;
 
   return (
-    <section className="overflow-x-auto mb-6">
+    <section className="overflow-x-auto mb-6 w-full">
       <div className="flex items-center gap-3 border-b">
         {tabList.map((item) => (
           <Button
@@ -49,7 +44,7 @@ export default function TabSection() {
             } transition-all duration-300`}
             onClick={() => {
               const params = new URLSearchParams(searchParams);
-              params.set("withdrawal", item.params);
+              params.set("replacement", item.params);
               router.push(`${pathname}?${params.toString()}`);
             }}
           >
