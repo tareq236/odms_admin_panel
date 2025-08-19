@@ -74,15 +74,7 @@ const DataTable = async ({
 
   return (
     <ErrorBoundary error={res.error}>
-      {" "}
       <section className="data-table-section">
-        {/* {["withdrawal_approval", "withdrawal_approved"].includes(
-          validatedWithdrawal as WithdrawalStatus
-        ) ? (
-          <WithdrawalApprovalTable data={res?.data?.data ?? []} />
-        ) : (
-          <RequestListTable data={res?.data?.data ?? []} />
-        )} */}
         <ReplacementOrderTable data={res?.data?.data ?? []} />
 
         {validatedDepot && res?.data?.data?.length === 0 && <NoData />}

@@ -10,7 +10,7 @@ export interface ReplacementOrder {
   partner_address: string;
   partner_mobile_no: string;
   contact_person: string;
-  order_date: string | Date;
+  order_date: string;
   order_approval_date: string;
   delivery_da_id: string | null;
   last_status: OrderStatus;
@@ -18,9 +18,8 @@ export interface ReplacementOrder {
 
 export type OrderStatus =
   | "replacement_approved"
-  | "withdrawal_pending"
-  | "withdrawal_approval"
-  | "withdrawal_approved";
+  | "delivered"
+  | "delivery_pending";
 
 export interface OrderList {
   matnr: string;

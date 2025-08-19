@@ -1,5 +1,5 @@
 import React from "react";
-import { Badge } from "../ui/badge";
+import { Badge } from "../../ui/badge";
 import { WithdrawalStatus } from "@/types/request-list";
 
 export default function StatusBadge({ status }: { status: WithdrawalStatus }) {

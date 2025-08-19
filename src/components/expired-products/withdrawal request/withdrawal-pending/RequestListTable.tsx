@@ -19,10 +19,11 @@ import { formatDate } from "@/lib/formatters";
 import { ScrollText } from "lucide-react";
 import React, { useState } from "react";
 import { RequestlistDetails } from "@/types/request-list";
-import StatusBadge from "../../StatusBadge";
+import StatusBadge from "../StatusBadge";
 import RequestInvoiceDetails from "./RequestInvoiceDetails";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import AssignDaForm from "./AssignDaForm";
+import AssignDaForm from "../../AssignDaForm";
+import { updateAssignDA } from "@/app/admin/expired-products/_actions/request-list";
 
 export default function RequestListTable({
   data,
@@ -66,6 +67,7 @@ export default function RequestListTable({
                     <AssignDaForm
                       invoiceNo={item.invoice_no}
                       depotCode={item.depot_id}
+                      onAssignDA={updateAssignDA}
                     />
                   )}
                 </TableCell>

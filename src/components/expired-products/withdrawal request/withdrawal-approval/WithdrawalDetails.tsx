@@ -1,12 +1,13 @@
 import { WithdrawalConfirmation } from "@/types/request-list";
 import React, { ReactNode } from "react";
 import { Table2 } from "lucide-react";
-import StatusBadge from "../../StatusBadge";
+import StatusBadge from "../StatusBadge";
 import { formatDateTZ } from "@/lib/formatters";
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { confirmWithdrawal } from "@/app/admin/expired-products/_actions/request-list";
 import { toast } from "sonner";
+import { approval, CustomSection, Field } from "../../section";
 
 export default function WithdrawalDetails({
   data,
@@ -125,7 +126,7 @@ export default function WithdrawalDetails({
               <th className="border-r-2">Net Value</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="[&_tr]:border-b [&_tr]:last::border-b-0">
             {data.materials &&
               data.materials.map((item) => (
                 <tr key={item.batch}>
@@ -183,37 +184,3 @@ export default function WithdrawalDetails({
     </section>
   );
 }
-
-const CustomSection = ({ ...props }: React.ComponentProps<"div">) => {
-  return (
-    <div
-      className="flex items-center gap-x-5 gap-y-3 flex-wrap border-b pb-3"
-      {...props}
-    />
-  );
-};
-
-const Field = ({
-  name,
-  value,
-}: {
-  name: string;
-  value: string | number | ReactNode;
-}) => {
-  return (
-    <div className="flex flex-col gap-0.5">
-      <h4 className="text-sm text-r-2">{name}</h4>
-      {typeof value !== "string" || typeof value !== "number" ? (
-        <p className="text-sm font-semibold">{value}</p>
-      ) : (
-        value
-      )}
-    </div>
-  );
-};
-
-type Approval = 0 | 1;
-
-const approval = (value: Approval | boolean) => {
-  return value === 1 || value === true ? "Yes" : "No";
-};

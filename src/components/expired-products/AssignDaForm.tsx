@@ -11,9 +11,21 @@ import { toast } from "sonner";
 export default function AssignDaForm({
   depotCode,
   invoiceNo,
+  onAssignDA,
 }: {
   depotCode: string;
   invoiceNo: string;
+  onAssignDA({
+    daId,
+    invoiceNo,
+  }: {
+    daId: number;
+    invoiceNo: number;
+  }): Promise<{
+    success: boolean;
+    data: any;
+    message: string;
+  }>;
 }) {
   const [data, setData] = React.useState<rdl_users_list[]>([]);
   const [search, setSearch] = React.useState("");
@@ -44,7 +56,7 @@ export default function AssignDaForm({
         onSelect={async (value) => {
           // assign DA and add loading transition in toast
           toast.promise(
-            updateAssignDA({
+            onAssignDA({
               daId: Number(value),
               invoiceNo: Number(invoiceNo),
             }),

@@ -1,10 +1,7 @@
 "use server";
 
-import { FetchApiJSON } from "@/lib/helper";
 import { revalidatePath } from "next/cache";
-
-const expiredAPI = new FetchApiJSON();
-expiredAPI.setBaseUrl(process.env.NEXT_PUBLIC_EXPIRED_PRODUCT_API as string);
+import { expiredAPI } from "./api";
 
 export const getRequestList = async (searchParams: any) => {
   try {
@@ -27,7 +24,7 @@ export const getRequestList = async (searchParams: any) => {
       apiUrl = `/api/v1/withdrawal/final_list`;
     }
 
-    console.log("PARAMS ",params.toString());
+    console.log("PARAMS ", params.toString());
 
     // fetch data
     const res = await expiredAPI.fetchData(`${apiUrl}?${params.toString()}`);
@@ -73,7 +70,7 @@ export const updateAssignDA = async ({
     return {
       success: true,
       data: res,
-      message: "Assign DA successfull",
+      message: "Assign DA successfully",
     };
   } catch (error) {
     console.error(error);

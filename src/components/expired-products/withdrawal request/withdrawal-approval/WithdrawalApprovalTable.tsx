@@ -13,7 +13,7 @@ import { formatDate } from "@/lib/formatters";
 import { ScrollText } from "lucide-react";
 import React, { useState } from "react";
 import { WithdrawalConfirmation } from "@/types/request-list";
-import StatusBadge from "../../StatusBadge";
+import StatusBadge from "../StatusBadge";
 import { Modal } from "@/components/modal/Modal";
 import WithdrawalDetails from "./WithdrawalDetails";
 
