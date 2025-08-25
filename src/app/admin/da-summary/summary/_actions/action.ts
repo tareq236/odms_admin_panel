@@ -22,8 +22,6 @@ export const getGatePassBill = async (searchParams: {
 
   const user = await verifyAuthuser();
 
-  console.log(user)
-
   if (!user) redirect("/login");
 
   const isDepotDA: any = hasDepotDa(searchParams.q, user.depot as string);
@@ -81,7 +79,7 @@ export const getGatePassBill = async (searchParams: {
         db.$queryRaw`
           SELECT 
             count(rsis.billing_doc_no) over() total_credit,
-            SUM(SUM(rsis.net_val)) OVER() AS total_credit_amount
+            SUM(SUM(rsis.net_val + rsis.vat)) OVER() AS total_credit_amount
           FROM rdl_delivery_info_sap rdis
           LEFT JOIN rpl_sales_info_sap rsis 
               ON rsis.billing_doc_no = rdis.billing_doc_no
@@ -101,6 +99,7 @@ export const getGatePassBill = async (searchParams: {
     console.log(error);
   }
 
+  // get gate pass list
   let gatePasses: (unknown | any)[] = [];
   try {
     if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
@@ -123,31 +122,50 @@ export const getGatePassBill = async (searchParams: {
     gatePasses = [];
   }
 
+  // get gatepass specific data
   let gatePassData = [];
   try {
     if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
       if (gatePasses.length > 0) {
         for (let i = 0; i < gatePasses.length; i++) {
           let data = await db.$queryRaw`
-          SELECT COUNT(b.gate_pass_no) over() total_invoice,
-          count(rd.delivery_status) over() total_delivered, 
-          COUNT(rd.cash_collection_status) over() total_collection, 
-          COUNT(rd.return_status) over() total_return,
-          sum(rd.due_amount) over() total_due,
-          SUM(rd.cash_collection) OVER() collection_amount,
-          SUM(rd.return_amount) OVER() return_amount
-          FROM rdl_delivery_info_sap as a
-          INNER JOIN rpl_sales_info_sap as b on a.billing_doc_no = b.billing_doc_no
-          LEFT JOIN rdl_delivery rd ON rd.billing_doc_no = a.billing_doc_no
-          WHERE a.billing_date = ${
-            searchParams.start
-              ? `${searchParams.start}`
-              : `${formateDateDB(new Date())}`
-          }
+          SELECT
+            COUNT(b.gate_pass_no) OVER () AS total_invoice,
+            COUNT(rd.delivery_status) OVER () AS total_delivered,
+            COUNT(rd.cash_collection_status) OVER () AS total_collection,
+            COUNT(rd.return_status) OVER () AS total_return,
+            SUM(rd.due_amount) OVER () AS total_due,
+            SUM(rd.cash_collection) OVER () AS collection_amount,
+            SUM(rd.return_amount) OVER () AS return_amount,
+            sum(
+                SUM(
+                    (
+                        CASE
+                            WHEN b.billing_type IN ('ZD2', 'ZD4', 'zd2', 'zd4') THEN b.net_val + b.vat
+                            ELSE 0
+                        END
+                    )
+                )
+            ) OVER () AS total_credit_amount,
+            COUNT(
+                CASE
+                    WHEN b.billing_type IN ('ZD2', 'ZD4', 'zd2', 'zd4') THEN b.billing_doc_no
+                END
+            ) OVER () AS total_credit
+        FROM
+            rdl_delivery_info_sap AS a
+            INNER JOIN rpl_sales_info_sap AS b ON a.billing_doc_no = b.billing_doc_no
+            LEFT JOIN rdl_delivery rd ON rd.billing_doc_no = a.billing_doc_no
+       WHERE a.billing_date = ${
+         searchParams.start
+           ? `${searchParams.start}`
+           : `${formateDateDB(new Date())}`
+       }
           AND a.da_code = ${daCode}
-          and b.gate_pass_no = ${gatePasses[i].gate_pass_no}
-          GROUP BY b.billing_doc_no
-          LIMIT 1
+          AND b.gate_pass_no = ${gatePasses[i].gate_pass_no}
+        GROUP BY
+            b.billing_doc_no
+        LIMIT 1;
         `;
           gatePassData.push(data);
         }
@@ -164,6 +182,6 @@ export const getGatePassBill = async (searchParams: {
     deliveryDone,
     collectionDone,
     returnQuantity,
-    totalCredit
+    totalCredit,
   };
 };

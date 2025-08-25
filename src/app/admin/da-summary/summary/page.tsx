@@ -49,7 +49,8 @@ async function GatePassSummaryPage({
             cashCollectionAmount={Number(collectionDone[0]?.total_net_val || 0)}
             cashCollectionRemaining={
               Number(deliveryDone[0]?.total_delivery_done || 0) -
-              Number(collectionDone[0]?.total_collection_done || 0)
+              Number(collectionDone[0]?.total_collection_done || 0) -
+              Number(totalCredit[0]?.total_credit || 0)
             }
             cashCollectionRemainingAmount={Math.abs(
               Number(deliveryDone[0]?.total_net_val || 0) -
@@ -100,11 +101,15 @@ async function GatePassSummaryPage({
               totalReturn={Number(item[0].total_return || 0)}
               cashCollectionRemaining={
                 Number(item[0].total_delivered || 0) -
-                Number(item[0].total_collection || 0)
+                Number(item[0].total_collection || 0) -
+                Number(item[0].total_credit || 0)
               }
-              cashCollectionRemainingAmount={Number(item[0].total_due || 0)}
-              totalCredit={0}
-              totalCreditAmount={0}
+              cashCollectionRemainingAmount={
+                Number(item[0].total_due || 0) -
+                Number(item[0].total_credit_amount || 0)
+              }
+              totalCredit={Number(item[0].total_credit || 0)}
+              totalCreditAmount={Number(item[0].total_credit_amount || 0)}
             />
           </Accordion>
         ))}
