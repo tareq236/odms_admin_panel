@@ -5,12 +5,13 @@ import { MapPinned } from "lucide-react";
 import React, { Suspense } from "react";
 import SearchDa from "@/components/constants/SearchDa";
 import { redirect } from "next/navigation";
-import { getUser } from "@/lib/dal";
+import { getUser, verifyAuthuser } from "@/lib/dal";
 import type { Metadata } from "next";
 import MapSection from "@/components/da-movement/MapSection";
 import Spinner from "@/components/ui/Spinner";
 import NoData from "@/components/constants/NoData";
 import { getDaInfo } from "../_actions/daInfo";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export const metadata: Metadata = {
   title: "DA Movement - ODMS Admin Panel",
@@ -21,7 +22,7 @@ export default async function DaMovementAnalyticsPage({
 }: {
   searchParams: { q: string; start: string; p: string };
 }) {
-  const user = await getUser();
+  const user = await verifyAuthuser();
 
   if (!user) redirect("/login");
 
@@ -40,7 +41,8 @@ export default async function DaMovementAnalyticsPage({
       <FilterSection />
 
       {searchParams.q ? (
-        user.role == "admin" || (isDepotDA && isDepotDA.length > 0) ? (
+        odmsPanelAdminPermission(user) ||
+        (isDepotDA && isDepotDA.length > 0) ? (
           <Suspense>
             <DaInfoSection searchParams={searchParams} />
             {daInfo && (

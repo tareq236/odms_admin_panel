@@ -7,7 +7,6 @@ import React, { Suspense } from "react";
 import { getConveyanceData } from "./_action/action";
 import type { Metadata } from "next";
 import DaInfoSection from "@/components/delivery/DaInfoSection";
-import db2 from "../../../../../db/db2";
 
 export const metadata: Metadata = {
   title: "Transportations - ODMS Admin Panel",
