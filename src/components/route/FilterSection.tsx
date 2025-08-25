@@ -12,12 +12,9 @@ import { Plus, Route } from "lucide-react";
 import React, { useState } from "react";
 import RouteForm from "./RouteForm";
 import { AuthUserProps } from "@/app/admin/route/page";
+import { AuthUser } from "@/types/AuthUser";
 
-export default function FilterSection({
-  user,
-}: {
-  user: AuthUserProps
-}) {
+export default function FilterSection({ user }: { user: AuthUser }) {
   const [add, setAdd] = useState(false);
 
   return (

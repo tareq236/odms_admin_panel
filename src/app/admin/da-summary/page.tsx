@@ -4,8 +4,9 @@ import NoData from "@/components/constants/NoData";
 import AttendanceSection from "@/components/da-summary/profile-attendance/AttendanceSection";
 import ProfileSection from "@/components/da-summary/profile-attendance/ProfileSection";
 import { formateDateDB } from "@/lib/formatters";
-import { getUser } from "@/lib/dal";
+import { verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export default async function DaSummaryPage({
   searchParams,
@@ -28,12 +29,12 @@ export default async function DaSummaryPage({
     startDate.getDate() + 1
   );
 
-  const user = await getUser();
+  const user = await verifyAuthuser();
 
   if (!user) redirect("/login");
 
   try {
-    if (user.role === "admin") {
+    if (odmsPanelAdminPermission(user)) {
       [daInfo, daAttendance, daRoute] = await Promise.all([
         db.rdl_users_list.findUnique({
           where: { sap_id: Number(searchParams.q || 0) },
@@ -65,7 +66,7 @@ export default async function DaSummaryPage({
                 sap_id: Number(searchParams.q || 0),
               },
               {
-                depot_code: user.depot_code,
+                depot_code: user.depot,
               },
             ],
           },

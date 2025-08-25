@@ -5,13 +5,13 @@ import TableSkeleton from "@/components/ui/TableSkeletion";
 import { ScrollText } from "lucide-react";
 import React, { Suspense } from "react";
 import DeliveryTable from "@/components/delivery/DeliveryTable";
-import { getUser } from "@/lib/dal";
-import { redirect } from "next/navigation";
+import { verifyAuthuser } from "@/lib/dal";
 import type { Metadata } from "next";
-import { AuthUserProps } from "../../route/page";
 import { getInvoiceInfo } from "./_actions/action";
 import DaInfoSection from "@/components/delivery/DaInfoSection";
 import db from "../../../../../db/db";
+import { AuthUser } from "@/types/AuthUser";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export const metadata: Metadata = {
   title: "Delivery Invoice - ODMS Admin Panel",
@@ -22,9 +22,7 @@ export default async function DevlierInvoicePage({
 }: {
   searchParams: { p: string; q: string; start: string };
 }) {
-  const user = await getUser();
-
-  if (!user) redirect("/login");
+  const user = await verifyAuthuser();
 
   const daInfo = await db.rdl_users_list.findFirst({
     where: {
@@ -43,7 +41,8 @@ export default async function DevlierInvoicePage({
         <FilterSection />
       </Suspense>
 
-      {(user.role === "admin" || daInfo?.depot_code == user.depot_code) &&
+      {(odmsPanelAdminPermission(user as AuthUser) ||
+        daInfo?.depot_code == user?.depot) &&
         searchParams.q != null && (
           <Suspense>
             <DaInfoSection searchParams={searchParams} />
@@ -51,7 +50,7 @@ export default async function DevlierInvoicePage({
         )}
 
       <Suspense fallback={<TableSkeleton />}>
-        <DataTable user={user} searchParams={searchParams} />
+        <DataTable user={user as AuthUser} searchParams={searchParams} />
       </Suspense>
     </>
   );
@@ -62,7 +61,7 @@ const DataTable = async ({
   user,
 }: {
   searchParams: { p: string; q: string; start: string };
-  user: AuthUserProps;
+  user: AuthUser;
 }) => {
   let limit = 20;
 

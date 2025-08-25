@@ -285,6 +285,7 @@ model rpl_customer_sales_org {
   rpl_customer  rpl_customer @relation(fields: [partner], references: [partner], onUpdate: Restrict, map: "fk_rpl_customer_customer_sales_org")
 
   @@id([partner, sales_org, del_plant])
+  @@index([partner], map: "indx_partner")
 }
 
 model rpl_customer_territory {
@@ -323,35 +324,38 @@ model rpl_material {
 }
 
 model rpl_sales_info_sap {
-  billing_doc_no String    @db.VarChar(10)
-  billing_type   String?   @db.VarChar(4)
-  sales_org      String?   @db.VarChar(4)
-  billing_date   DateTime? @db.Date
-  company_code   String?   @db.VarChar(4)
-  net_val        Decimal?  @db.Decimal(18, 2)
-  created_on     DateTime? @db.Date
-  partner        String?   @db.VarChar(10)
-  assigment      String?   @db.VarChar(10)
-  matnr          String    @db.VarChar(40)
-  quantity       Decimal?  @db.Decimal(18, 0)
-  territory_code String?   @db.VarChar(5)
-  gate_pass_no   String?   @db.VarChar(10)
-  plant          String?   @db.VarChar(4)
-  team           String?   @db.VarChar(3)
-  refrence       String?   @db.VarChar(16)
-  order_type     String?   @db.VarChar(5)
-  tp             Decimal?  @db.Decimal(18, 2)
-  batch          String    @db.VarChar(10)
-  item_category  String?   @db.VarChar(4)
-  cancel         String?   @db.VarChar(1)
-  sales_type     String?   @db.VarChar(2)
-  vat            Decimal?  @db.Decimal(18, 2)
-  created_at     DateTime  @default(now()) @db.DateTime(0)
-  updated_at     DateTime  @default(now()) @db.DateTime(0)
+  billing_doc_no    String    @db.VarChar(10)
+  billing_type      String?   @db.VarChar(4)
+  sales_org         String?   @db.VarChar(4)
+  billing_date      DateTime? @db.Date
+  company_code      String?   @db.VarChar(4)
+  net_val           Decimal?  @db.Decimal(18, 2)
+  created_on        DateTime? @db.Date
+  partner           String?   @db.VarChar(10)
+  assigment         String?   @db.VarChar(10)
+  matnr             String    @db.VarChar(40)
+  quantity          Decimal?  @db.Decimal(18, 0)
+  territory_code    String?   @db.VarChar(5)
+  gate_pass_no      String?   @db.VarChar(10)
+  plant             String?   @db.VarChar(4)
+  team              String?   @db.VarChar(3)
+  refrence          String?   @db.VarChar(16)
+  order_type        String?   @db.VarChar(5)
+  tp                Decimal?  @db.Decimal(18, 2)
+  batch             String    @db.VarChar(10)
+  item_category     String?   @db.VarChar(4)
+  cancel            String?   @db.VarChar(1)
+  sales_type        String?   @db.VarChar(2)
+  vat               Decimal?  @db.Decimal(18, 2)
+  created_at        DateTime  @default(now()) @db.DateTime(0)
+  updated_at        DateTime  @default(now()) @db.DateTime(0)
+  mio_name          String?   @db.VarChar(255)
+  mio_mobile_number String?   @db.VarChar(255)
 
   @@id([billing_doc_no, matnr, batch])
   @@index([billing_doc_no], map: "indx_billing_doc_no")
   @@index([billing_date], map: "indx_billing_date")
+  @@index([partner, matnr, batch], map: "idx_sales_partner_matnr_batch")
 }
 
 model synchronize_log {
@@ -519,6 +523,8 @@ model rdl_conveyance {
   journey_status          String    @db.VarChar(20)
   created_at              DateTime  @db.DateTime(6)
   updated_at              DateTime  @db.DateTime(6)
+  distance                Decimal?  @db.Decimal(10, 2)
+  time_duration           Decimal?  @db.Decimal(10, 2)
 }
 
 model rdl_delivery_stats {
@@ -541,7 +547,7 @@ model rdl_transport_mode_list {
   id             Int       @id @default(autoincrement())
   transport_name String    @db.VarChar(255)
   status         Int       @db.UnsignedSmallInt
-  created_at     DateTime  @db.DateTime(6)
+  created_at     DateTime  @default(now()) @db.DateTime(6)
   updated_at     DateTime? @db.DateTime(6)
 }
 
@@ -726,7 +732,7 @@ model rdl_users_list {
   sap_id            Int       @id
   full_name         String    @db.VarChar(255)
   mobile_number     String?   @db.VarChar(15)
-  user_type         String?   @db.VarChar(20)
+  user_type         String?   @db.VarChar(55)
   user_designation  String?   @db.VarChar(55)
   user_depot        String?   @db.VarChar(155)
   depot_code        String?   @db.VarChar(55)
@@ -744,6 +750,138 @@ model temp_users_list {
   user_job_location String? @db.VarChar(255)
 }
 
+model expr_replacement_list {
+  id                   BigInt               @id @default(autoincrement())
+  matnr                String               @db.VarChar(40)
+  batch                String?              @db.VarChar(40)
+  pack_qty             Int
+  unit_qty             Int
+  net_val              Decimal              @db.Decimal(10, 2)
+  created_at           DateTime             @db.DateTime(6)
+  updated_at           DateTime             @db.DateTime(6)
+  invoice_id           BigInt
+  expr_withdrawal_info expr_withdrawal_info @relation(fields: [invoice_id], references: [id], onUpdate: Restrict, map: "expr_replacement_lis_invoice_id_038b756a_fk_expr_with")
+
+  @@index([invoice_id], map: "expr_replacement_lis_invoice_id_038b756a_fk_expr_with")
+}
+
+model expr_request_list {
+  id                   BigInt               @id @default(autoincrement())
+  matnr                String               @db.VarChar(40)
+  batch                String               @db.VarChar(40)
+  pack_qty             Int
+  strip_qty            Int
+  unit_qty             Int
+  net_val              Decimal              @db.Decimal(10, 2)
+  created_at           DateTime             @db.DateTime(6)
+  updated_at           DateTime             @db.DateTime(6)
+  invoice_id_id        BigInt
+  expire_date          DateTime?            @db.Date
+  rel_invoice_date     DateTime?            @db.Date
+  rel_invoice_no       String?              @db.VarChar(20)
+  rel_mio_name         String?              @db.VarChar(155)
+  rel_mio_phone        String?              @db.VarChar(15)
+  expr_withdrawal_info expr_withdrawal_info @relation(fields: [invoice_id_id], references: [id], onUpdate: Restrict, map: "expr_request_list_invoice_id_id_8afbd376_fk_expr_with")
+
+  @@index([invoice_id_id], map: "expr_request_list_invoice_id_id_8afbd376_fk_expr_with")
+}
+
+model expr_withdrawal_info {
+  id                       BigInt                  @id @default(autoincrement())
+  invoice_no               String?                 @unique(map: "invoice_no") @db.VarChar(12)
+  mio_id                   String                  @db.VarChar(40)
+  rm_id                    String                  @db.VarChar(40)
+  da_id                    String?                 @db.VarChar(40)
+  depot_id                 String?                 @db.VarChar(40)
+  route_id                 String?                 @db.VarChar(40)
+  partner_id               String                  @db.VarChar(40)
+  request_approval         Boolean
+  withdrawal_confirmation  Boolean
+  replacement_order        Boolean
+  order_approval           Boolean
+  order_delivery           Boolean
+  request_date             DateTime?               @db.Date
+  request_approval_date    DateTime?               @db.Date
+  withdrawal_date          DateTime?               @db.Date
+  withdrawal_approval_date DateTime?               @db.Date
+  order_date               DateTime?               @db.Date
+  order_approval_date      DateTime?               @db.Date
+  delivery_date            DateTime?               @db.Date
+  last_status              String                  @db.VarChar(40)
+  created_at               DateTime                @db.DateTime(6)
+  updated_at               DateTime                @db.DateTime(6)
+  invoice_type             String                  @db.VarChar(12)
+  delivery_da_id           String?                 @db.VarChar(40)
+  expr_replacement_list    expr_replacement_list[]
+  expr_request_list        expr_request_list[]
+  expr_withdrawal_list     expr_withdrawal_list[]
+}
+
+model expr_withdrawal_list {
+  id                   BigInt               @id @default(autoincrement())
+  matnr                String               @db.VarChar(40)
+  batch                String               @db.VarChar(40)
+  pack_qty             Int
+  strip_qty            Int
+  unit_qty             Int
+  net_val              Decimal              @db.Decimal(10, 2)
+  created_at           DateTime             @db.DateTime(6)
+  updated_at           DateTime             @db.DateTime(6)
+  invoice_id_id        BigInt
+  expire_date          DateTime?            @db.Date
+  expr_withdrawal_info expr_withdrawal_info @relation(fields: [invoice_id_id], references: [id], onUpdate: Restrict, map: "expr_withdrawal_list_invoice_id_id_86ac1900_fk_expr_with")
+
+  @@index([invoice_id_id], map: "expr_withdrawal_list_invoice_id_id_86ac1900_fk_expr_with")
+}
+
+model rdl_da_movement_info {
+  id            Int      @id @default(autoincrement())
+  da_code       String   @db.VarChar(50)
+  mv_date       DateTime @db.Date
+  time_duration Int
+  distance      Int
+  created_at    DateTime @db.DateTime(6)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model rdl_test {
+  billing_doc_no String    @db.VarChar(255)
+  billing_date   DateTime? @db.Date
+  da_code        Int?
+
+  @@ignore
+}
+
+model rpl_user_list {
+  work_area_t        String   @id @db.VarChar(8)
+  rm_code            String?  @db.VarChar(8)
+  zm_code            String?  @db.VarChar(8)
+  sm_code            String?  @db.VarChar(8)
+  gm_code            String?  @db.VarChar(8)
+  rm_address         String?  @db.VarChar(255)
+  zm_address         String?  @db.VarChar(255)
+  sm_address         String?  @db.VarChar(255)
+  gm_address         String?  @db.VarChar(255)
+  sap_user_code      Int?
+  sap_next_user_code Int?
+  name               String?  @db.VarChar(255)
+  address            String?  @db.VarChar(255)
+  mobile_number      String?  @db.VarChar(20)
+  designation_id     BigInt?
+  designation        String?  @db.VarChar(255)
+  group_name         String?  @db.VarChar(50)
+  password           String?  @db.VarChar(255)
+  active             Int?     @default(1)
+  opt                String?  @db.VarChar(8)
+  token              String?  @db.VarChar(255)
+  device_type        String?  @db.VarChar(10)
+  password_change    Int?     @default(0)
+  created_at         DateTime @default(now()) @db.DateTime(0)
+  updated_at         DateTime @default(now()) @db.DateTime(0)
+
+  @@index([work_area_t, gm_code, sm_code, zm_code, rm_code, designation_id], map: "indx_user_list")
+}
+
 enum rdl_visit_history_visit_type {
   Customer_Unavailable
   Customer_Busy
@@ -753,4 +891,6 @@ enum rdl_visit_history_visit_type {
 enum rdl_admin_user_list_role {
   admin
   depot
+  admin_odms
+  admin_expr
 }

@@ -4,8 +4,9 @@ import { Prisma } from "@/prisma/generated/client1";
 import { format } from "date-fns";
 import Header from "@/components/home/Header";
 import { ChartSection } from "@/components/home/ChartSections";
-import { getUser } from "@/lib/dal";
+import { getUser, verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export type ChartData = {
   day: Date;
@@ -40,12 +41,12 @@ export default async function Home({
   let data: ChartData[] | unknown;
 
   // get auth user info
-  const authUser = await getUser();
+  const authUser = await verifyAuthuser();
 
   if (!authUser) return redirect("/login");
 
   try {
-    if (authUser.role === "admin") {
+    if (odmsPanelAdminPermission(authUser)) {
       [data, count] = await Promise.all([
         db.$queryRaw(
           Prisma.sql`
@@ -65,13 +66,13 @@ export default async function Home({
           FROM rdl_attendance ra
           LEFT JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
           WHERE start_date_time > ${prevMonth} AND start_date_time < ${currentDate} 
-              AND ru.depot_code = ${authUser.depot_code}
+              AND ru.depot_code = ${authUser.depot}
           GROUP BY
               CAST(ra.start_date_time as DATE)
       `
         ),
         db.rdl_users_list.count({
-          where: { depot_code: authUser.depot_code },
+          where: { depot_code: authUser.depot },
         }),
       ]);
     }

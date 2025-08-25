@@ -1,12 +1,12 @@
 "use server";
 
-import { verifyAutuser } from "@/lib/dal";
+import { verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import db from "../../../db/db";
 
 export const getPermission = async (userId?: string | number) => {
   try {
-    const authUser = await verifyAutuser();
+    const authUser = await verifyAuthuser();
 
     if (!authUser) redirect("/login");
 
@@ -21,7 +21,7 @@ export const getPermission = async (userId?: string | number) => {
       return true;
     }
 
-    if (authUser.role === "admin") return true;
+    if (["admin", "admin_odms"].includes(authUser.role as string)) return true;
 
     return false;
   } catch (error) {

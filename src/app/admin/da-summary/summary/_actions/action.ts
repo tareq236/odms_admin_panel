@@ -2,7 +2,7 @@ import { getUser, verifyAuthuser } from "@/lib/dal";
 import db from "../../../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
 import { redirect } from "next/navigation";
-import { hasDepotDa } from "@/lib/permissions";
+import { hasDepotDa, odmsPanelAdminPermission } from "@/lib/permissions";
 
 export const getGatePassBill = async (searchParams: {
   q: string;
@@ -27,7 +27,7 @@ export const getGatePassBill = async (searchParams: {
   const isDepotDA: any = hasDepotDa(searchParams.q, user.depot as string);
 
   try {
-    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
+    if (odmsPanelAdminPermission(user) || (isDepotDA && isDepotDA.length > 0)) {
       [
         totalDelivery,
         deliveryDone,

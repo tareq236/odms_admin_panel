@@ -6,11 +6,16 @@ import TableSkeleton from "@/components/ui/TableSkeletion";
 import { Route } from "lucide-react";
 import React, { Suspense } from "react";
 import db from "../../../../db/db";
-import { $Enums, Prisma, rdl_route_wise_depot } from "@/prisma/generated/client1";
+import {
+  $Enums,
+  Prisma,
+  rdl_route_wise_depot,
+} from "@/prisma/generated/client1";
 
 import type { Metadata } from "next";
-import { getUser } from "@/lib/dal";
+import { verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
+import { AuthUser } from "@/types/AuthUser";
 
 export type AuthUserProps = {
   id: number;
@@ -28,7 +33,7 @@ export default async function RoutePage({
 }: {
   searchParams: { q: string; p: string };
 }) {
-  const user = await getUser();
+  const user = await verifyAuthuser();
 
   if (!user) redirect("/login");
 
@@ -55,7 +60,7 @@ const DataTable = async ({
   user,
 }: {
   searchParams: { q: string; p: string };
-  user: AuthUserProps;
+  user: AuthUser;
 }) => {
   let count = 0;
   let data;
@@ -63,7 +68,7 @@ const DataTable = async ({
   let connectionError = false;
 
   try {
-    if (user.role === "admin") {
+    if (user.role?.includes("admin")) {
       if (searchParams.q) {
         [data, count] = await Promise.all([
           db.rdl_route_wise_depot.findMany({
@@ -127,7 +132,7 @@ const DataTable = async ({
                   },
                 },
                 {
-                  depot_code: user.depot_code,
+                  depot_code: user.depot,
                 },
               ],
             },
@@ -148,7 +153,7 @@ const DataTable = async ({
                   },
                 },
                 {
-                  depot_code: user.depot_code,
+                  depot_code: user.depot,
                 },
               ],
             },
@@ -158,14 +163,14 @@ const DataTable = async ({
         [data, count] = await Promise.all([
           db.rdl_route_wise_depot.findMany({
             where: {
-              depot_code: user.depot_code,
+              depot_code: user.depot,
             },
             take: limit,
             skip: limit * (Number(searchParams.p || 1) - 1),
           }),
           db.rdl_route_wise_depot.count({
             where: {
-              depot_code: user.depot_code,
+              depot_code: user.depot,
             },
           }),
         ]);

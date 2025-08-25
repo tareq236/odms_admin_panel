@@ -2,9 +2,10 @@ import UserStatusTag from "@/components/user/UserStatusTag";
 import React, { ReactNode } from "react";
 import db from "../../../db/db";
 import { MessageSquareOff } from "lucide-react";
-import { getUser } from "@/lib/dal";
+import { verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import { formateDateDB } from "@/lib/formatters";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export default async function DaInfoSection({
   searchParams,
@@ -14,7 +15,7 @@ export default async function DaInfoSection({
   let daInfo = null;
   let daRoute: any[] | null = null;
 
-  const user = await getUser();
+  const user = await verifyAuthuser();
 
   if (!user) redirect("/login");
 
@@ -42,8 +43,8 @@ export default async function DaInfoSection({
     <section className="my-6">
       <h2 className="text-muted-foreground mb-3">DA Information</h2>
 
-      {user.role == "admin" ||
-      (daInfo?.depot_code === user.depot_code && searchParams.q) ? (
+      {odmsPanelAdminPermission(user) ||
+      (daInfo?.depot_code === user.depot && searchParams.q) ? (
         <article className="p-4 border rounded flex items-center flex-wrap justify-between gap-4">
           <Field name="DA Name" value={daInfo?.full_name} />
           <Field name="Depot Name" value={daInfo?.user_depot} />

@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import db from "../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
-import { getUser } from "@/lib/dal";
+import { getUser, verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 
 type CardContainerProps = {
@@ -23,12 +23,12 @@ export default async function CardContainer({
   let dailyAttendance: unknown | any;
   let userCount;
 
-  const authUser = await getUser();
+  const authUser = await verifyAuthuser();
 
   if (!authUser) return redirect("/login");
 
   try {
-    if (authUser.role === "admin") {
+    if (authUser.role?.includes("admin")) {
       [dailyAttendance, userCount] = await Promise.all([
         db.$queryRaw`
         SELECT COUNT(sap_id) as total_attendance
@@ -45,12 +45,12 @@ export default async function CardContainer({
         FROM rdl_attendance ra
         LEFT JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
         WHERE DATE(ra.start_date_time) = ${formateDateDB(startDate)}
-        AND ru.depot_code = ${authUser.depot_code}
+        AND ru.depot_code = ${authUser.depot}
         GROUP BY CAST(start_date_time as DATE) 
         `,
         db.rdl_users_list.count({
           where: {
-            depot_code: authUser.depot_code,
+            depot_code: authUser.depot,
           },
         }),
       ]);

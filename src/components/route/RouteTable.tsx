@@ -38,8 +38,8 @@ import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { toast } from "sonner";
 import RouteForm from "./RouteForm";
 import { deleteRoute } from "@/app/actions/routes";
-import { AuthUserProps } from "@/app/admin/route/page";
 import { rdl_route_wise_depot } from "@/prisma/generated/client1";
+import { AuthUser } from "@/types/AuthUser";
 
 export default function RouteTable({
   data,
@@ -48,7 +48,7 @@ export default function RouteTable({
 }: {
   data: rdl_route_wise_depot[];
   connectionError: boolean;
-  user: AuthUserProps;
+  user: AuthUser;
 }) {
   const [editRoute, setEditRoute] = useState<any>();
   const [delRoute, setDelRoute] = useState<any>();
@@ -63,7 +63,7 @@ export default function RouteTable({
             <TableHead>Description</TableHead>
             <TableHead>Depot code</TableHead>
             <TableHead>Depot name</TableHead>
-            {user.role === "admin" && (
+            {user.role?.includes("admin") && (
               <TableHead className="text-right">Actions</TableHead>
             )}
           </TableRow>
@@ -89,7 +89,7 @@ export default function RouteTable({
                 <TableCell>{item.depot_code}</TableCell>
                 <TableCell>{item.depot_name}</TableCell>
 
-                {user.role === "admin" && (
+                {user.role?.includes("admin") && (
                   <TableCell className="flex justify-end gap-2">
                     <Tooltips title="Edit">
                       <Button

@@ -1,7 +1,8 @@
-import { getUser } from "@/lib/dal";
+import { getUser, verifyAuthuser } from "@/lib/dal";
 import db from "../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
 import { redirect } from "next/navigation";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export const getAttendance = async ({
   searchParams,
@@ -20,12 +21,12 @@ export const getAttendance = async ({
       : new Date(Number(date[0]), Number(date[1]) - 1, Number(date[2]));
 
   // get auth user info
-  const authUser = await getUser();
+  const authUser = await verifyAuthuser();
 
   if (!authUser) return redirect("/login");
 
   try {
-    if (authUser.role === "admin") {
+    if (odmsPanelAdminPermission(authUser)) {
       // get for admin
       if (status === "1") {
         // get attendance
@@ -75,7 +76,7 @@ export const getAttendance = async ({
           INNER JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
           WHERE DATE(ra.start_date_time) = ${formateDateDB(startDate)}
           AND ra.sap_id = ${searchParams.q} AND ru.depot_code = ${
-            authUser.depot_code
+            authUser.depot
           }
           LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
         `;
@@ -84,7 +85,7 @@ export const getAttendance = async ({
           SELECT ra.*, ru.full_name, COUNT(*) OVER() count FROM rdl_attendance ra 
           INNER JOIN rdl_users_list ru ON ru.sap_id = ra.sap_id
           WHERE DATE(ra.start_date_time) = ${formateDateDB(startDate)}
-          AND ru.depot_code = ${authUser.depot_code}
+          AND ru.depot_code = ${authUser.depot}
           LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
         `;
         }
@@ -94,7 +95,7 @@ export const getAttendance = async ({
           SELECT ra.*, ru.full_name, ru.sap_id, COUNT(*) OVER() count FROM rdl_users_list ru
           LEFT JOIN rdl_attendance ra ON ru.sap_id = ra.sap_id AND DATE(ra.start_date_time) = ${formateDateDB(startDate)}
           WHERE ra.sap_id is null
-          AND ru.depot_code = ${authUser.depot_code}
+          AND ru.depot_code = ${authUser.depot}
           AND ru.sap_id = ${searchParams.q}
           LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
         `;
@@ -103,7 +104,7 @@ export const getAttendance = async ({
           SELECT ra.*, ru.full_name, ru.sap_id, COUNT(*) OVER() count FROM rdl_users_list ru
           LEFT JOIN rdl_attendance ra ON ru.sap_id = ra.sap_id AND DATE(ra.start_date_time) = ${formateDateDB(startDate)}
           WHERE ra.sap_id is null
-          AND ru.depot_code = ${authUser.depot_code}
+          AND ru.depot_code = ${authUser.depot}
           LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
         `;
         }

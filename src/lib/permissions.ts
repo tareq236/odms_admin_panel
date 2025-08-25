@@ -1,6 +1,9 @@
 "use server";
 
+import { rdl_admin_user_list_role } from "@/prisma/generated/client1";
 import db from "../../db/db";
+import { verifyAuthuser } from "./dal";
+import { AuthUser } from "@/types/AuthUser";
 
 const hasDepotDa = async (daId: string, depotCode: string) => {
   let data: any = null;
@@ -26,4 +29,15 @@ const hasDepotDa = async (daId: string, depotCode: string) => {
   return data;
 };
 
-export { hasDepotDa };
+const odmsPanelAdminPermission = (user: AuthUser) => {
+  try {
+    return (["admin", "admin_odms"] as rdl_admin_user_list_role[]).includes(
+      user.role as rdl_admin_user_list_role
+    );
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export { hasDepotDa, odmsPanelAdminPermission };
