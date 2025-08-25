@@ -52,7 +52,7 @@ export const getUser = async () => {
   }
 };
 
-export const verifyAutuser: () => Promise<AuthUser | null> = async () => {
+export const verifyAuthuser: () => Promise<AuthUser | null> = async () => {
   try {
     const cookie = cookies().get("session")?.value;
     const session = await decrypt(cookie);

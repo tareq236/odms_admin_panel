@@ -17,6 +17,7 @@ async function GatePassSummaryPage({
     gatePassData,
     gatePasses,
     collectionDone,
+    totalCredit,
   } = await getGatePassBill(searchParams);
 
   if (!searchParams.q) return <SearchDa />;
@@ -53,10 +54,13 @@ async function GatePassSummaryPage({
             cashCollectionRemainingAmount={Math.abs(
               Number(deliveryDone[0]?.total_net_val || 0) -
                 Number(collectionDone[0]?.total_net_val || 0) -
-                Number(returnQuantity[0]?.total_return_amount || 0)
+                Number(returnQuantity[0]?.total_return_amount || 0) -
+                Number(totalCredit[0]?.total_credit_amount || 0)
             )}
             totalReturn={Number(returnQuantity[0]?.total_return || 0)}
             returnAmount={Number(returnQuantity[0]?.total_return_amount || 0)}
+            totalCredit={Number(totalCredit[0]?.total_credit || 0)}
+            totalCreditAmount={Number(totalCredit[0]?.total_credit_amount || 0)}
           />
         ) : (
           <div className="my-12">
@@ -99,6 +103,8 @@ async function GatePassSummaryPage({
                 Number(item[0].total_collection || 0)
               }
               cashCollectionRemainingAmount={Number(item[0].total_due || 0)}
+              totalCredit={0}
+              totalCreditAmount={0}
             />
           </Accordion>
         ))}
