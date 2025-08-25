@@ -2,7 +2,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import { List } from "lucide-react";
 import React, { Suspense } from "react";
 import FilterSection from "@/components/expired-products/FilterSection";
-import { verifyAutuser } from "@/lib/dal";
+import { verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import { SearchParams } from "@/types/params";
 import TabSection from "@/components/expired-products/replacement-order/TabSection";
@@ -11,16 +11,16 @@ import TableSkeleton from "@/components/ui/TableSkeletion";
 import { getReplacementOrders } from "../_actions/replacement-order";
 import { ErrorBoundary } from "@/components/boundary/ErrorBoundary";
 import PagePagination from "@/components/ui/PagePagination";
-import SelectDepot from "@/components/filter/SelectDepot";
 import NoData from "@/components/constants/NoData";
 import ReplacementOrderTable from "@/components/expired-products/replacement-order/ReplacementOrderTable";
+import SelectDepot from "@/components/constants/SelectDepot";
 
 export default async function ReplacementOrderPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
-  const authUser = await verifyAutuser();
+  const authUser = await verifyAuthuser();
 
   if (!authUser) return redirect("/login");
 

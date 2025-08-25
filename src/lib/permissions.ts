@@ -40,4 +40,15 @@ const odmsPanelAdminPermission = (user: AuthUser) => {
   }
 };
 
-export { hasDepotDa, odmsPanelAdminPermission };
+const expiredPanelAdminPermission = (user: AuthUser) => {
+  try {
+    return (["admin", "admin_expr"] as rdl_admin_user_list_role[]).includes(
+      user.role as rdl_admin_user_list_role
+    );
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export { hasDepotDa, odmsPanelAdminPermission, expiredPanelAdminPermission };

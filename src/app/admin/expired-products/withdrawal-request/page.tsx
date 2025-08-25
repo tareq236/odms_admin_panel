@@ -8,7 +8,7 @@ import { getRequestList } from "../_actions/request-list";
 import NoData from "@/components/constants/NoData";
 import { SearchParams } from "@/types/params";
 import SelectDepot from "@/components/constants/SelectDepot";
-import { verifyAutuser } from "@/lib/dal";
+import { verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import { AuthUser } from "@/types/AuthUser";
@@ -22,7 +22,7 @@ export default async function ExpiredProductsListPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const authUser = await verifyAutuser();
+  const authUser = await verifyAuthuser();
 
   if (!authUser) return redirect("/login");
 
