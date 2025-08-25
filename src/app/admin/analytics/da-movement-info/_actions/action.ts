@@ -1,7 +1,8 @@
 import { formateDateDB } from "@/lib/formatters";
 import db from "../../../../../../db/db";
-import { getUser } from "@/lib/dal";
+import { verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export const getDaMovementInfoData = async (
   searchParams: {
@@ -51,12 +52,12 @@ export const getDaMovementInfoData = async (
       )
     );
 
-  const authUser = await getUser();
+  const authUser = await verifyAuthuser();
 
   if (!authUser) return redirect("/login");
 
   try {
-    if (authUser.role === "admin") {
+    if (odmsPanelAdminPermission(authUser)) {
       if (searchParams.start || searchParams.filter) {
         if (searchParams.q) {
           [data, resCount] = await Promise.all([
@@ -127,7 +128,7 @@ export const getDaMovementInfoData = async (
                 INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
                 WHERE rdm.da_code = ${searchParams.q || ""} AND
                 rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-                AND rul.depot_code=${authUser.depot_code}
+                AND rul.depot_code=${authUser.depot}
                 ORDER BY rdm.mv_date DESC, rdm.da_code ASC
                 LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
                 `,
@@ -136,7 +137,7 @@ export const getDaMovementInfoData = async (
              INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
              WHERE rdm.da_code = ${searchParams.q || ""} AND
                 rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-                AND rul.depot_code=${authUser.depot_code}
+                AND rul.depot_code=${authUser.depot}
            `,
           ]);
         } else {
@@ -145,7 +146,7 @@ export const getDaMovementInfoData = async (
                 SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
                 INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
                 WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-                AND rul.depot_code=${authUser.depot_code}
+                AND rul.depot_code=${authUser.depot}
                 ORDER BY rdm.mv_date DESC, rdm.da_code ASC
                 LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
                 `,
@@ -153,7 +154,7 @@ export const getDaMovementInfoData = async (
               SELECT COUNT(rdm.da_code) as total FROM rdl_da_movement rdm 
               INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
               WHERE rdm.mv_date >= ${dateStart} AND rdm.mv_date < ${dateEnd}
-              AND rul.depot_code=${authUser.depot_code}
+              AND rul.depot_code=${authUser.depot}
             `,
           ]);
         }
@@ -164,7 +165,7 @@ export const getDaMovementInfoData = async (
                 SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
                 INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
                 WHERE rdm.da_code = ${searchParams.q || ""}
-                AND rul.depot_code=${authUser.depot_code}
+                AND rul.depot_code=${authUser.depot}
                 ORDER BY rdm.mv_date DESC, rdm.da_code ASC
                 LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
                 `,
@@ -172,7 +173,7 @@ export const getDaMovementInfoData = async (
              SELECT COUNT(rdm.da_code) as total FROM rdl_da_movement rdm 
              INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
              WHERE rdm.da_code = ${searchParams.q || ""}
-                AND rul.depot_code=${authUser.depot_code}
+                AND rul.depot_code=${authUser.depot}
            `,
           ]);
         } else {
@@ -180,14 +181,14 @@ export const getDaMovementInfoData = async (
             db.$queryRaw`
                 SELECT rdm.da_code, rul.full_name, rdm.mv_distance_km, rdm.mv_time_minutes, (rdm.mv_time_minutes / 60) mv_time_hours, rdm.mv_date FROM rdl_da_movement rdm 
                 INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
-                WHERE rul.depot_code=${authUser.depot_code}
+                WHERE rul.depot_code=${authUser.depot}
                 ORDER BY rdm.mv_date DESC, rdm.da_code ASC
                 LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
                 `,
             db.$queryRaw`
               SELECT COUNT(rdm.da_code) as total FROM rdl_da_movement rdm 
               INNER JOIN rdl_users_list rul ON rul.sap_id = rdm.da_code
-              WHERE rul.depot_code=${authUser.depot_code}
+              WHERE rul.depot_code=${authUser.depot}
             `,
           ]);
         }

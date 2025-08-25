@@ -160,7 +160,7 @@ export default function Sidebar({
                   onClick={onClose}
                 />
 
-                {userRole === "admin" && (
+                {["admin", "admin_odms"].includes(userRole) && (
                   <NavLink
                     icon={<Users className="size-4" />}
                     name="Partner Delivery"
