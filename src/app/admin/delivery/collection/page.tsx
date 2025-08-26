@@ -10,12 +10,13 @@ import DaInfoSection from "@/components/delivery/DaInfoSection";
 import CollectionDetailsView from "@/components/delivery/collection/CollectionDetailsView";
 import { getDeliveryCollection } from "./_action/action";
 import type { Metadata } from "next";
-import { getUser } from "@/lib/dal";
+import { getUser, verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import db from "../../../../../db/db";
 import NoData from "@/components/constants/NoData";
 import SearchDa from "@/components/constants/SearchDa";
 import Spinner from "@/components/ui/Spinner";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export const metadata: Metadata = {
   title: "Delivery Collection - ODMS Admin Panel",
@@ -32,7 +33,7 @@ export default async function DeliveryCollectionPage({
     status: string;
   };
 }) {
-  const user = await getUser();
+  const user = await verifyAuthuser();
 
   if (!user) redirect("/login");
 
@@ -53,7 +54,7 @@ export default async function DeliveryCollectionPage({
         <FilterSection />
       </Suspense>
 
-      {(user.role === "admin" || daInfo?.depot_code == user.depot_code) &&
+      {(odmsPanelAdminPermission(user) || daInfo?.depot_code == user.depot) &&
         searchParams.q != null && (
           <>
             <Suspense>
