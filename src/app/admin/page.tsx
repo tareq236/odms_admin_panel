@@ -46,7 +46,7 @@ export default async function Home({
   if (!authUser) return redirect("/login");
 
   try {
-    if (odmsPanelAdminPermission(authUser)) {
+    if (authUser.role?.includes("admin")) {
       [data, count] = await Promise.all([
         db.$queryRaw(
           Prisma.sql`
