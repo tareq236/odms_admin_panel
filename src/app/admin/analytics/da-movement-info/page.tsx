@@ -6,7 +6,6 @@ import PagePagination from "@/components/ui/PagePagination";
 import TableSkeleton from "@/components/ui/TableSkeletion";
 import type { Metadata } from "next";
 import React, { Suspense } from "react";
-import db from "../../../../../db/db";
 import { getDaMovementInfoData } from "./_actions/action";
 
 export const metadata: Metadata = {
@@ -29,7 +28,6 @@ export default async function DaMovementInfoPage({
     searchParams,
     limit
   );
-
 
   return (
     <>

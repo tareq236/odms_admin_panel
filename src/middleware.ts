@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "@/lib/session";
 import { cookies } from "next/headers";
-import { rdl_admin_user_list_role } from "@/prisma/generated/client1";
 import {
   expiredPanelAdminPermission,
   odmsPanelAdminPermission,
@@ -61,14 +60,22 @@ export default async function middleware(req: NextRequest) {
 
   console.log(userRole);
 
-  // odms authorization
-  if (isODMSProtectedRoute && !odmsPanelAdminPermission(session as AuthUser)) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
-  }
+  if (userRole !== "depot") {
+    // odms authorization
+    if (
+      isODMSProtectedRoute &&
+      !odmsPanelAdminPermission(session as AuthUser)
+    ) {
+      return NextResponse.redirect(new URL("/", req.nextUrl));
+    }
 
-  // expired panel authorization
-  if (isExprPanelRoutes && !expiredPanelAdminPermission(session as AuthUser)) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
+    // expired panel authorization
+    if (
+      isExprPanelRoutes &&
+      !expiredPanelAdminPermission(session as AuthUser)
+    ) {
+      return NextResponse.redirect(new URL("/", req.nextUrl));
+    }
   }
 
   return NextResponse.next();

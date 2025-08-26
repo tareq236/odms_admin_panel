@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 
 function Spinner({
-  borderBottomColor = "primary",
+  borderBottomColor = "border-primary",
   className
 }: {
   borderBottomColor?: string;

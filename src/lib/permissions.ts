@@ -2,7 +2,6 @@
 
 import { rdl_admin_user_list_role } from "@/prisma/generated/client1";
 import db from "../../db/db";
-import { verifyAuthuser } from "./dal";
 import { AuthUser } from "@/types/AuthUser";
 
 const hasDepotDa = async (daId: string, depotCode: string) => {

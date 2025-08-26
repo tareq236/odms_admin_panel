@@ -15,6 +15,7 @@ import { redirect } from "next/navigation";
 import db from "../../../../../db/db";
 import NoData from "@/components/constants/NoData";
 import SearchDa from "@/components/constants/SearchDa";
+import Spinner from "@/components/ui/Spinner";
 
 export const metadata: Metadata = {
   title: "Delivery Collection - ODMS Admin Panel",
@@ -60,7 +61,7 @@ export default async function DeliveryCollectionPage({
             </Suspense>
 
             {/* stats cards */}
-            <Suspense>
+            <Suspense fallback={<Spinner />}>
               <CardSection searchParams={searchParams} />
             </Suspense>
           </>

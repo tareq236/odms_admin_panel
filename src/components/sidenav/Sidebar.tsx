@@ -85,12 +85,12 @@ const Navlist = {
       {
         icon: FileUser,
         name: "DA Movement Info",
-        href: "/admin/map/da-movement-info",
+        href: "/admin/analytics/da-movement-info",
       },
       {
         icon: Users,
         name: "Partner Delivery",
-        href: "/admin/map/partner-delivery",
+        href: "/admin/analytics/partner-delivery",
       },
     ],
     expired_product: [
@@ -160,12 +160,12 @@ const Navlist = {
       {
         icon: FileUser,
         name: "DA Movement Info",
-        href: "/admin/map/da-movement-info",
+        href: "/admin/analytics/da-movement-info",
       },
       {
         icon: Users,
         name: "Partner Delivery",
-        href: "/admin/map/partner-delivery",
+        href: "/admin/analytics/partner-delivery",
       },
     ],
   },
