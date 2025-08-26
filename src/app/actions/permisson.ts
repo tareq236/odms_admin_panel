@@ -3,6 +3,7 @@
 import { verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import db from "../../../db/db";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export const getPermission = async (userId?: string | number) => {
   try {
@@ -21,7 +22,7 @@ export const getPermission = async (userId?: string | number) => {
       return true;
     }
 
-    if (["admin", "admin_odms"].includes(authUser.role as string)) return true;
+    if (odmsPanelAdminPermission(authUser)) return true;
 
     return false;
   } catch (error) {

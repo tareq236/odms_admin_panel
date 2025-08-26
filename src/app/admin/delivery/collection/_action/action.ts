@@ -15,6 +15,8 @@ export const getDeliveryCollection = async ({
 
   const isPermitted = await getPermission(searchParams.q ?? null);
 
+  console.log(isPermitted);
+
   try {
     if (isPermitted) {
       if (searchParams.q && searchParams.status) {
