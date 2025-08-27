@@ -3,6 +3,7 @@ import SelectDepot from "../filter/SelectDepot";
 import SelectDepotDA from "../filter/SelectDepotDA";
 import { SearchParams } from "@/types/params";
 import { AuthUser } from "@/types/AuthUser";
+import { expiredPanelAdminPermission } from "@/lib/permissions";
 
 export default function FilterSection({
   searchParams,
@@ -21,7 +22,7 @@ export default function FilterSection({
 
   return (
     <section className="flex gap-x-5 gap-y-3 flex-wrap w-full xl:w-1/2 justify-end">
-      {user.role === "admin" && <SelectDepot />}
+      {(expiredPanelAdminPermission(user)) && <SelectDepot />}
       <SelectDepotDA depotCode={validateDepot as string} />
     </section>
   );
