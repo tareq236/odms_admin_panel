@@ -71,6 +71,7 @@ const DataTable = async ({
     limit: limit,
   });
 
+  
   return (
     <div className="data-table-section">
       <DeliveryTable data={data as any[]} connectionError={connectionError} />

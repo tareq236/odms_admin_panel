@@ -31,7 +31,7 @@ export const getInvoiceInfo = async ({
             c.description address, d.name1 partner_name
             FROM rdl_delivery_info_sap as a
             INNER JOIN rpl_sales_info_sap as b on a.billing_doc_no = b.billing_doc_no
-            INNER JOIN rdl_route_sap as c on a.route = c.route
+            LEFT JOIN rdl_route_sap as c on a.route = c.route
             INNER JOIN rpl_customer as d ON b.partner = d.partner
             WHERE a.billing_date = ${
               searchParams.start
