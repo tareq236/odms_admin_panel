@@ -22,6 +22,8 @@ function GatePassTable({
   cashCollectionRemainingAmount,
   totalReturn,
   returnAmount,
+  totalCredit,
+  totalCreditAmount,
 }: {
   totalInvoice: number;
   totalAmount: number;
@@ -35,8 +37,9 @@ function GatePassTable({
   cashCollectionRemainingAmount: number;
   totalReturn: number;
   returnAmount: number;
+  totalCredit: number;
+  totalCreditAmount: number;
 }) {
-
   return (
     <>
       <Table className="mt-3 [&_td]:p-3 [&_th]:h-fit [&_th]:p-3 [&_tr:last-child]:border-b">
@@ -72,6 +75,11 @@ function GatePassTable({
             <TableCell>Collection Remaining</TableCell>
             <TableCell>{formatNumber(cashCollectionRemaining)}</TableCell>
             <TableCell>{formatNumber(cashCollectionRemainingAmount)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Credit Amount</TableCell>
+            <TableCell>{formatNumber(totalCredit)}</TableCell>
+            <TableCell>{formatNumber(totalCreditAmount)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Return</TableCell>

@@ -1,10 +1,10 @@
 "use client";
 
-import { format } from "date-fns";
 import {
   Footprints,
   Home,
   IdCard,
+  List,
   ListTodo,
   LogOut,
   Map,
@@ -28,6 +28,227 @@ import { rdl_admin_user_list_role } from "@/prisma/generated/client1";
 import Spinner from "../ui/Spinner";
 import { FileUser } from "../constants/icons/icons";
 import Link from "next/link";
+import { titleCase } from "@/lib/formatters";
+
+const Navlist = {
+  admin: {
+    main: [
+      { icon: Home, name: "Dashboard", href: "/admin" },
+      {
+        icon: UserRoundPen,
+        name: "User Management",
+        href: "/admin/user/management",
+      },
+      { icon: ListTodo, name: "Attendance", href: "/admin/user/attendance" },
+      { icon: Route, name: "Route", href: "/admin/route" },
+      {
+        icon: Truck,
+        name: "Delivery",
+        children: [
+          {
+            icon: ScrollText,
+            name: "Invoice",
+            href: "/admin/delivery/invoice",
+          },
+          {
+            icon: PackageCheck,
+            name: "Collection",
+            href: "/admin/delivery/collection",
+          },
+        ],
+      },
+      { icon: IdCard, name: "DA Summary", href: "/admin/da-summary" },
+    ],
+    map: [
+      {
+        icon: Waypoints,
+        name: "Transportation",
+        href: "/admin/map/transportation",
+      },
+      {
+        icon: MapPin,
+        name: "DA Tracking",
+        href: "/admin/map/da-tracking",
+      },
+      {
+        icon: Footprints,
+        name: "Live Tracking",
+        href: "/admin/map/live-tracking",
+      },
+      {
+        icon: MapPinned,
+        name: "DA Movement",
+        href: "/admin/map/da-movement",
+      },
+    ],
+    analytics: [
+      {
+        icon: FileUser,
+        name: "DA Movement Info",
+        href: "/admin/analytics/da-movement-info",
+      },
+      {
+        icon: Users,
+        name: "Partner Delivery",
+        href: "/admin/analytics/partner-delivery",
+      },
+    ],
+    expired_product: [
+      {
+        icon: ScrollText,
+        name: "Withdrawal Request",
+        href: "/admin/expired-products/withdrawal-request",
+      },
+      {
+        icon: List,
+        name: "Replacement Order",
+        href: "/admin/expired-products/replacement-order",
+      },
+    ],
+  },
+  admin_odms: {
+    main: [
+      { icon: Home, name: "Dashboard", href: "/admin" },
+      {
+        icon: UserRoundPen,
+        name: "User Management",
+        href: "/admin/user/management",
+      },
+      { icon: ListTodo, name: "Attendance", href: "/admin/user/attendance" },
+      { icon: Route, name: "Route", href: "/admin/route" },
+      {
+        icon: Truck,
+        name: "Delivery",
+        children: [
+          {
+            icon: ScrollText,
+            name: "Invoice",
+            href: "/admin/delivery/invoice",
+          },
+          {
+            icon: PackageCheck,
+            name: "Collection",
+            href: "/admin/delivery/collection",
+          },
+        ],
+      },
+      { icon: IdCard, name: "DA Summary", href: "/admin/da-summary" },
+    ],
+    map: [
+      {
+        icon: Waypoints,
+        name: "Transportation",
+        href: "/admin/map/transportation",
+      },
+      {
+        icon: MapPin,
+        name: "DA Tracking",
+        href: "/admin/map/da-tracking",
+      },
+      {
+        icon: Footprints,
+        name: "Live Tracking",
+        href: "/admin/map/live-tracking",
+      },
+      {
+        icon: MapPinned,
+        name: "DA Movement",
+        href: "/admin/map/da-movement",
+      },
+    ],
+    analytics: [
+      {
+        icon: FileUser,
+        name: "DA Movement Info",
+        href: "/admin/analytics/da-movement-info",
+      },
+      {
+        icon: Users,
+        name: "Partner Delivery",
+        href: "/admin/analytics/partner-delivery",
+      },
+    ],
+  },
+  admin_expr: {
+    main: [
+      {
+        icon: ScrollText,
+        name: "Withdrawal Request",
+        href: "/admin/expired-products/withdrawal-request",
+      },
+      {
+        icon: List,
+        name: "Replacement Order",
+        href: "/admin/expired-products/replacement-order",
+      },
+    ],
+  },
+  depot: {
+    main: [
+      { icon: Home, name: "Dashboard", href: "/admin" },
+      { icon: ListTodo, name: "Attendance", href: "/admin/user/attendance" },
+      { icon: Route, name: "Route", href: "/admin/route" },
+      {
+        icon: Truck,
+        name: "Delivery",
+        children: [
+          {
+            icon: ScrollText,
+            name: "Invoice",
+            href: "/admin/delivery/invoice",
+          },
+          {
+            icon: PackageCheck,
+            name: "Collection",
+            href: "/admin/delivery/collection",
+          },
+        ],
+      },
+      { icon: IdCard, name: "DA Summary", href: "/admin/da-summary" },
+    ],
+    map: [
+      {
+        icon: Waypoints,
+        name: "Transportation",
+        href: "/admin/map/transportation",
+      },
+      {
+        icon: MapPin,
+        name: "DA Tracking",
+        href: "/admin/map/da-tracking",
+      },
+      {
+        icon: Footprints,
+        name: "Live Tracking",
+        href: "/admin/map/live-tracking",
+      },
+      {
+        icon: MapPinned,
+        name: "DA Movement",
+        href: "/admin/map/da-movement",
+      },
+    ],
+    analytics: [
+      {
+        icon: FileUser,
+        name: "DA Movement Info",
+        href: "/admin/map/da-movement-info",
+      },
+    ],
+    expired: [
+      {
+        icon: ScrollText,
+        name: "Withdrawal Request",
+        href: "/admin/expired-products/withdrawal-request",
+      },
+      {
+        icon: List,
+        name: "Replacement Order",
+        href: "/admin/expired-products/replacement-order",
+      },
+    ],
+  },
+};
 
 export default function Sidebar({
   onClose,
@@ -43,7 +264,10 @@ export default function Sidebar({
     <div className="max-h-[calc(100dvh-1rem)] flex flex-col justify-between min-h-svh">
       <div className="top md:pt-5 min-h-[20rem] flex flex-col md:gap-5">
         {/* logo */}
-        <Link href={'/'} className="logo text-primary p-5 md:px-5 md:py-0 flex items-center gap-2">
+        <Link
+          href={"/"}
+          className="logo text-primary p-5 md:px-5 md:py-0 flex items-center gap-2"
+        >
           <Map className="size-7" />
           <div className="">
             <h1 className="font-title tracking-[1rem] text-lg">ODMS</h1>
@@ -54,118 +278,46 @@ export default function Sidebar({
         </Link>
         <ScrollArea className="h-[calc(100dvh-2rem)] md:h-[calc(100dvh-2rem)] px-5 md:px-5 md:py-0">
           {/* links */}
-          <div className="flex flex-col gap-2">
-            <NavLink
-              icon={<Home className="size-4" />}
-              name="Dashboard"
-              href="/admin"
-              onClick={onClose}
-            />
-            {userRole != "depot" && (
-              <NavLink
-                icon={<UserRoundPen className="size-4" />}
-                name="User Management"
-                href="/admin/user/management"
-                onClick={onClose}
-              />
-            )}
-
-            <NavLink
-              icon={<ListTodo className="size-4" />}
-              name="Attendance"
-              href={`/admin/user/attendance?start=${format(
-                new Date(),
-                "yyyy-MM-dd"
-              )}`}
-              onClick={onClose}
-            />
-            <NavLink
-              icon={<Route className="size-4" />}
-              name="Route"
-              href="/admin/route"
-              onClick={onClose}
-            />
-
-            <Accordion name="Delivery" icon={<Truck className="size-4" />}>
-              <NavLink
-                name="Invoice"
-                icon={<ScrollText className="size-4" />}
-                href="/admin/delivery/invoice"
-                onClick={onClose}
-              />
-              <NavLink
-                name="Collection"
-                icon={<PackageCheck className="size-4" />}
-                href="/admin/delivery/collection"
-                onClick={onClose}
-              />
-            </Accordion>
-
-            <NavLink
-              icon={<IdCard className="size-4" />}
-              name="DA Summary"
-              href="/admin/da-summary"
-              onClick={onClose}
-            />
-
-            {/* maps */}
-            <div className="mt-3">
-              <h4 className="text-muted-foreground text-xs mb-3">Map</h4>
-
-              <div className="flex flex-col gap-2">
-                <NavLink
-                  icon={<Waypoints className="size-4" />}
-                  name="Transportation"
-                  href="/admin/map/transportation"
-                  onClick={onClose}
-                />
-
-                <NavLink
-                  icon={<MapPin className="size-4" />}
-                  name="DA Tracking"
-                  href="/admin/map/da-tracking"
-                  onClick={onClose}
-                />
-
-                <NavLink
-                  icon={<Footprints className="size-4" />}
-                  name="Live Tracking"
-                  href="/admin/map/live-tracking"
-                  onClick={onClose}
-                />
-
-                <NavLink
-                  icon={<MapPinned className="size-4" />}
-                  name="DA Movement"
-                  href="/admin/map/da-movement"
-                  onClick={onClose}
-                />
+          <div className="flex flex-col gap-5">
+            {Object.entries(Navlist[userRole]).map(([section, items]) => (
+              <div key={section}>
+                <h4 className="text-muted-foreground text-xs mb-3">
+                  {titleCase(section)}
+                </h4>
+                {/* main */}
+                <div className="flex flex-col gap-2">
+                  {items.map((item: any, index) => {
+                    if (item?.children)
+                      return (
+                        <Accordion
+                          key={index}
+                          name={item.name}
+                          icon={<item.icon className="size-4" />}
+                        >
+                          {item.children.map((child: any) => (
+                            <NavLink
+                              key={child.href}
+                              icon={<child.icon className="size-4" />}
+                              name={child.name}
+                              href={child.href}
+                              onClick={onClose}
+                            />
+                          ))}
+                        </Accordion>
+                      );
+                    return (
+                      <NavLink
+                        key={index}
+                        icon={<item.icon className="size-4" />}
+                        name={item.name}
+                        href={item.href}
+                        onClick={onClose}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-
-            {/* statistics */}
-
-            <div className="mt-3">
-              <h4 className="text-muted-foreground text-xs mb-3">Analytics</h4>
-
-              <div className="flex flex-col gap-2">
-                <NavLink
-                  icon={<FileUser className="size-4" />}
-                  name="DA Movement Info"
-                  href="/admin/analytics/da-movement-info"
-                  onClick={onClose}
-                />
-
-                {userRole === "admin" && (
-                  <NavLink
-                    icon={<Users className="size-4" />}
-                    name="Partner Delivery"
-                    href="/admin/analytics/partner-delivery"
-                    onClick={onClose}
-                  />
-                )}
-              </div>
-            </div>
+            ))}
           </div>
         </ScrollArea>
       </div>

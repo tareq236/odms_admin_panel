@@ -55,7 +55,8 @@ const LoginForm = () => {
               name="password"
               id="password"
             />
-            <span
+            <button 
+              type="button"
               className="eye absolute top-9 right-3 cursor-pointer"
               onClick={() => {
                 setShowPassword(!showPassword);
@@ -66,7 +67,7 @@ const LoginForm = () => {
               ) : (
                 <EyeOff className="size-4" />
               )}
-            </span>
+            </button>
             {data?.error?.password && (
               <p className="error-msg">{data.error.password}</p>
             )}

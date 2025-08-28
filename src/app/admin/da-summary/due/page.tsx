@@ -1,6 +1,5 @@
 import DueTable from "@/components/da-summary/due/DueTable";
 import React from "react";
-
 import { getDueList } from "./_action/action";
 import Accordion from "@/components/da-summary/accordion/Accordion";
 import NoData from "@/components/constants/NoData";

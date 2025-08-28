@@ -1,7 +1,8 @@
-import { getUser } from "@/lib/dal";
+import { getUser, verifyAuthuser } from "@/lib/dal";
 import db from "../../../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
 import { redirect } from "next/navigation";
+import { hasDepotDa, odmsPanelAdminPermission } from "@/lib/permissions";
 
 export const getDueList = async (searchParams: {
   q: string;
@@ -15,32 +16,14 @@ export const getDueList = async (searchParams: {
 
   const daCode = Number(searchParams.q) || 0;
 
-  const user = await getUser();
+  const user = await verifyAuthuser();
 
   if (!user) redirect("/login");
 
-  const isDepotDA: any = await db.$queryRaw`
-    select count(*) over () as total
-    from
-        rdl_delivery_info_sap as a
-        LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
-    WHERE
-        a.billing_date = ${
-          searchParams.start
-            ? `${searchParams.start}`
-            : `${formateDateDB(new Date())}`
-        }
-        AND a.da_code = ${Number(searchParams.q) || 0}
-        AND a.route IN (
-            SELECT route_code
-            FROM rdl_route_wise_depot
-            WHERE
-                depot_code =${user.depot_code}
-        )
-  `;
+  const isDepotDA = await hasDepotDa(daCode.toString(), user.depot as string);
 
   try {
-    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
+    if (odmsPanelAdminPermission(user) || (isDepotDA && isDepotDA.length > 0)) {
       partners = await db.$queryRaw`
     select DISTINCT rd.partner 
     from rdl_delivery rd
@@ -55,7 +38,7 @@ export const getDueList = async (searchParams: {
   let partnerDues: any[] = [];
 
   try {
-    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
+    if (odmsPanelAdminPermission(user) || (isDepotDA && isDepotDA.length > 0)) {
       for (let i = 0; i < partners.length; i++) {
         let data = await db.$queryRaw`
         select rd.billing_doc_no, 

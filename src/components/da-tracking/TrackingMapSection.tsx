@@ -2,7 +2,7 @@
 
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { initializeApp } from "firebase/app";
-import { getDatabase, get, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import NoData from "../constants/NoData";

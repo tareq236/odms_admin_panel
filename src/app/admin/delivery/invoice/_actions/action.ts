@@ -1,8 +1,9 @@
 "use server";
 
-import { AuthUserProps } from "@/app/admin/route/page";
 import db from "../../../../../../db/db";
 import { format } from "date-fns";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
+import { AuthUser } from "@/types/AuthUser";
 
 export const getInvoiceInfo = async ({
   searchParams,
@@ -10,7 +11,7 @@ export const getInvoiceInfo = async ({
   limit,
 }: {
   searchParams: { p: string; q: string; start: string };
-  user: AuthUserProps;
+  user: AuthUser;
   limit: number;
 }) => {
   let count: any = [{ total: 0 }];
@@ -19,7 +20,7 @@ export const getInvoiceInfo = async ({
 
   try {
     if (searchParams.q) {
-      if (user.role == "admin") {
+      if (odmsPanelAdminPermission(user)) {
         [data, count] = await Promise.all([
           db.$queryRaw`
             SELECT a.*,
@@ -30,7 +31,7 @@ export const getInvoiceInfo = async ({
             c.description address, d.name1 partner_name
             FROM rdl_delivery_info_sap as a
             INNER JOIN rpl_sales_info_sap as b on a.billing_doc_no = b.billing_doc_no
-            INNER JOIN rdl_route_sap as c on a.route = c.route
+            LEFT JOIN rdl_route_sap as c on a.route = c.route
             INNER JOIN rpl_customer as d ON b.partner = d.partner
             WHERE a.billing_date = ${
               searchParams.start
@@ -75,7 +76,7 @@ export const getInvoiceInfo = async ({
             SELECT route_code
             FROM rdl_route_wise_depot
             WHERE
-              depot_code = ${user.depot_code}
+              depot_code = ${user.depot}
             )
             GROUP BY b.billing_doc_no
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
@@ -93,7 +94,7 @@ export const getInvoiceInfo = async ({
             SELECT route_code
             FROM rdl_route_wise_depot
             WHERE
-                depot_code = ${user.depot_code}
+                depot_code = ${user.depot}
             )
           `,
         ]);

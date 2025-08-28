@@ -35,10 +35,7 @@ export const formatDateTimeTZ = (date: Date) => {
   return formatTimeZone(utcDate, "MMM d, yyyy - h:mm:ss aaa ");
 };
 
-export const formatTimeTZ = (
-  date: Date,
-  dateString?: string
-) => {
+export const formatTimeTZ = (date: Date, dateString?: string) => {
   if (date == null) return `-`;
   const utcDate = toZonedTime(date, "UTC");
   return formatTimeZone(utcDate, dateString ?? "h:mm:ss aaa");
@@ -53,6 +50,7 @@ export const titleCase = (str: string) => {
   if (str == null) return;
   let word: any = str
     .toLowerCase()
+    .replaceAll("_", " ")
     .split(" ")
     .map((item) => {
       return item.charAt(0).toUpperCase() + item.slice(1);

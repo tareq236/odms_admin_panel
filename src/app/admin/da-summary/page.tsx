@@ -4,8 +4,9 @@ import NoData from "@/components/constants/NoData";
 import AttendanceSection from "@/components/da-summary/profile-attendance/AttendanceSection";
 import ProfileSection from "@/components/da-summary/profile-attendance/ProfileSection";
 import { formateDateDB } from "@/lib/formatters";
-import { getUser } from "@/lib/dal";
+import { verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export default async function DaSummaryPage({
   searchParams,
@@ -14,6 +15,8 @@ export default async function DaSummaryPage({
 }) {
   let daInfo = null,
     daAttendance = null;
+  let daRoute: any[] | null = null;
+
   let date = searchParams.start ? searchParams.start.split("-") : undefined;
   let startDate =
     date == undefined
@@ -26,13 +29,13 @@ export default async function DaSummaryPage({
     startDate.getDate() + 1
   );
 
-  const user = await getUser();
+  const user = await verifyAuthuser();
 
   if (!user) redirect("/login");
 
   try {
-    if (user.role === "admin") {
-      [daInfo, daAttendance] = await Promise.all([
+    if (odmsPanelAdminPermission(user)) {
+      [daInfo, daAttendance, daRoute] = await Promise.all([
         db.rdl_users_list.findUnique({
           where: { sap_id: Number(searchParams.q || 0) },
         }),
@@ -44,9 +47,18 @@ export default async function DaSummaryPage({
         )} AND ra.start_date_time < ${formateDateDB(endDate)}
         AND ra.sap_id = ${searchParams.q}
       `,
+        db.$queryRaw`
+          select DISTINCT (rrs.description), rrs.route FROM rdl_delivery_info_sap rdis 
+          inner join rdl_route_sap rrs on rrs.route = rdis.route
+          WHERE rdis.billing_date = ${
+            searchParams.start
+              ? `${searchParams.start}`
+              : `${formateDateDB(new Date())}`
+          } AND rdis.da_code = ${Number(searchParams.q || 0)}
+        ` as any,
       ]);
     } else {
-      [daInfo, daAttendance] = await Promise.all([
+      [daInfo, daAttendance, daRoute] = await Promise.all([
         db.rdl_users_list.findFirst({
           where: {
             AND: [
@@ -54,8 +66,8 @@ export default async function DaSummaryPage({
                 sap_id: Number(searchParams.q || 0),
               },
               {
-                depot_code: user.depot_code
-              }
+                depot_code: user.depot,
+              },
             ],
           },
         }),
@@ -67,6 +79,15 @@ export default async function DaSummaryPage({
         )} AND ra.start_date_time < ${formateDateDB(endDate)}
         AND ra.sap_id = ${searchParams.q}
       `,
+        db.$queryRaw`
+          select DISTINCT (rrs.description), rrs.route FROM rdl_delivery_info_sap rdis 
+          inner join rdl_route_sap rrs on rrs.route = rdis.route
+          WHERE rdis.billing_date = ${
+            searchParams.start
+              ? `${searchParams.start}`
+              : `${formateDateDB(new Date())}`
+          } AND rdis.da_code = ${Number(searchParams.q || 0)}
+        ` as any,
       ]);
     }
   } catch (error) {
@@ -80,7 +101,7 @@ export default async function DaSummaryPage({
 
   return (
     <div className="grid grid-cols-1 gap-5">
-      <ProfileSection daInfo={daInfo} />
+      <ProfileSection daInfo={daInfo} daRoute={daRoute as any[]} />
 
       <AttendanceSection daAttendance={daAttendance as any[]} />
     </div>

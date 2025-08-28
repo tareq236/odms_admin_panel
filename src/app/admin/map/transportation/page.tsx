@@ -6,7 +6,7 @@ import { Waypoints } from "lucide-react";
 import React, { Suspense } from "react";
 import { getConveyanceData } from "./_action/action";
 import type { Metadata } from "next";
-import DaInfoSection from "@/components/delivery/collection/DaInfoSection";
+import DaInfoSection from "@/components/delivery/DaInfoSection";
 
 export const metadata: Metadata = {
   title: "Transportations - ODMS Admin Panel",

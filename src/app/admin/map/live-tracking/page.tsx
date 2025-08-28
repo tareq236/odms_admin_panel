@@ -2,7 +2,7 @@ import Header from "@/components/live-tracking/Header";
 import LiveTrackingSection from "@/components/live-tracking/LiveTrackingSection";
 import React from "react";
 import type { Metadata } from "next";
-import { getUser } from "@/lib/dal";
+import { getUser, verifyAuthuser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LiveTrackingPage() {
-  const authUser = await getUser();
+  const authUser = await verifyAuthuser();
 
   if (!authUser) return redirect("/login");
 

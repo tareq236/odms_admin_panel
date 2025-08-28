@@ -116,7 +116,7 @@ export default function ConveyanceTable({
             // table data
             data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="text-nowrap"># {index + 1}</TableCell>
+                <TableCell className="text-nowrap">{index + 1}</TableCell>
                 <TableCell className="text-nowrap">
                   {formatTimeTZ(item.start_journey_date_time)}
                 </TableCell>
@@ -140,9 +140,9 @@ export default function ConveyanceTable({
                 </TableCell>
                 <TableCell className="min-w-[10rem]">
                   {item.end_journey_latitude && (
-                    <ReverseGeocodeCell
-                      lat={item.end_journey_latitude}
-                      long={item.end_journey_longitude}
+                    <EndPointReverseGeocodeCell
+                      endTime={item.end_journey_date_time}
+                      startTime={item.start_journey_date_time}
                     />
                   )}
                 </TableCell>
@@ -207,7 +207,7 @@ export default function ConveyanceTable({
 
       {/* delivery details modal */}
       <Dialog open={view} onOpenChange={setView}>
-        <DialogContent className="md:min-w-[90vw] md:max-w-xl">
+        <DialogContent className="md:min-w-[90vw] max-h-[80vh] overflow-y-auto md:max-w-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Waypoints className="size-4 text-primary" />
@@ -271,7 +271,7 @@ export const ReverseGeocodeCell = ({
         const response = await fetch(url);
         const data = await response.json();
         if (data.status === "OK") {
-          setLocation(data.results[0].formatted_address);
+          setLocation(data.plus_code.compound_code);
         } else {
           setLocation("Not Found");
         }
@@ -285,17 +285,75 @@ export const ReverseGeocodeCell = ({
 
   return (
     <>
-      <span>
-        {/* {location.split(",").length < 3
-          ? location
-          : location
-              .replace(", বাংলাদেশ", "")
-              .replace("Bangladesh", "")
-              .split(",")
-              .filter((item) => !item.includes("+"))
-              .join(",")} */}
-        {location}
-      </span>
+      <span>{location}</span>
+    </>
+  );
+};
+
+export const EndPointReverseGeocodeCell = ({
+  endTime,
+  startTime,
+}: {
+  endTime: Date;
+  startTime: Date;
+}) => {
+  const [location, setLocation] = useState("Loading...");
+  const searchParams = useSearchParams();
+
+  const allParams: Record<string, string> = {};
+  for (const [key, value] of searchParams.entries()) {
+    allParams[key] = value;
+  }
+
+  // modify time
+  const modifiedStartTime = startTime
+    ? JSON.stringify(startTime).split("T")[1].slice(0, 11)
+    : "";
+  const modifiedEndTime = endTime
+    ? JSON.stringify(endTime).split("T")[1].slice(0, 11)
+    : "";
+
+  allParams["start_time"] = modifiedStartTime;
+  allParams["end_time"] = modifiedEndTime;
+
+  // create searchparams
+  const params = new URLSearchParams(allParams).toString();
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        // get end point from postgres
+        const res = await fetch(
+          "/api/map/transportation/geolocation?" + params
+        );
+        const location = await res.json();
+
+        if (!res.ok || location.length === 0) {
+          setLocation("Unknown");
+          return;
+        }
+
+        // get geocode from google api
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location[0].latitude},${location[0].longitude}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.status === "OK") {
+          setLocation(data.plus_code.compound_code);
+        } else {
+          setLocation("Not Found");
+        }
+      } catch (error) {
+        setLocation("Error Loading");
+      }
+    };
+
+    fetchLocation();
+  }, [endTime]);
+
+  return (
+    <>
+      <span>{location}</span>
     </>
   );
 };

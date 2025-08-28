@@ -9,9 +9,10 @@ import {
   Map,
   Marker,
 } from "@vis.gl/react-google-maps";
-import { AuthUserProps } from "@/app/admin/route/page";
+import { AuthUser } from "@/types/AuthUser";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
-const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
+const LiveTrackingSection = ({ authUser }: { authUser: AuthUser }) => {
   const [userLocations, setUserLocations] = useState<any>();
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [infoWindowOpen, setInfoWindowOpen] = useState(false);
@@ -21,7 +22,7 @@ const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
 
   const findDepotUser = async (daCode: string) => {
     const isDepotUser = await fetch(
-      `/api/live-tracking?q=${daCode}&depot=${authUser?.depot_code}`
+      `/api/live-tracking?q=${daCode}&depot=${authUser?.depot}`
     );
 
     if (isDepotUser.ok) return true;
@@ -32,7 +33,7 @@ const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
     socket.on("coordinatesResultAndroid", async (data) => {
       const { user_details, location } = data.result;
 
-      if (authUser.role === "admin") {
+      if (odmsPanelAdminPermission(authUser)) {
         if (searchParams.has("q")) {
           if (user_details.sap_id == searchParams.get("q")) {
             setUserLocations((prevUserLocations: any) => ({
@@ -55,7 +56,7 @@ const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
         }
       } else {
         const isDepotUser = await findDepotUser(user_details.sap_id);
-        console.log(isDepotUser)
+        console.log(isDepotUser);
         if (isDepotUser) {
           if (searchParams.has("q")) {
             if (user_details.sap_id == searchParams.get("q")) {
@@ -87,7 +88,7 @@ const LiveTrackingSection = ({ authUser }: { authUser: AuthUserProps }) => {
   };
 
   useEffect(() => {
-    handleSocket()
+    handleSocket();
   }, [socket, pathname, searchParams]);
 
   const handleMarkerMouseOver = (location: any) => {
