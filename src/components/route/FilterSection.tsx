@@ -11,8 +11,8 @@ import Search from "@/components/ui/Search";
 import { Plus, Route } from "lucide-react";
 import React, { useState } from "react";
 import RouteForm from "./RouteForm";
-import { AuthUserProps } from "@/app/admin/route/page";
 import { AuthUser } from "@/types/AuthUser";
+import { odmsPanelAdminPermission } from "@/lib/permissions";
 
 export default function FilterSection({ user }: { user: AuthUser }) {
   const [add, setAdd] = useState(false);
@@ -22,7 +22,7 @@ export default function FilterSection({ user }: { user: AuthUser }) {
       <section className="filter-section">
         <Search placeholder="Search by route" />
 
-        {user.role === "admin" && (
+        {odmsPanelAdminPermission(user) && (
           <Button
             onClick={() => {
               setAdd(true);
