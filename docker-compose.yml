@@ -1,0 +1,9 @@
+services:
+  odms-admin-nextjs:
+    build: .
+    container_name: odms_admin_panel
+    restart: always
+    ports:
+      - "5003:5003"
+    env_file:
+      - .env 

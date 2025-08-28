@@ -2,7 +2,7 @@
 
 ## Technologies
 
-Frontend: ReactJs, NextJs, TypeScript
+Frontend: ReactJs, NextJs, Socket.io, TypeScript, TailwindCSS
 Backend: Prisma ORM
 
 ## Run this project
@@ -35,4 +35,17 @@ To run on dev server,
 
 ```bash
 npm run dev
+```
+
+
+For Docker, Run for initial build
+
+```bash
+docker-compose up -d --build
+```
+
+For rebuild,
+```bash
+docker-compose down odms-admin-nextjs 
+docker-compose up -d --build odms-admin-nextjs 
 ```
