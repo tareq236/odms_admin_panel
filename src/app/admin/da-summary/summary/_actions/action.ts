@@ -26,8 +26,11 @@ export const getGatePassBill = async (searchParams: {
 
   const isDepotDA: any = hasDepotDa(searchParams.q, user.depot as string);
 
+  const isPermitted =
+    odmsPanelAdminPermission(user) || (isDepotDA && isDepotDA.length > 0);
+
   try {
-    if (odmsPanelAdminPermission(user) || (isDepotDA && isDepotDA.length > 0)) {
+    if (isPermitted) {
       [
         totalDelivery,
         deliveryDone,
@@ -102,7 +105,7 @@ export const getGatePassBill = async (searchParams: {
   // get gate pass list
   let gatePasses: (unknown | any)[] = [];
   try {
-    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
+    if (isPermitted) {
       gatePasses = await db.$queryRaw`
       SELECT c.gate_pass_no, (sum(c.net_val) + sum(c.vat)) as total_net_val,
       count(DISTINCT a.billing_doc_no) as total_delivery
@@ -125,7 +128,7 @@ export const getGatePassBill = async (searchParams: {
   // get gatepass specific data
   let gatePassData = [];
   try {
-    if (user.role == "admin" || (isDepotDA && isDepotDA.length > 0)) {
+    if (isPermitted) {
       if (gatePasses.length > 0) {
         for (let i = 0; i < gatePasses.length; i++) {
           let data = await db.$queryRaw`
