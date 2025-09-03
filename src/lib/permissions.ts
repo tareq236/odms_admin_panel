@@ -50,4 +50,8 @@ const expiredPanelAdminPermission = (user: AuthUser) => {
   }
 };
 
-export { hasDepotDa, odmsPanelAdminPermission, expiredPanelAdminPermission };
+export {
+  hasDepotDa,
+  odmsPanelAdminPermission,
+  expiredPanelAdminPermission,
+};

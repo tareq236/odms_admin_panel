@@ -1,8 +1,9 @@
-import { getUser, verifyAuthuser } from "@/lib/dal";
+import { verifyAuthuser } from "@/lib/dal";
 import db from "../../../../../../db/db";
 import { formateDateDB } from "@/lib/formatters";
 import { redirect } from "next/navigation";
 import { hasDepotDa, odmsPanelAdminPermission } from "@/lib/permissions";
+import { AuthUser } from "@/types/AuthUser";
 
 export const getGatePassBill = async (searchParams: {
   q: string;
@@ -21,13 +22,13 @@ export const getGatePassBill = async (searchParams: {
   let totalCredit: any = [{ total_credit: 0, total_credit_amount: 0 }];
 
   const user = await verifyAuthuser();
-
   if (!user) redirect("/login");
 
-  const isDepotDA: any = hasDepotDa(searchParams.q, user.depot as string);
+  const isDepotDA = await hasDepotDa(daCode.toString(), user.depot as string);
 
   const isPermitted =
-    odmsPanelAdminPermission(user) || (isDepotDA && isDepotDA.length > 0);
+    odmsPanelAdminPermission(user as AuthUser) ||
+    (isDepotDA && isDepotDA.length > 0);
 
   try {
     if (isPermitted) {
