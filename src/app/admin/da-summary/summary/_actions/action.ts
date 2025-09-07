@@ -137,7 +137,7 @@ export const getGatePassBill = async (searchParams: {
             COUNT(b.gate_pass_no) OVER () AS total_invoice,
             COUNT(rd.delivery_status) OVER () AS total_delivered,
             COUNT(rd.cash_collection_status) OVER () AS total_collection,
-            COUNT(rd.return_status) OVER () AS total_return,
+            COUNT(CASE WHEN rd.return_status = 1 THEN 1 END) over() AS total_return,
             SUM(rd.due_amount) OVER () AS total_due,
             SUM(rd.cash_collection) OVER () AS collection_amount,
             SUM(rd.return_amount) OVER () AS return_amount,
