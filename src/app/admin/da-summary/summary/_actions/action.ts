@@ -20,6 +20,10 @@ export const getGatePassBill = async (searchParams: {
   let collectionDone: any = [{ total_collection_done: 0, total_net_val: 0 }];
   let returnQuantity: any = [{ total_return: 0, total_return_amount: 0 }];
   let totalCredit: any = [{ total_credit: 0, total_credit_amount: 0 }];
+  let totalDue: any = [{ total_due: 0, total_due_amount: 0 }];
+  let totalCollectionRemaining: any = [
+    { total_net_val: 0, total_collection_remaining: 0 },
+  ];
 
   const user = await verifyAuthuser();
   if (!user) redirect("/login");
@@ -38,6 +42,8 @@ export const getGatePassBill = async (searchParams: {
         collectionDone,
         returnQuantity,
         totalCredit,
+        totalDue,
+        totalCollectionRemaining,
       ] = await Promise.all([
         db.$queryRaw`
         SELECT sum(sum(c.net_val) + sum(c.vat)) over() as total_net_val,
@@ -97,6 +103,38 @@ export const getGatePassBill = async (searchParams: {
           GROUP BY rsis.billing_doc_no 
           LIMIT 1;
         `,
+        db.$queryRaw`
+        SELECT sum(rd.due_amount) over() total_due_amount,
+            COUNT(*) over() total_due
+        FROM rdl_delivery rd
+            LEFT JOIN rpl_sales_info_sap rsis on rsis.billing_doc_no = rd.billing_doc_no
+         WHERE rd.da_code = ${daCode}
+            AND rd.billing_date = ${
+              searchParams.start
+                ? `${searchParams.start}`
+                : `${formateDateDB(new Date())}`
+            }
+            AND rd.due_amount > 0
+            AND rd.cash_collection = 0
+            AND rd.cash_collection_status = "Done"
+            AND rsis.billing_type NOT IN ('ZD2', 'ZD4')
+        GROUP BY rd.billing_doc_no
+        limit 1
+        `,
+        db.$queryRaw`
+          SELECT sum(b.net_val) over() as total_net_val,
+              count(*) over() as total_collection_done
+          FROM rdl_delivery_info_sap as a
+              LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
+              left JOIN rpl_sales_info_sap c on c.billing_doc_no = a.billing_doc_no
+          WHERE a.da_code = ${daCode}
+              AND a.billing_date = ${startDate}
+              AND b.cash_collection_status is null
+              AND b.delivery_status='Done'
+                AND c.billing_type NOT IN ('ZD2', 'ZD4')
+          GROUP BY a.billing_doc_no
+          limit 1
+        `,
       ]);
     }
   } catch (error) {
@@ -138,7 +176,8 @@ export const getGatePassBill = async (searchParams: {
             COUNT(rd.delivery_status) OVER () AS total_delivered,
             COUNT(rd.cash_collection_status) OVER () AS total_collection,
             COUNT(CASE WHEN rd.return_status = 1 THEN 1 END) over() AS total_return,
-            SUM(rd.due_amount) OVER () AS total_due,
+            SUM(rd.due_amount) OVER () AS total_due_amount,
+            count(rd.due_amount) OVER () AS total_due,
             SUM(rd.cash_collection) OVER () AS collection_amount,
             SUM(rd.return_amount) OVER () AS return_amount,
             sum(
@@ -187,5 +226,7 @@ export const getGatePassBill = async (searchParams: {
     collectionDone,
     returnQuantity,
     totalCredit,
+    totalDue,
+    totalCollectionRemaining,
   };
 };

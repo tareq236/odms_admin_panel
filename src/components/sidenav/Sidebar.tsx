@@ -324,7 +324,7 @@ export default function Sidebar({
 
       <div className="bottom my-3 md:my-6 px-5 md:px-5 md:py-0">
         <NavLink
-          className="text-destructive hover:bg-red-100 hover:text-red-800"
+          className="text-destructive dark:text-red-300 hover:bg-red-100 hover:text-red-800 hover:dark:text-background"
           icon={
             isPending ? (
               <Spinner borderBottomColor="red-400" />

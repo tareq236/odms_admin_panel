@@ -24,6 +24,8 @@ function GatePassTable({
   returnAmount,
   totalCredit,
   totalCreditAmount,
+  totalDue,
+  totalDueAmount,
 }: {
   totalInvoice: number;
   totalAmount: number;
@@ -39,6 +41,8 @@ function GatePassTable({
   returnAmount: number;
   totalCredit: number;
   totalCreditAmount: number;
+  totalDue: number;
+  totalDueAmount: number;
 }) {
   return (
     <>
@@ -55,6 +59,11 @@ function GatePassTable({
             <TableCell>Total</TableCell>
             <TableCell>{formatNumber(totalInvoice)}</TableCell>
             <TableCell>{formatNumber(totalAmount)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Credit Amount</TableCell>
+            <TableCell>{formatNumber(totalCredit)}</TableCell>
+            <TableCell>{formatNumber(totalCreditAmount)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Delivered</TableCell>
@@ -77,9 +86,9 @@ function GatePassTable({
             <TableCell>{formatNumber(cashCollectionRemainingAmount)}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Credit Amount</TableCell>
-            <TableCell>{formatNumber(totalCredit)}</TableCell>
-            <TableCell>{formatNumber(totalCreditAmount)}</TableCell>
+            <TableCell>Due Amount</TableCell>
+            <TableCell>{formatNumber(totalDue)}</TableCell>
+            <TableCell>{formatNumber(totalDueAmount)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Return</TableCell>
