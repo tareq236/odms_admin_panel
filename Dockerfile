@@ -4,8 +4,8 @@ FROM node:22-alpine AS base
 # set working directory
 WORKDIR /app
 
-# install OpenSSL 1.1 compatibility
-RUN apk add --no-cache openssl1.1-compat
+# install OpenSSL
+RUN apk add --no-cache openssl
 
 # install dependencies separately (better caching)
 COPY package*.json ./
