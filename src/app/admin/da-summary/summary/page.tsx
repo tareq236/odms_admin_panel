@@ -93,37 +93,30 @@ async function SummaryContainer({
           >
             <GatePassTable
               key={index}
-              totalAmount={Number(gatePasses[index].total_net_val)}
+              totalAmount={Number(item[0].total_amount)}
               totalInvoice={Number(item[0].total_invoice || 0)}
               cashCollection={Number(item[0].total_collection || 0)}
               cashCollectionAmount={Number(item[0].collection_amount || 0)}
               totalDelivered={Number(item[0].total_delivered || 0)}
-              totalDeliveredAmount={
-                Number(item[0].total_due || 0) +
-                Number(item[0].collection_amount || 0) +
-                Number(item[0].total_return || 0)
-              }
+              totalDeliveredAmount={Number(
+                item[0].total_delivered_done_amount || 0
+              )}
               deliveryRemaining={
                 Number(item[0].total_invoice || 0) -
                 Number(item[0].total_delivered || 0)
               }
               deliveryRemainingAmount={
-                Number(gatePasses[index].total_net_val) -
-                Number(item[0].total_due_amount || 0) -
-                Number(item[0].return_amount || 0)
+                Number(item[0].total_amount) -
+                Number(item[0].total_delivered_done_amount || 0)
               }
               returnAmount={Number(item[0].return_amount || 0)}
               totalReturn={Number(item[0].total_return || 0)}
-              cashCollectionRemaining={
-                Number(item[0].total_delivered || 0) -
-                Number(item[0].total_collection || 0) -
-                Number(item[0].total_credit || 0) -
-                Number(item[0].total_due || 0)
-              }
-              cashCollectionRemainingAmount={
-                Number(item[0].total_due_amount || 0) -
-                Number(item[0].total_credit_amount || 0)
-              }
+              cashCollectionRemaining={Number(
+                item[0].total_collection_remaining || 0
+              )}
+              cashCollectionRemainingAmount={Number(
+                item[0].total_collection_remaining_amount || 0
+              )}
               totalCredit={Number(item[0].total_credit || 0)}
               totalCreditAmount={Number(item[0].total_credit_amount || 0)}
               totalDue={Number(item[0].total_due || 0)}

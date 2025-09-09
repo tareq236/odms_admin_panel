@@ -78,11 +78,7 @@ export const getGatePassBill = async (searchParams: {
         select count(DISTINCT rd.billing_doc_no) total_return, sum(rds.return_net_val) total_return_amount
           FROM rdl_delivery rd
           INNER JOIN rdl_delivery_list rds ON rds.delivery_id = rd.id
-          WHERE rd.billing_date =${
-            searchParams.start
-              ? `${searchParams.start}`
-              : `${formateDateDB(new Date())}`
-          }
+          WHERE rd.billing_date =${startDate}
           AND rd.da_code = ${daCode} 
           AND rds.return_quantity > 0
         `,
@@ -94,11 +90,7 @@ export const getGatePassBill = async (searchParams: {
           LEFT JOIN rpl_sales_info_sap rsis 
               ON rsis.billing_doc_no = rdis.billing_doc_no
           WHERE rdis.da_code = ${daCode}
-            AND rdis.billing_date = ${
-              searchParams.start
-                ? `${searchParams.start}`
-                : `${formateDateDB(new Date())}`
-            }
+            AND rdis.billing_date = ${startDate}
             AND rsis.billing_type IN ('ZD2', 'ZD4', 'zd2', 'zd4')
           GROUP BY rsis.billing_doc_no 
           LIMIT 1;
@@ -109,11 +101,7 @@ export const getGatePassBill = async (searchParams: {
         FROM rdl_delivery rd
             LEFT JOIN rpl_sales_info_sap rsis on rsis.billing_doc_no = rd.billing_doc_no
          WHERE rd.da_code = ${daCode}
-            AND rd.billing_date = ${
-              searchParams.start
-                ? `${searchParams.start}`
-                : `${formateDateDB(new Date())}`
-            }
+            AND rd.billing_date = ${startDate}
             AND rd.due_amount > 0
             AND rd.cash_collection = 0
             AND rd.cash_collection_status = "Done"
@@ -123,7 +111,7 @@ export const getGatePassBill = async (searchParams: {
         `,
         db.$queryRaw`
           SELECT sum(b.net_val) over() as total_net_val,
-              count(*) over() as total_collection_done
+              count(*) over() as total_collection_remaining
           FROM rdl_delivery_info_sap as a
               LEFT JOIN rdl_delivery as b ON a.billing_doc_no = b.billing_doc_no
               left JOIN rpl_sales_info_sap c on c.billing_doc_no = a.billing_doc_no
@@ -151,11 +139,7 @@ export const getGatePassBill = async (searchParams: {
       FROM rdl_delivery_info_sap as a
       INNER JOIN rpl_sales_info_sap as c ON a.billing_doc_no = c.billing_doc_no
       LEFT JOIN rdl_delivery rd ON rd.billing_doc_no = a.billing_doc_no
-      WHERE a.da_code =${daCode} AND a.billing_date=${
-        searchParams.start
-          ? `${searchParams.start}`
-          : `${formateDateDB(new Date())}`
-      }
+      WHERE a.da_code =${daCode} AND a.billing_date=${startDate}
       GROUP BY c.gate_pass_no
     `;
     }
@@ -171,39 +155,79 @@ export const getGatePassBill = async (searchParams: {
       if (gatePasses.length > 0) {
         for (let i = 0; i < gatePasses.length; i++) {
           let data = await db.$queryRaw`
-          SELECT
-            COUNT(b.gate_pass_no) OVER () AS total_invoice,
-            COUNT(rd.delivery_status) OVER () AS total_delivered,
-            COUNT(rd.cash_collection_status) OVER () AS total_collection,
-            COUNT(CASE WHEN rd.return_status = 1 THEN 1 END) over() AS total_return,
-            SUM(rd.due_amount) OVER () AS total_due_amount,
-            count(rd.due_amount) OVER () AS total_due,
-            SUM(rd.cash_collection) OVER () AS collection_amount,
-            SUM(rd.return_amount) OVER () AS return_amount,
-            sum(
-                SUM(
-                    (
-                        CASE
-                            WHEN b.billing_type IN ('ZD2', 'ZD4', 'zd2', 'zd4') THEN b.net_val + b.vat
-                            ELSE 0
-                        END
-                    )
-                )
-            ) OVER () AS total_credit_amount,
-            COUNT(
-                CASE
-                    WHEN b.billing_type IN ('ZD2', 'ZD4', 'zd2', 'zd4') THEN b.billing_doc_no
-                END
-            ) OVER () AS total_credit
+          SELECT COUNT(b.gate_pass_no) OVER () AS total_invoice,
+              COUNT(
+                  case
+                      WHEN rd.delivery_status = "Done" THEN 1
+                  END
+              ) OVER () AS total_delivered,
+              SUM(
+                  SUM(
+                      CASE
+                          WHEN rd.delivery_status = "Done" THEN b.net_val + b.vat
+                      end
+                  )
+              ) over() total_delivered_done_amount,
+              sum(SUM(b.net_val + b.vat)) OVER () AS total_amount,
+              COUNT(rd.cash_collection_status) OVER () AS total_collection,
+              COUNT(
+                  CASE
+                      WHEN rd.return_status = 1 THEN 1
+                  END
+              ) over() AS total_return,
+              SUM(
+                  CASE
+                      WHEN b.billing_type NOT IN ('ZD2', 'ZD4', 'zd2', 'zd4')
+                      AND rd.due_amount > 0
+                      AND rd.cash_collection = 0
+                      AND rd.cash_collection_status = "Done" THEN rd.due_amount
+                      ELSE 0
+                  END
+              ) AS total_due_amount,
+              count(
+                  CASE
+                      WHEN b.billing_type NOT IN ('ZD2', 'ZD4', 'zd2', 'zd4')
+                      AND rd.due_amount > 0
+                      AND rd.cash_collection = 0
+                      AND rd.cash_collection_status = "Done" THEN 1
+                  END
+              ) AS total_due,
+              SUM(rd.cash_collection) OVER () AS collection_amount,
+              sum(
+                  CASE
+                      WHEN rd.cash_collection_status is null
+                      AND rd.delivery_status = 'Done'
+                      AND b.billing_type NOT IN ('ZD2', 'ZD4') THEN rd.net_val
+                  END
+              ) over() total_collection_remaining_amount,
+              count(
+                  CASE
+                      WHEN rd.cash_collection_status is null
+                      AND rd.delivery_status = 'Done'
+                      AND b.billing_type NOT IN ('ZD2', 'ZD4') THEN 1
+                  END
+              ) over() total_collection_remaining,
+              SUM(rd.return_amount) OVER () AS return_amount,
+              sum(
+                  SUM(
+                      (
+                          CASE
+                              WHEN b.billing_type IN ('ZD2', 'ZD4', 'zd2', 'zd4') THEN b.net_val + b.vat
+                              ELSE 0
+                          END
+                      )
+                  )
+              ) OVER () AS total_credit_amount,
+              COUNT(
+                  CASE
+                      WHEN b.billing_type IN ('ZD2', 'ZD4', 'zd2', 'zd4') THEN b.billing_doc_no
+                  END
+              ) OVER () AS total_credit
         FROM
             rdl_delivery_info_sap AS a
             INNER JOIN rpl_sales_info_sap AS b ON a.billing_doc_no = b.billing_doc_no
             LEFT JOIN rdl_delivery rd ON rd.billing_doc_no = a.billing_doc_no
-       WHERE a.billing_date = ${
-         searchParams.start
-           ? `${searchParams.start}`
-           : `${formateDateDB(new Date())}`
-       }
+       WHERE a.billing_date = ${startDate}
           AND a.da_code = ${daCode}
           AND b.gate_pass_no = ${gatePasses[i].gate_pass_no}
         GROUP BY
