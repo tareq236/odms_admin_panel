@@ -27,55 +27,51 @@ async function SummaryContainer({
 }: {
   searchParams: { p: string; q: string; start: string };
 }) {
-  const {
-    totalDelivery,
-    deliveryDone,
-    returnQuantity,
-    gatePassData,
-    gatePasses,
-    collectionDone,
-    totalCredit,
-    totalDue,
-    totalCollectionRemaining,
-  } = await getGatePassBill(searchParams);
+  const { gatepassWiseData } = await getGatePassBill(searchParams);
 
   return (
     <>
       {/* overview */}
       <Accordion show={true} name="Overview">
-        {Number(totalDelivery[0]?.total_net_val || 0) != 0 ? (
+        {gatepassWiseData ? (
           <GatePassTable
-            totalInvoice={Number(totalDelivery[0]?.total_delivery || 0)}
-            totalAmount={Number(totalDelivery[0]?.total_net_val || 0)}
-            totalDelivered={deliveryDone[0]?.total_delivery_done || 0}
-            totalDeliveredAmount={
-              Number(deliveryDone[0]?.total_net_val || 0) -
-              Number(returnQuantity[0]?.total_return_amount || 0)
+            totalAmount={getTotal(gatepassWiseData, "total_amount")}
+            totalInvoice={getTotal(gatepassWiseData, "total_invoice")}
+            cashCollection={getTotal(gatepassWiseData, "total_collection")}
+            cashCollectionAmount={
+              getTotal(gatepassWiseData, "collection_amount") -
+              getTotal(gatepassWiseData, "total_due_amount")
             }
+            totalDelivered={getTotal(gatepassWiseData, "total_delivered")}
+            totalDeliveredAmount={getTotal(
+              gatepassWiseData,
+              "total_delivered_done_amount"
+            )}
             deliveryRemaining={
-              Number(totalDelivery[0]?.total_delivery || 0) -
-              Number(deliveryDone[0]?.total_delivery_done || 0)
+              getTotal(gatepassWiseData, "total_invoice") -
+              getTotal(gatepassWiseData, "total_delivered")
             }
             deliveryRemainingAmount={
-              Number(totalDelivery[0]?.total_net_val || 0) -
-              Number(deliveryDone[0]?.total_net_val || 0)
+              getTotal(gatepassWiseData, "total_amount") -
+              getTotal(gatepassWiseData, "total_delivered_done_amount")
             }
-            cashCollection={Number(
-              collectionDone[0]?.total_collection_done || 0
+            returnAmount={getTotal(gatepassWiseData, "return_amount")}
+            totalReturn={getTotal(gatepassWiseData, "total_return")}
+            cashCollectionRemaining={getTotal(
+              gatepassWiseData,
+              "total_collection_remaining"
             )}
-            cashCollectionAmount={Number(collectionDone[0]?.total_net_val || 0)}
-            cashCollectionRemaining={Number(
-              totalCollectionRemaining[0]?.total_collection_remaining || 0
+            cashCollectionRemainingAmount={getTotal(
+              gatepassWiseData,
+              "total_collection_remaining_amount"
             )}
-            cashCollectionRemainingAmount={Number(
-              totalCollectionRemaining[0]?.total_net_val || 0
+            totalCredit={getTotal(gatepassWiseData, "total_credit")}
+            totalCreditAmount={getTotal(
+              gatepassWiseData,
+              "total_credit_amount"
             )}
-            totalReturn={Number(returnQuantity[0]?.total_return || 0)}
-            returnAmount={Number(returnQuantity[0]?.total_return_amount || 0)}
-            totalCredit={Number(totalCredit[0]?.total_credit || 0)}
-            totalCreditAmount={Number(totalCredit[0]?.total_credit_amount || 0)}
-            totalDue={Number(totalDue[0]?.total_due || 0)}
-            totalDueAmount={Number(totalDue[0]?.total_due_amount || 0)}
+            totalDue={getTotal(gatepassWiseData, "total_due")}
+            totalDueAmount={getTotal(gatepassWiseData, "total_due_amount")}
           />
         ) : (
           <div className="my-12">
@@ -85,45 +81,49 @@ async function SummaryContainer({
       </Accordion>
 
       {/* single gate pass */}
-      {gatePassData &&
-        gatePassData.map((item: any, index) => (
-          <Accordion
-            key={index}
-            name={`Gate pass no. - ${gatePasses[index].gate_pass_no}`}
-          >
+      {gatepassWiseData &&
+        gatepassWiseData.map((item: any, index: number) => (
+          <Accordion key={index} name={`Gate pass no. - ${item.gate_pass_no}`}>
             <GatePassTable
               key={index}
-              totalAmount={Number(item[0].total_amount)}
-              totalInvoice={Number(item[0].total_invoice || 0)}
-              cashCollection={Number(item[0].total_collection || 0)}
-              cashCollectionAmount={Number(item[0].collection_amount || 0)}
-              totalDelivered={Number(item[0].total_delivered || 0)}
+              totalAmount={Number(item.total_amount)}
+              totalInvoice={Number(item.total_invoice || 0)}
+              cashCollection={Number(item.total_collection || 0)}
+              cashCollectionAmount={
+                Number(item.collection_amount || 0) -
+                Number(item.total_due_amount || 0)
+              }
+              totalDelivered={Number(item.total_delivered || 0)}
               totalDeliveredAmount={Number(
-                item[0].total_delivered_done_amount || 0
+                item.total_delivered_done_amount || 0
               )}
               deliveryRemaining={
-                Number(item[0].total_invoice || 0) -
-                Number(item[0].total_delivered || 0)
+                Number(item.total_invoice || 0) -
+                Number(item.total_delivered || 0)
               }
               deliveryRemainingAmount={
-                Number(item[0].total_amount) -
-                Number(item[0].total_delivered_done_amount || 0)
+                Number(item.total_amount) -
+                Number(item.total_delivered_done_amount || 0)
               }
-              returnAmount={Number(item[0].return_amount || 0)}
-              totalReturn={Number(item[0].total_return || 0)}
+              returnAmount={Number(item.return_amount || 0)}
+              totalReturn={Number(item.total_return || 0)}
               cashCollectionRemaining={Number(
-                item[0].total_collection_remaining || 0
+                item.total_collection_remaining || 0
               )}
               cashCollectionRemainingAmount={Number(
-                item[0].total_collection_remaining_amount || 0
+                item.total_collection_remaining_amount || 0
               )}
-              totalCredit={Number(item[0].total_credit || 0)}
-              totalCreditAmount={Number(item[0].total_credit_amount || 0)}
-              totalDue={Number(item[0].total_due || 0)}
-              totalDueAmount={Number(item[0].total_due_amount || 0)}
+              totalCredit={Number(item.total_credit || 0)}
+              totalCreditAmount={Number(item.total_credit_amount || 0)}
+              totalDue={Number(item.total_due || 0)}
+              totalDueAmount={Number(item.total_due_amount || 0)}
             />
           </Accordion>
         ))}
     </>
   );
 }
+
+const getTotal = (data: any[], key: string) => {
+  return data.reduce((sum, obj) => sum + Number(obj[key] || 0), 0);
+};
