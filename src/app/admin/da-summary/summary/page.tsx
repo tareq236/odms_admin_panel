@@ -37,7 +37,10 @@ async function SummaryContainer({
           <GatePassTable
             totalAmount={getTotal(gatepassWiseData, "total_amount")}
             totalInvoice={getTotal(gatepassWiseData, "total_invoice")}
-            cashCollection={getTotal(gatepassWiseData, "total_collection")}
+            cashCollection={
+              getTotal(gatepassWiseData, "total_collection") -
+              getTotal(gatepassWiseData, "total_due")
+            }
             cashCollectionAmount={
               getTotal(gatepassWiseData, "collection_amount") -
               getTotal(gatepassWiseData, "total_due_amount") -
@@ -99,7 +102,9 @@ async function SummaryContainer({
               key={index}
               totalAmount={Number(item.total_amount)}
               totalInvoice={Number(item.total_invoice || 0)}
-              cashCollection={Number(item.total_collection || 0)}
+              cashCollection={
+                Number(item.total_collection || 0) - Number(item.total_due || 0)
+              }
               cashCollectionAmount={
                 Number(item.collection_amount || 0) -
                 Number(item.total_due_amount || 0) -
