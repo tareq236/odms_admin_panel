@@ -40,13 +40,13 @@ async function SummaryContainer({
             cashCollection={getTotal(gatepassWiseData, "total_collection")}
             cashCollectionAmount={
               getTotal(gatepassWiseData, "collection_amount") -
-              getTotal(gatepassWiseData, "total_due_amount")
+              getTotal(gatepassWiseData, "total_due_amount") - getTotal(gatepassWiseData, "return_amount")
             }
             totalDelivered={getTotal(gatepassWiseData, "total_delivered")}
-            totalDeliveredAmount={getTotal(
-              gatepassWiseData,
-              "total_delivered_done_amount"
-            )}
+            totalDeliveredAmount={
+              getTotal(gatepassWiseData, "total_delivered_done_amount") -
+              getTotal(gatepassWiseData, "return_amount")
+            }
             deliveryRemaining={
               getTotal(gatepassWiseData, "total_invoice") -
               getTotal(gatepassWiseData, "total_delivered")
@@ -91,12 +91,14 @@ async function SummaryContainer({
               cashCollection={Number(item.total_collection || 0)}
               cashCollectionAmount={
                 Number(item.collection_amount || 0) -
-                Number(item.total_due_amount || 0)
+                Number(item.total_due_amount || 0) -
+                Number(item.return_amount || 0)
               }
               totalDelivered={Number(item.total_delivered || 0)}
-              totalDeliveredAmount={Number(
-                item.total_delivered_done_amount || 0
-              )}
+              totalDeliveredAmount={
+                Number(item.total_delivered_done_amount || 0) -
+                Number(item.return_amount || 0)
+              }
               deliveryRemaining={
                 Number(item.total_invoice || 0) -
                 Number(item.total_delivered || 0)

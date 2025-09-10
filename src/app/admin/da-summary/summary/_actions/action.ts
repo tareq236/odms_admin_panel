@@ -91,7 +91,14 @@ export const getGatePassBill = async (searchParams: {
                     AND b.billing_type NOT IN ('ZD2', 'ZD4', 'zd2', 'zd4') THEN b.billing_doc_no
                 END
             ) AS total_collection_remaining,
-            SUM(rd.return_amount) AS return_amount,
+            (
+            select sum(c.return_amount)
+                FROM rdl_delivery c
+                WHERE c.billing_date = ${startDate}
+                    AND c.da_code = ${daCode}
+                    AND c.return_amount > 0
+                GROUP BY gate_pass_no
+            ) AS return_amount,
             SUM(
                 CASE
                     WHEN b.billing_type IN ('ZD2', 'ZD4', 'zd2', 'zd4') THEN b.net_val + b.vat
