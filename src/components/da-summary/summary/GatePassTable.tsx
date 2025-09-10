@@ -26,6 +26,8 @@ function GatePassTable({
   totalCreditAmount,
   totalDue,
   totalDueAmount,
+  totalCreditDelivered,
+  totalCreditDeliveredAmount,
 }: {
   totalInvoice: number;
   totalAmount: number;
@@ -43,6 +45,8 @@ function GatePassTable({
   totalCreditAmount: number;
   totalDue: number;
   totalDueAmount: number;
+  totalCreditDelivered: number;
+  totalCreditDeliveredAmount: number;
 }) {
   return (
     <>
@@ -61,14 +65,9 @@ function GatePassTable({
             <TableCell>{formatNumber(totalAmount)}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Credit Amount</TableCell>
+            <TableCell>Credit</TableCell>
             <TableCell>{formatNumber(totalCredit)}</TableCell>
             <TableCell>{formatNumber(totalCreditAmount)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Delivered</TableCell>
-            <TableCell>{formatNumber(totalDelivered)}</TableCell>
-            <TableCell>{formatNumber(totalDeliveredAmount)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Delivery Remaining</TableCell>
@@ -76,9 +75,14 @@ function GatePassTable({
             <TableCell>{formatNumber(deliveryRemainingAmount)}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Cash Collection</TableCell>
-            <TableCell>{formatNumber(cashCollection)}</TableCell>
-            <TableCell>{formatNumber(cashCollectionAmount)}</TableCell>
+            <TableCell>Delivered</TableCell>
+            <TableCell>{formatNumber(totalDelivered)}</TableCell>
+            <TableCell>{formatNumber(totalDeliveredAmount)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Credit Delivered</TableCell>
+            <TableCell>{formatNumber(totalCreditDelivered)}</TableCell>
+            <TableCell>{formatNumber(totalCreditDeliveredAmount)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Collection Remaining</TableCell>
@@ -86,7 +90,12 @@ function GatePassTable({
             <TableCell>{formatNumber(cashCollectionRemainingAmount)}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Due Amount</TableCell>
+            <TableCell>Collection Done</TableCell>
+            <TableCell>{formatNumber(cashCollection)}</TableCell>
+            <TableCell>{formatNumber(cashCollectionAmount)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Due</TableCell>
             <TableCell>{formatNumber(totalDue)}</TableCell>
             <TableCell>{formatNumber(totalDueAmount)}</TableCell>
           </TableRow>

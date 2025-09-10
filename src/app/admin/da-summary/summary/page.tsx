@@ -40,7 +40,8 @@ async function SummaryContainer({
             cashCollection={getTotal(gatepassWiseData, "total_collection")}
             cashCollectionAmount={
               getTotal(gatepassWiseData, "collection_amount") -
-              getTotal(gatepassWiseData, "total_due_amount") - getTotal(gatepassWiseData, "return_amount")
+              getTotal(gatepassWiseData, "total_due_amount") -
+              getTotal(gatepassWiseData, "return_amount")
             }
             totalDelivered={getTotal(gatepassWiseData, "total_delivered")}
             totalDeliveredAmount={
@@ -70,6 +71,16 @@ async function SummaryContainer({
               gatepassWiseData,
               "total_credit_amount"
             )}
+            totalCreditDelivered={
+              getTotal(gatepassWiseData, "total_delivered") -
+              getTotal(gatepassWiseData, "total_collection") -
+              getTotal(gatepassWiseData, "total_collection_remaining")
+            }
+            totalCreditDeliveredAmount={
+              getTotal(gatepassWiseData, "total_delivered_done_amount") -
+              getTotal(gatepassWiseData, "collection_amount") -
+              getTotal(gatepassWiseData, "total_collection_remaining_amount")
+            }
             totalDue={getTotal(gatepassWiseData, "total_due")}
             totalDueAmount={getTotal(gatepassWiseData, "total_due_amount")}
           />
@@ -117,6 +128,16 @@ async function SummaryContainer({
               )}
               totalCredit={Number(item.total_credit || 0)}
               totalCreditAmount={Number(item.total_credit_amount || 0)}
+              totalCreditDelivered={
+                Number(item.total_delivered || 0) -
+                Number(item.total_collection || 0) -
+                Number(item.total_collection_remaining || 0)
+              }
+              totalCreditDeliveredAmount={
+                Number(item.total_delivered_done_amount || 0) -
+                Number(item.collection_amount || 0) -
+                Number(item.total_collection_remaining_amount || 0)
+              }
               totalDue={Number(item.total_due || 0)}
               totalDueAmount={Number(item.total_due_amount || 0)}
             />
