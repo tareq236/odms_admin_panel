@@ -24,6 +24,7 @@ export default async function CardSection({
   let deliveryDone: any = [{ total_delivery_done: 0, total_net_val: 0 }];
   let collectionDone: any = [{ total_collection_done: 0, total_net_val: 0 }];
   let returnQuantity: any = [{ total_return: 0, total_return_amount: 0 }];
+  let credit: any = [{ total_credit: 0, total_credit_amount: 0 }];
 
   const isDepotDA: any = await hasDepotDa(
     searchParams.q,
@@ -35,7 +36,7 @@ export default async function CardSection({
       odmsPanelAdminPermission(user as AuthUser) ||
       (isDepotDA && isDepotDA.length > 0)
     ) {
-      [totalDelivery, deliveryDone, collectionDone, returnQuantity] =
+      [totalDelivery, deliveryDone, collectionDone, returnQuantity, credit] =
         await Promise.all([
           db.$queryRaw`
         SELECT sum(sum(c.net_val) + sum(c.vat)) over() as total_net_val,
@@ -90,6 +91,21 @@ export default async function CardSection({
             AND rd.da_code = ${Number(searchParams.q) || 0} 
             AND rds.return_quantity > 0
         `,
+          // credit
+          db.$queryRaw`
+          select count(DISTINCT a.billing_doc_no) total_credit ,
+            SUM(b.net_val + b.vat) total_credit_amount
+          FROM rdl_delivery_info_sap AS a
+          LEFT JOIN rpl_sales_info_sap AS b ON a.billing_doc_no = b.billing_doc_no
+            WHERE a.da_code = ${Number(searchParams.q) || 0}
+              and a.billing_date = ${
+                searchParams.start
+                  ? `${searchParams.start}`
+                  : `${formateDateDB(new Date())}`
+              }
+              and b.billing_type IN ('ZD2', 'ZD4', 'zd2', 'zd4')
+          LIMIT 1
+        `,
         ]);
     }
   } catch (error) {
@@ -99,6 +115,8 @@ export default async function CardSection({
   return (
     <section>
       <h3 className="text-muted-foreground mb-3">Statistics</h3>
+      {Number(credit[0].total_credit_amount)}
+      {Number(credit[0].total_credit)}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2">
         <Card
@@ -128,20 +146,15 @@ export default async function CardSection({
 
         <Card
           paramString="cr"
-          name="Collection Remainig"
+          name="Collection Remaining"
           stats={
             Number(deliveryDone[0]?.total_delivery_done || 0) -
             Number(collectionDone[0]?.total_collection_done || 0)
           }
           amount={
             Number(deliveryDone[0]?.total_net_val || 0) -
-              Number(collectionDone[0]?.total_net_val || 0) -
-              Number(returnQuantity[0]?.total_return_amount || 0) >
-            0.01
-              ? Number(deliveryDone[0]?.total_net_val || 0) -
-                Number(collectionDone[0]?.total_net_val || 0) -
-                Number(returnQuantity[0]?.total_return_amount || 0)
-              : 0
+            Number(collectionDone[0]?.total_net_val || 0) -
+            Number(returnQuantity[0]?.total_return_amount || 0)
           }
           icon={<HandCoins className="size-4" />}
           isDown

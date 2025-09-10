@@ -43,8 +43,7 @@ async function SummaryContainer({
             }
             cashCollectionAmount={
               getTotal(gatepassWiseData, "collection_amount") -
-              getTotal(gatepassWiseData, "total_due_amount") -
-              getTotal(gatepassWiseData, "return_amount")
+              getTotal(gatepassWiseData, "total_due_amount") 
             }
             totalDelivered={getTotal(gatepassWiseData, "total_delivered")}
             totalDeliveredAmount={
@@ -68,6 +67,9 @@ async function SummaryContainer({
             cashCollectionRemainingAmount={getTotal(
               gatepassWiseData,
               "total_collection_remaining_amount"
+            ) - getTotal(
+              gatepassWiseData,
+              "return_amount"
             )}
             totalCredit={getTotal(gatepassWiseData, "total_credit")}
             totalCreditAmount={getTotal(
@@ -107,8 +109,7 @@ async function SummaryContainer({
               }
               cashCollectionAmount={
                 Number(item.collection_amount || 0) -
-                Number(item.total_due_amount || 0) -
-                Number(item.return_amount || 0)
+                Number(item.total_due_amount || 0)
               }
               totalDelivered={Number(item.total_delivered || 0)}
               totalDeliveredAmount={
@@ -130,6 +131,8 @@ async function SummaryContainer({
               )}
               cashCollectionRemainingAmount={Number(
                 item.total_collection_remaining_amount || 0
+              ) - Number(
+                item.return_amount || 0
               )}
               totalCredit={Number(item.total_credit || 0)}
               totalCreditAmount={Number(item.total_credit_amount || 0)}

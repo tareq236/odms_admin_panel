@@ -81,7 +81,6 @@ export const getGatePassBill = async (searchParams: {
                     WHEN rd.cash_collection_status IS NULL
                     AND rd.delivery_status = 'Done'
                     AND b.billing_type NOT IN ('ZD2', 'ZD4', 'zd2', 'zd4') THEN b.net_val + b.vat
-                    ELSE 0
                 END
             ) AS total_collection_remaining_amount,
             COUNT(

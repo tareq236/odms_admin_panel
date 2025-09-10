@@ -157,6 +157,7 @@ export const getDeliveryCollection = async ({
             AND a.da_code = ${Number(searchParams.q) || 0} 
             AND b.delivery_status='done'
             AND b.cash_collection_status is null
+            AND b.billing_type NOT IN ('ZD2', 'ZD4')
             GROUP BY a.billing_doc_no
             LIMIT ${(Number(searchParams.p || 1) - 1) * limit}, ${limit}
             `,
